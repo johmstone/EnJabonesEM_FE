@@ -8,6 +8,7 @@ import { Landing } from './views/landing';
 import { Home } from './views/home';
 import { Login } from './views/login';
 import { Register } from './views/register';
+import { ConfirmEmail } from './views/confirmEmail';
 
 import injectContext from './store/appContext';
 
@@ -34,9 +35,9 @@ const Layout = () => {
 						<Route exact path="/Home">
 							<Home />
 						</Route>
-						{/*<Route exact path="/single/:theid">
-							<Single />
-						</Route> */}
+						<Route exact path="/ConfirmEmail/:EVToken">
+							<ConfirmEmail />
+						</Route>
 						<Route>
 							<h1>Not found!</h1>
 						</Route>

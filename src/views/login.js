@@ -2,15 +2,20 @@
 import React, { useContext, useState } from "react";
 import { useForm } from 'react-hook-form';
 import { Link, Redirect } from 'react-router-dom'
-import Authentication from '../services/authentication';
 import { Context } from '../store/appContext';
 import { message } from 'antd';
+
+import Authentication from '../services/authentication';
+import Account from '../services/account';
+
 export const Login = () => {
 	const { store, actions } = useContext(Context);
-	const AuthSVC = new Authentication();
 	const [Loading, setLoading] = useState(false);
 	const [NeedSomething, setNeedSomething] = useState({ Action: '', msg: '' });
 	const [User, setUser] = useState({});
+
+	const AuthSVC = new Authentication();
+	const AccountSVC = new Account();
 
 	const { register, handleSubmit, formState, reset } = useForm({
 		mode: 'onChange',
@@ -28,7 +33,6 @@ export const Login = () => {
 				IP: res.ip
 			}
 			AuthSVC.Login(model).then(auth => {
-				console.log(auth);
 				setLoading(false);
 				if (auth.status) {
 					message.error({
@@ -56,6 +60,11 @@ export const Login = () => {
 
 	const GenerateEmailValidation = () => {
 		console.log(User.Email);
+		AccountSVC.ConfirmEmailRequest(User.Email).then(res => {
+			if (res) {
+				ResetLogin();
+			}
+		});
 	}
 
 	const ResetLogin = () => {

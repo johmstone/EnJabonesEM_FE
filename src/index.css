@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Norican&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+html,
+body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+}
+
+audio {
+	max-width: 100%;
+}
+
+.text-font-base {
+    font-family: Montserrat,sans-serif!important;
+}
+
+.fa-15x{
+	font-size: 1.5em;
+}
+
+#NavMenu {
+	flex-direction: row-reverse;
+	position: absolute;
+	top: 65px;
+	right: 0px;
+}
+
+.MenuLink {
+	color: white !important;
+	font-size: 14px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: pointer;
+	outline: none;
+	border: none;
+	-webkit-tap-highlight-color: transparent;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: block;
+	line-height: 48px;
+	height: 48px;
+	padding: 0 16px;
+	text-align: left;
+	text-decoration: none;
+	max-width: 100%;
+	position: relative;
+	text-transform: uppercase;
+}
+
+.MenuLink:hover {
+	color: gray !important;
+}
+
+.card-contact {
+	width: 350px;
+}
+.card-success {
+	position: relative;
+	width: 320px;
+	display: block;
+	margin: 40px auto;
+	text-align: center;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+.label-alert {
+	font-size: 0.75em;
+	margin: 0;
+}
+
+.upper-side {
+	padding: 2em;
+	display: block;
+	color: #fff;
+	border-top-right-radius: 8px;
+	border-top-left-radius: 8px;
+}
+
+.lower-side {
+	padding: 2em 2em 5em 2em;
+	display: block;
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+}
+
+.status {
+	font-weight: lighter;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-size: 1em;
+	margin-top: -.2em;
+	margin-bottom: 0;
+	color: black;
+}
+
+.card-message {
+	margin-top: -.5em;
+	color: #757575;
+	letter-spacing: 1px;
+}
+
+.card-btn-success {
+	position: relative;
+	top: 1.5em;
+	text-decoration: none;
+	color: black;
+	margin: auto;
+	padding: .8em 3em;
+	-webkit-box-shadow: 0px 15px 30px rgba(50, 50, 50, 0.21);
+	-moz-box-shadow: 0px 15px 30px rgba(50, 50, 50, 0.21);
+	box-shadow: 0px 15px 30px rgba(50, 50, 50, 0.21);
+	border-radius: 25px;
+	-webkit-transition: all .4s ease;
+	-moz-transition: all .4s ease;
+	-o-transition: all .4s ease;
+	transition: all .4s ease;
+}
+
+.card-btn-success:hover {
+	-webkit-box-shadow: 0px 15px 30px rgba(50, 50, 50, 0.41);
+	-moz-box-shadow: 0px 15px 30px rgba(50, 50, 50, 0.41);
+	box-shadow: 0px 15px 30px rgba(50, 50, 50, 0.41);
+	color: white;
+	-webkit-transition: all .4s ease;
+	-moz-transition: all .4s ease;
+	-o-transition: all .4s ease;
+	transition: all .4s ease;
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}
+.anticon {
+	vertical-align: middle!important;
+}
+.ant-message-custom-content > span {
+	margin-top: -4px;
+}

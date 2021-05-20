@@ -146,3 +146,18 @@ audio {
 .ant-message-custom-content > span {
 	margin-top: -4px;
 }
+.btn-cart {
+	padding: .25rem .75rem;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+	border-color: rgba(255,255,255,.1);
+}
+.ant-badge {
+	font-size: 1.25rem !important;
+	color: rgba(255,255,255,.5) !important;    
+	line-height: 1 !important;
+}
+.menuLink-cart {
+	display: none;
+}

@@ -14,6 +14,12 @@
     #NavMenu {
         top: auto;
     }
+    .btn-cart {
+        display: none;
+    }
+    .menuLink-cart {
+        display: block;
+    }
  }
 
 /* Extra large devices (large desktops, 1200px and up) */

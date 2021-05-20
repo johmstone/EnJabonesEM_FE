@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import getState from "./flux.js";
+import { isExpired } from 'react-jwt';
 
 // Don't change, here is where we initialize our context, by default it's just going to be null.
 export const Context = React.createContext(null);
@@ -21,11 +22,28 @@ const injectContext = PassedComponent => {
 		);
 
 		useEffect(() => {
+			const user = JSON.parse(localStorage.getItem('User'));
+			
 			let model = {
-				AppID: 1,
-				UserID: 0
+			  	AppID: 1,
+			  	UserID: 0
 			}
-			state.actions.uploadMenu(model);
+			
+			if(user) {
+				if(!isExpired(user.Token))  {
+					state.actions.Login();
+					model.AppID = 2;
+					model.UserID = user.UserID;
+					state.actions.uploadMenu(model);
+				} else {
+					localStorage.removeItem('User');
+					state.actions.Logout();
+					state.actions.uploadMenu(model);
+				}
+			} else {
+				state.actions.Logout();
+				state.actions.uploadMenu(model);
+			}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, []);
 		return (

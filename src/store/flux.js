@@ -8,6 +8,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			menu: []
 			,isLogged: false
+			,ShopCart: []
 		},
 		actions: {
 			uploadMenu: (model) => {								
@@ -17,10 +18,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 			Login: () => {
-				setStore({ isLogged: true})
+				setStore({ isLogged: true});
 			},
 			Logout: () => {
-				setStore({ isLogged: false })
+				setStore({ isLogged: false });				
 			}
 		}
 	};

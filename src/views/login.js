@@ -44,7 +44,12 @@ export const Login = () => {
 				} else {
 					if (auth.Token) {
 						localStorage.setItem('User', JSON.stringify(auth));
-						actions.Login()
+						actions.Login();
+						let model = {
+							AppID: 2,
+							UserID: auth.UserID
+						}
+						actions.uploadMenu(model);
 					} else {
 						setUser(auth);
 						if (!auth.EmailValidated) {

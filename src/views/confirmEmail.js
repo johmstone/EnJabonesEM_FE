@@ -10,7 +10,6 @@ export const ConfirmEmail = () => {
     const [ResponseStatus, setResponse] = useState({})
 
     const LoadPage = () => {
-        console.log('Call loadPage')
         AccountSVC.ConfirmEmail(params.EVToken).then(res => {
             setResponse(res);
         })

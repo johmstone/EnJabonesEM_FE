@@ -22,6 +22,10 @@ audio {
     font-family: Montserrat,sans-serif!important;
 }
 
+.text-primary-color {
+	color: #56CCF2;
+}
+
 .fa-15x{
 	font-size: 1.5em;
 }
@@ -158,6 +162,31 @@ audio {
 	color: rgba(255,255,255,.5) !important;    
 	line-height: 1 !important;
 }
+.ant-modal-close {
+	display: none !important;
+}
+
+.ant-modal-header,
+.ant-modal-footer {
+	background-color: black !important;
+}
 .menuLink-cart {
 	display: none;
 }
+
+.loading-screen-wrapper {
+	position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .loading-screen-icon {
+	position: absolute;
+	top: 25%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+  }

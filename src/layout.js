@@ -9,6 +9,9 @@ import { Home } from './views/home';
 import { Login } from './views/login';
 import { Register } from './views/register';
 import { ConfirmEmail } from './views/confirmEmail';
+import { ForgotPassword } from './views/forgotPassword';
+import { ResetPassword } from './views/resetPassword';
+import { WebDirectory } from './views/webDirectory';
 
 import injectContext from './store/appContext';
 
@@ -32,11 +35,23 @@ const Layout = () => {
 						<Route exact path="/Register">
 							<Register />
 						</Route>
+						<Route exact path="/ForgotPassword">
+							<ForgotPassword />
+						</Route>
 						<Route exact path="/Home">
 							<Home />
 						</Route>
 						<Route exact path="/ConfirmEmail/:EVToken">
 							<ConfirmEmail />
+						</Route>
+						<Route exact path="/ResetPassword/:GUID">
+							<ResetPassword />
+						</Route>
+						<Route exact path="/WebDirectory">
+							<WebDirectory />
+						</Route>
+						<Route exact path="/WebDirectory/Index">
+							<WebDirectory />
 						</Route>
 						<Route>
 							<h1>Not found!</h1>

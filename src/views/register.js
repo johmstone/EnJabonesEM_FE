@@ -89,9 +89,13 @@ export const Register = () => {
 										, pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Cuenta de correo Invalida!' }
 										, validate: {
 											ExistingEmail: (value) => {
-												return AccountSVC.CheckEmailAvailability(value).then(res => {
-													return res || "Cuenta ya se encuentra registrada!"
-												});
+												if (value !== undefined) {
+													return AccountSVC.CheckEmailAvailability(value).then(res => {
+														return res || "Cuenta ya se encuentra registrada!"
+													});
+												} else {
+													return true;
+												}
 											}
 										}
 									})} />

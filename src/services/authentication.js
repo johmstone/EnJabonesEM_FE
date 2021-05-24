@@ -1,6 +1,6 @@
 import Configuration from './configuration'
 
-class Authentication {
+class AuthenticationService {
 
     constructor() {
         this.config = new Configuration();
@@ -56,4 +56,4 @@ class Authentication {
     }
 }
 
-export default Authentication;
+export default AuthenticationService;

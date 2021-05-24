@@ -1,8 +1,8 @@
-import WebDirectory from '../services/webdirectory';
+import WebDirectoryService from '../services/webdirectory';
 
 const getState = ({ getStore, getActions, setStore }) => {
 	
-	const WebDirectorySVC = new WebDirectory();
+	const WebDirectorySVC = new WebDirectoryService();
 
 	return {
 		store: {
@@ -13,7 +13,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 			uploadMenu: (model) => {								
 				WebDirectorySVC.Menu(model).then(items => {
-					console.log(items);
+					//console.log(items);
 					setStore({ menu: items});
 				});
 			},

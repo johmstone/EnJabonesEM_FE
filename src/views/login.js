@@ -91,13 +91,6 @@ export const Login = () => {
 				<div className="lower-side">
 					<p className="card-message">Su cuenta de correo aún esta pendiente de validar!</p>
 					<p className="card-message">Revise su correo electrónico o solicite nuevamente su validación</p>
-					{/* <a className="card-btn-success text-decoration-none bg-primary cursor-pointer" onClick={() => GenerateEmailValidation()}>
-						Solicitar Validación
-					</a>
-
-					<Link to="/Login" className="card-btn-success text-decoration-none bg-primary cursor-pointer" >
-						Ingresar
-					</Link> */}
 					<div className="form-group text-center">
 						<button className="btn btn-outline-primary text-font-base btn-block my-3" onClick={() => GenerateEmailValidation()}>
 							Solicitar Validación

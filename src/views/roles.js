@@ -3,17 +3,18 @@ import React, { useContext, useState, useEffect } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 
 import { Context } from '../store/appContext';
+
 import WebDirectoryService from '../services/webdirectory';
+
 import { Error } from '../component/error';
 import { Loading } from '../component/loading';
-import { UpsertWebDirectory } from '../component/webdirectory/upsertWebDirectory';
-import { ListWebDirectory } from '../component/webdirectory/listwebdirectory';
+import { AddNewRole } from '../component/roles/addnewrole';
+import { RightsRole } from '../component/roles/rightsrole';
 
-export const WebDirectory = () => {
+export const Roles = () => {
     const { store, actions } = useContext(Context);
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
-    const [AppID, setAppID] = useState(1);
     const WebDirectorySVC = new WebDirectoryService();
     const location = useLocation();
 
@@ -29,50 +30,57 @@ export const WebDirectory = () => {
             return res;
         }).then(src => {
             if (src.ReadRight) {
-                actions.uploadWDList();
+                actions.UploadRoleList();
                 setLoading(false);
             }
         });
 
     }
-
     useEffect(() => {
         setLoading(true);
         LoadPage();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
     const ContentPage = () => {
         return (
             <section className="container">
                 <div className="text-center text-font-base pt-2">
-                    <h2 className="m-0">Web Directory</h2>
-                    <p className="subtitle">Módulo de Gestion de Páginas</p>
+                    <h2 className="m-0">Roles</h2>
+                    <p className="subtitle">Módulo de Gestion de Roles</p>
                 </div>
                 <hr />
-                <div className="d-flex justify-content-start my-2">
-                    <form className="mx-2">
-                        <div className="form-group input-group p-0 m-0 mw-100" style={{ width: "300px" }}>
-                            <div className="input-group-prepend">
-                                <label className="input-group-text">Directorio</label>
-                            </div>
-                            <select className="custom-select" value={AppID} onChange={(e) => setAppID(e.target.value)}>
-                                <option value={1}>No Autenticado</option>
-                                <option value={2}>Autenticado</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
                 <div className="mx-2">
-                    <UpsertWebDirectory isNew={true} />
+                    <AddNewRole />
                 </div>
                 <div className="justify-content-start my-2">
-                    <ListWebDirectory AppID={ parseInt(AppID) } />
-                </div>
-            </section>
+                    <table className="table table-hover table-responsive-xl align-content-center p-0 mx-2">
+                        <thead className="thead-dark">
+                            <tr className="align-middle">
+                                <th className="align-middle py-2">Rol</th>
+                                <th className="text-center align-middle py-2">Descripción</th>
+                                <th className="text-center align-middle py-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                store.RoleList.map((item, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td className="align-middle">{item.RoleName}</td>
+                                            <td className="align-middle">{item.RoleDescription}</td>
+                                            <td className="text-center align-middle" style={{ width: "160px" }}>
+                                                <RightsRole Role={item}/>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                        </tbody >
+                    </table >
+                </div >
+            </section >
         )
     }
-
     if (store.isLoading || isLoading) {
         return <Loading />
     } else {

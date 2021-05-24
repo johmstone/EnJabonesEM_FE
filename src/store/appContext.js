@@ -31,6 +31,7 @@ const injectContext = PassedComponent => {
 			
 			if(user) {
 				if(!isExpired(user.Token))  {
+					//console.log('Login')
 					state.actions.Login();
 					model.AppID = 2;
 					model.UserID = user.UserID;

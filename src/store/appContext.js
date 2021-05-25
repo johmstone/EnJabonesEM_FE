@@ -36,6 +36,7 @@ const injectContext = PassedComponent => {
 					model.AppID = 2;
 					model.UserID = user.UserID;
 					state.actions.uploadMenu(model);
+					state.actions.UploadRoleList();
 				} else {
 					localStorage.removeItem('User');
 					state.actions.Logout();

@@ -10,6 +10,7 @@ export const Navbar = () => {
 
 	const { store, actions } = useContext(Context);
 	let history = useHistory();
+	let User = JSON.parse(localStorage.getItem('User'));
 	const config = new Configuration();
 	const Logout = () => {
 		localStorage.removeItem('User');
@@ -47,6 +48,15 @@ export const Navbar = () => {
 		if (isMenu) {
 			return (
 				<ul className="navbar-nav">
+					{
+						store.isLogged ? (
+							<li className="nav-item MenuLink">
+								<Link to={"/Users/Profile/" + User.UserID} className="text-uppercase MenuLink text-font-base text-decoration-none">
+									Hola <span className="font-weight-bold">{User.FullName}</span>
+								</Link>
+							</li>
+						) : null
+					}
 					{store.menu.map((item, i) => {
 						let url = (item.Controller === 'Home' && item.AppID === 1 ? '' : item.Controller) + (item.Action === 'Index' ? '' : "/" + item.Action)
 						return (
@@ -61,7 +71,7 @@ export const Navbar = () => {
 					<LoginLogout />
 					<li className="nav-item MenuLink menuLink-cart">
 						<Link to="/ShopCart" className="text-uppercase MenuLink text-font-base text-decoration-none">
-							Carrito <Badge count={store.ShopCart.length} size="small"><i className="far fa-cart-arrow-down"></i></Badge> 
+							Carrito <Badge count={store.ShopCart.length} size="small"><i className="far fa-cart-arrow-down"></i></Badge>
 						</Link>
 					</li>
 				</ul>
@@ -72,7 +82,7 @@ export const Navbar = () => {
 					<LoginLogout />
 					<li className="nav-item MenuLink menuLink-cart">
 						<Link to="/ShopCart" className="text-uppercase MenuLink text-font-base text-decoration-none">
-							Carrito <Badge count={store.ShopCart.length} size="small"><i className="far fa-cart-arrow-down"></i></Badge> 
+							Carrito <Badge count={store.ShopCart.length} size="small"><i className="far fa-cart-arrow-down"></i></Badge>
 						</Link>
 					</li>
 				</ul>

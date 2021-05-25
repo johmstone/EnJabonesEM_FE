@@ -55,6 +55,7 @@ export const Login = () => {
 						if (!auth.EmailValidated) {
 							setNeedSomething({ Action: 'ValidateEmail', msg: 'Necesita validar su correo electrónico' })
 						} else {
+							localStorage.setItem('TempUser',JSON.stringify(auth))
 							setNeedSomething({ Action: 'ResetPassword', msg: 'Necesita restaurar su contraseña' })
 						}
 					}
@@ -80,7 +81,7 @@ export const Login = () => {
 	}
 
 	if (NeedSomething.Action === 'ResetPassword') {
-		return <Redirect to={{ pathname: "/ResetPassword" }} />;
+		return <Redirect to={{ pathname: "/ResetPassword"}} />;
 	} else if (NeedSomething.Action === 'ValidateEmail') {
 		return (
 			<div className="card-success">

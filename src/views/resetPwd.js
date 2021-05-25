@@ -1,38 +1,23 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, useContext } from "react";
-import { useParams, Link, Redirect } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 
 import Account from '../services/account';
-import Authentication from '../services/authentication';
 
-import { Context } from '../store/appContext';
-
-export const ResetPassword = () => {
+export const ResetPwd = (props) => {
     const params = useParams();
-    const AuthSVC = new Authentication();
     const AccountSVC = new Account();
-
-    const { store, actions } = useContext(Context);
     const [UserID, setUserID] = useState(0)
-    const [AdminResetPwd, setAdminResetPwd] = useState(false);
     const [Loading, setLoading] = useState(false);
     const [Submitted, setSubmitted] = useState(false);
 
     const LoadPage = () => {
-        if (params.GUID === undefined) {
-            let User = JSON.parse(localStorage.getItem('TempUser'));
-            if (User.UserID !== undefined) {
-                setUserID(User.UserID);
-                setAdminResetPwd(true);
-            }
-        } else {
-            AccountSVC.CheckGUID(params.GUID).then(res => {
-                if (res !== undefined) {
-                    setUserID(res);
-                }
-            })
-        }
+        // AccountSVC.CheckGUID(params.GUID).then(res => {
+        //     if(res !== undefined) {
+        //         setUserID(res);
+        //     }
+        // })
     };
 
     const { register, handleSubmit, formState, getValues } = useForm({
@@ -44,40 +29,15 @@ export const ResetPassword = () => {
 
     const onSubmit = data => {
         setLoading(true);
-        let model = {
-            UserID: params.GUID ? null: UserID,
-            GUID: params.GUID ? params.GUID : "No Required",
-            Password: data.Password
-        }
-        console.log(model);
-        AccountSVC.ResetPassword(model).then(res => {
-            if (AdminResetPwd) {
-                AuthSVC.GetIP().then(res => {
-                    let User = JSON.parse(localStorage.getItem('TempUser'));
-                    let model = {
-                        Email: User.Email,
-                        Password: data.Password,
-                        IP: res.ip
-                    }
-                    AuthSVC.Login(model).then(auth => {
-                        setLoading(false);
-                        if (auth.Token) {
-                            localStorage.removeItem('TempUser');
-                            localStorage.setItem('User', JSON.stringify(auth));
-                            actions.Login();
-                            let model = {
-                                AppID: 2,
-                                UserID: auth.UserID
-                            }
-                            actions.uploadMenu(model);                       
-                        }
-                    });
-                });
-            } else {
-                setSubmitted(true);
-            }            
-            setLoading(false);
-        });
+        // let model = {
+        //     GUID: params.GUID,
+        //     Password: data.Password
+        // }
+
+        // AccountSVC.ResetPassword(model).then(res => {
+        //      setSubmitted(res);
+        //      setLoading(false);
+        // });
     }
 
     useEffect(() => {
@@ -85,27 +45,7 @@ export const ResetPassword = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    if (store.isLogged) {
-		return <Redirect to={{ pathname: "/Home" }} />;
-    } else if (UserID === 0) {
-        return (
-            <div className="card-success">
-                <div className="upper-side bg-primary">
-                    <i className="far fa-question-circle mb-3"></i>
-                    <h3 className="status"> Restablecer Contraseña </h3>
-                </div>
-                <div className="lower-side">
-                    <p className="card-message">Este Código de Verificación es invalido!</p>
-                    <div className="form-group text-center">
-                        <Link to="/Login" className="btn btn-outline-primary text-font-base btn-block my-3">
-                            Ingresar
-                   		</Link>
-                    </div >
-                </div>
-
-            </div>
-        )
-    } else if (Submitted) {
+    if (Submitted) {
         return (
             <div className="card-success">
                 <div className="upper-side bg-success">

@@ -46,6 +46,9 @@ const Layout = () => {
 						<Route exact path="/ConfirmEmail/:EVToken">
 							<ConfirmEmail />
 						</Route>
+						<Route exact path="/ResetPassword">
+							<ResetPassword />
+						</Route>
 						<Route exact path="/ResetPassword/:GUID">
 							<ResetPassword />
 						</Route>

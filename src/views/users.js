@@ -1,20 +1,31 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext, useState, useEffect } from "react";
-import { Redirect, useLocation } from "react-router-dom";
-import { Tooltip } from 'antd';
+import { Redirect, useLocation, Link } from "react-router-dom";
+import { Tooltip, Table, Modal, message } from 'antd';
+import * as moment from 'moment';
+import "moment/locale/es";
 
 import { Context } from '../store/appContext';
 
 import WebDirectoryService from '../services/webdirectory';
+import UsersService from '../services/users';
 
 import { Error } from '../component/error';
 import { Loading } from '../component/loading';
+import { EditRoleUser } from '../component/users/editRoleUser';
+
+moment.locale("es");
 
 export const Users = () => {
-    const { store, actions } = useContext(Context);
+    const { store } = useContext(Context);
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
+    const [SearchInput, setSearchInput] = useState('');
+    const [UserList, setUserList] = useState([]);
+    const [SearchResults, setSearchResults] = useState([]);
+
     const WebDirectorySVC = new WebDirectoryService();
+    const UsersSVC = new UsersService();
     const location = useLocation();
 
     useEffect(() => {
@@ -22,6 +33,15 @@ export const Users = () => {
         LoadPage();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        const results = UserList.filter(item =>
+            item.FullName.toLowerCase().includes(SearchInput.toLowerCase()) ||
+            item.Email.toLowerCase().includes(SearchInput.toLowerCase())
+        );
+        setSearchResults(results);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [SearchInput, UserList]);
 
     const LoadPage = () => {
         const pathname = location.pathname.slice(1).split('/');
@@ -35,17 +55,164 @@ export const Users = () => {
             return res;
         }).then(src => {
             if (src.ReadRight) {
-                actions.UploadUsersList();
-                setLoading(false);
+                UsersSVC.List().then(items => {
+                    //console.log(items)
+                    setUserList(items);
+                    setLoading(false);
+                })
             }
         });
 
     }
 
+
     const ChangeStatus = (model) => {
-        console.log(model);
+        let NewModel = { ...model, ActionType: 'CHGST' }
+        //console.log(NewModel);
+        const { confirm } = Modal;
+        if (model.ActiveFlag) {
+            confirm({
+                content: 'Esta seguro que quiere deshabilitar este usuario???',
+                onOk() {
+                    //console.log("OK")
+                    UsersSVC.Upsert(NewModel, 'Update').then(res => {
+                        if (res) {
+                            LoadPage();
+                        } else {
+                            message.error({
+                                content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                                style: {
+                                    marginTop: "30vh"
+                                }
+                            });
+                        }
+                    });
+                },
+                okText: 'Si',
+                cancelText: 'No',
+            })
+        } else {
+            UsersSVC.Upsert(NewModel, 'Update').then(res => {
+                if (res) {
+                    LoadPage();
+                } else {
+                    message.error({
+                        content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                        style: {
+                            marginTop: "30vh"
+                        }
+                    });
+                }
+            });
+        }
     }
 
+    const ResetPwd = (UserID) => {
+        //console.log(UserID);
+        const { confirm } = Modal;
+        confirm({
+            content: 'Esta seguro que quiere Restablecer esta contraseña???',
+            onOk() {
+                //console.log("OK")
+                setLoading(true);
+                UsersSVC.AdminResetPwd(UserID).then(res => {
+                    if (res) {
+                        setLoading(false);
+                        message.success({
+                            content: "La contraseña se genero exitosamente!!!",
+                            style: {
+                                marginTop: "30vh"
+                            }
+                        });
+                    } else {
+                        setLoading(false);
+                        message.error({
+                            content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                            style: {
+                                marginTop: "30vh"
+                            }
+                        });
+                    }
+                });
+            },
+            okText: 'Si',
+            cancelText: 'No',
+        });
+    }
+    const handleChange = (event) => {
+        setSearchInput(event.target.value);
+    }
+
+    const columnsAdmin = [
+        { title: 'Nombre', dataIndex: 'FullName', key: 'FullName', fixed: 'left' },
+        { title: 'Rol', dataIndex: 'RoleName', key: 'RoleName' },
+        {
+            title: 'Status',
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <p className={e.ActiveFlag ? "text-center align-middle font-weight-bolder text-success m-0" : "text-center align-middle font-weight-bolder text-danger m-0"}>
+                    {e.ActiveFlag ? "Activo" : "Inactivo"}
+                </p>
+            ),
+        },
+        {
+            title: 'Validado',
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <p className={e.EmailValidated ? "text-center align-middle font-weight-bolder text-success m-0" : "text-center align-middle font-weight-bolder text-danger m-0"}>
+                    {e.EmailValidated ? "Validado" : "Pendiente"}
+                </p>
+            ),
+        },
+        {
+            title: 'Acción',
+            colSpan: 4,
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <Tooltip title={e.ActiveFlag ? "Desactivar" : "Activar"} color={e.Email ? "red" : "green"} >
+                    <a onClick={() => ChangeStatus(e)}>
+                        <i className="fas fa-repeat-alt"></i>
+                    </a>
+                </Tooltip>
+            ),
+        },
+        {
+            title: 'Perfil',
+            colSpan: 0,
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <Tooltip title="Perfil" color="blue">
+                    <Link to={ "/User/Profile/" + e.UserID} target="_blank" rel="noopener noreferrer" >
+                        <i className="fas fa-user-circle fa-1x" style={{ "verticalAlign": "middle" }}></i>
+                    </Link>
+                </Tooltip>
+            ),
+        },
+        {
+            title: 'Edit',
+            colSpan: 0,
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (<EditRoleUser User={e} />),
+        },
+        {
+            title: 'ResetPwd',
+            colSpan: 0,
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <Tooltip title="Restablecer Contraseña" color="green">
+                    <a onClick={() => ResetPwd(e.UserID)}>
+                        <i className="fas fa-key fa-1x" style={{ "verticalAlign": "middle" }}></i>
+                    </a>
+                </Tooltip>
+            ),
+        }
+    ]
 
     const ContentPage = () => {
         return (
@@ -56,70 +223,34 @@ export const Users = () => {
                 </div>
                 <hr />
                 <div className="mx-2">
-
+                    <div className="input-group mb-3 mw-100" style={{ width: "300px" }}>
+                        <div className="input-group-prepend">
+                            <span className="input-group-text" id="SearchInput-label"><i className="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" className="form-control" placeholder="Palabra clave..." aria-label="Palabra clave..." aria-describedby="SearchInput-label"
+                            value={SearchInput} onChange={handleChange} autoFocus />
+                    </div>
                 </div>
                 <div className="justify-content-start my-2">
-                    <table className="table table-hover table-responsive-xl align-content-center p-0 mx-2">
-                        <thead className="thead-dark">
-                            <tr className="align-middle">
-                                <th className="align-middle py-2">Nombre</th>
-                                <th className="align-middle py-2">Rol</th>
-                                <th className="text-center align-middle py-2">Status</th>
-                                <th className="text-center align-middle py-2">Validado</th>
-                                {Rights.WriteRight ? <th className="text-center align-middle py-2" colSpan={4}>Acción</th> : null}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                store.UsersList.map((item, i) => {
-                                    return (
-                                        <tr key={i}>
-                                            <td className="align-middle">{item.FullName}</td>
-                                            <td className="align-middle">{item.RoleName}</td>
-                                            <td className={item.ActiveFlag ? "text-center align-middle font-weight-bolder text-success" : "text-center align-middle font-weight-bolder text-danger"}>{item.ActiveFlag ? "Activo" : "Inactivo"}</td>
-                                            <td className={item.EmailValidated ? "text-center align-middle font-weight-bolder text-success" : "text-center align-middle font-weight-bolder text-danger"}>{item.EmailValidated ? "Validado" : "Pendiente"}</td>
-                                            {Rights.WriteRight ?
-                                                <td className="text-center align-middle">
-                                                    <Tooltip title={item.ActiveFlag ? "Desactivar" : "Activar"} color={item.ActiveFlag ? "red" : "green"} >
-                                                        <a onClick={() => ChangeStatus(item)}>
-                                                            <i className="fas fa-repeat-alt"></i>
-                                                        </a>
-                                                    </Tooltip>
-                                                </td> : null
-                                            }
-                                            {Rights.WriteRight ?
-                                                <td className="text-center align-middle">
-                                                    <Tooltip title="Perfil" color="blue">
-                                                        <a>
-                                                            <i class="fas fa-user-circle fa-1x" style={{ "vertical-align": "middle" }}></i>
-                                                        </a>
-                                                    </Tooltip>
-                                                </td> : null
-                                            }
-                                            {Rights.WriteRight ?
-                                                <td className="text-center align-middle">
-                                                    <Tooltip title="Asignar nuevo rol" color="blue">
-                                                        <a>
-                                                            <i class="fas fa-user-edit fa-1x" style={{ "vertical-align": "middle" }}></i>
-                                                        </a>
-                                                    </Tooltip>
-                                                </td> : null
-                                            }
-                                            {Rights.WriteRight ?
-                                                <td className="text-center align-middle">
-                                                    <Tooltip title="Restablecer Contraseña" color="green">
-                                                        <a>
-                                                            <i class="fas fa-key fa-1x" style={{ "vertical-align": "middle" }}></i>
-                                                        </a>
-                                                    </Tooltip>
-                                                </td> : null
-                                            }
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody >
-                    </table >
+                    <p className="mx-2 mb-0">Total de Usuarios: {SearchResults.length}</p>
+                    <Table
+                        columns={columnsAdmin}
+                        rowKey={record => record.UserID}
+                        expandable={{
+                            expandedRowRender: record => (
+                                <div>
+                                    <p className="m-0 font-weight-bold">Correo: <span className="font-weight-normal">{record.Email}</span></p>
+                                    <p className="m-0 font-weight-bold">Rol: <span className="font-weight-normal">{record.RoleName}</span></p>
+                                    <p className="m-0 font-weight-bold">Ultima Actividad: <span className="font-weight-normal text-capitalize">{moment(record.LastActivityDate).format('MMMM Do YYYY, h:mm:ss A')}</span></p>
+                                </div>
+                            ),
+                            rowExpandable: record => record.FullName !== 'Not Expandable',
+                        }}
+                        dataSource={SearchResults}
+                        scroll={{ x: 'max-content' }}
+                        pagination={{ position: ['bottomLeft'], pageSize: 10 }}
+
+                    />
                 </div >
             </section >
         )

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropType from "prop-types";
 import Checkbox from '@material-ui/core/Checkbox';
-import { Modal, message } from "antd";
+import { Modal } from "antd";
 
 import RolesService from '../../services/roles';
 

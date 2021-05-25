@@ -47,7 +47,7 @@ export const WebDirectory = () => {
             <section className="container">
                 <div className="text-center text-font-base pt-2">
                     <h2 className="m-0">Web Directory</h2>
-                    <p className="subtitle">Módulo de Gestion de Páginas</p>
+                    <p className="subtitle">Módulo de Gestión de Páginas</p>
                 </div>
                 <hr />
                 <div className="d-flex justify-content-start my-2">
@@ -64,10 +64,10 @@ export const WebDirectory = () => {
                     </form>
                 </div>
                 <div className="mx-2">
-                    <UpsertWebDirectory isNew={true} />
+                    {Rights.WriteRight ? <UpsertWebDirectory isNew={true} /> : ''}
                 </div>
                 <div className="justify-content-start my-2">
-                    <ListWebDirectory AppID={ parseInt(AppID) } />
+                    <ListWebDirectory AppID={parseInt(AppID)} WriteRight={Rights.WriteRight} />
                 </div>
             </section>
         )

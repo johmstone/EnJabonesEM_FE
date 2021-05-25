@@ -13,6 +13,7 @@ import { ForgotPassword } from './views/forgotPassword';
 import { ResetPassword } from './views/resetPassword';
 import { WebDirectory } from './views/webDirectory';
 import { Roles } from './views/roles';
+import { Users } from './views/users';
 
 import injectContext from './store/appContext';
 
@@ -54,7 +55,9 @@ const Layout = () => {
 						<Route exact path="/Roles">
 							<Roles />
 						</Route>
-						
+						<Route exact path="/Users">
+							<Users />
+						</Route>
 						<Route>
 							<h1>Not found!</h1>
 						</Route>

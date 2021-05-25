@@ -1,19 +1,22 @@
 import WebDirectoryService from '../services/webdirectory';
 import RolesService from '../services/roles';
+import UsersService from '../services/users';
 
 const getState = ({ getStore, getActions, setStore }) => {
 	
 	const WebDirectorySVC = new WebDirectoryService();
 	const RolesSVC = new RolesService();
+	const UsersSVC = new UsersService();
 
 	return {
 		store: {
-			menu: []
-			,isLoading: true
+			isLoading: true
 			,isLogged: false
+			,menu: []
 			,ShopCart: []
 			,WDList:[]
 			,RoleList: []
+			,UsersList: []
 		},
 		actions: {
 			uploadMenu: (model) => {								
@@ -36,6 +39,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				RolesSVC.List().then(items => {
 					//console.log(items);
 					setStore({ RoleList: items});
+					setStore({ isLoading: false })
+				});
+			},
+			UploadUsersList: () => {
+				setStore({ isLoading: true })				
+				UsersSVC.List().then(items => {
+					//console.log(items);
+					setStore({ UsersList: items});
 					setStore({ isLoading: false })
 				});
 			},

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropType from "prop-types";
 import Checkbox from '@material-ui/core/Checkbox';
-import { Modal } from "antd";
+import { Modal, message } from "antd";
 
 import RolesService from '../../services/roles';
 
@@ -12,17 +12,21 @@ export const RightsRole = (props) => {
 
     const RolesSVC = new RolesService();
 
+    
     useEffect(() => {
         if (isModalVisible) {
             //console.log(props.Role.RoleID)
-            RolesSVC.Rights(props.Role.RoleID).then(res => {
-                setRights(res);
-                console.log(RightList)
-            });
+            LoadPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalVisible]);
 
+    const LoadPage = () => {
+        RolesSVC.Rights(props.Role.RoleID).then(res => {
+            setRights(res);
+            //console.log(RightList)
+        });
+    }
     const showModal = () => {
         setIsModalVisible(true);
     };
@@ -30,44 +34,75 @@ export const RightsRole = (props) => {
         setIsModalVisible(false);
     };
 
-    const UpdateRight = (model, type) => {
-        console.log(model, type);
+    const UpdateRight = (model, Type) => {
+        //console.log(model);
+        let NewModel = {...model};
+
+        if (model.ReadRight === true && Type === "Read") {
+            NewModel.WriteRight = false;
+            NewModel.ReadRight = false;
+        }
+        if (!model.ReadRight && Type === "Read") {
+            NewModel.ReadRight = true;            
+        }
+        if(model.WriteRight === true && Type === "Write") {
+            NewModel.WriteRight = false;
+        }
+        if(!model.WriteRight && Type === "Write") {
+            NewModel.WriteRight = true;
+            NewModel.ReadRight = true;
+        }
+
+        RolesSVC.UpdateRight(NewModel).then(res => {
+            if(res) {
+                LoadPage()
+            } else {
+                message.error({
+                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                    style: {
+                        marginTop: "30vh"
+                    }
+                });
+            }
+        })
     }
 
     const ModalContent = () => {
         return (
-            <article className="card-body mx-auto py-0">
+            <article className="card-body mx-auto py-0"  >
                 <h4>
                     <i className="fa fa-tags"></i> Rol: <span className="text-primary">{props.Role.RoleName}</span>
                 </h4>
-                <table className="table table-sm table-hover align-content-center p-0 m-0">
-                    <thead>
-                        <tr className="align-middle">
-                            <th className="py-2">Directorio</th>
-                            <th className="py-2">Controlador</th>
-                            <th className="text-center py-2">Lectura</th>
-                            <th className="text-center py-2">Escritura</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            RightList.map((item, i) => {
-                                return (
-                                    <tr key={i}>
-                                        <td className="align-middle">{item.AppID ===1 ? 'No Auth': 'Auth'}</td>
-                                        <td className="align-middle">{item.DisplayName}</td>
-                                        <td className="text-center align-middle">
-                                            <Checkbox checked={item.ReadRight} onChange={() => UpdateRight(item, 'Read')} />
-                                        </td>
-                                        <td className="text-center align-middle">
-                                            <Checkbox checked={item.WriteRight} onChange={() => UpdateRight(item, 'Write')} />
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                        }
-                    </tbody>
-                </table>
+                <div style={{ height: 500, overflow: 'scroll' }}>
+                    <table className="table table-sm table-hover align-content-center p-0 m-0" >
+                        <thead>
+                            <tr className="align-middle">
+                                <th className="py-2">Directorio</th>
+                                <th className="py-2">Controlador</th>
+                                <th className="text-center py-2">Lectura</th>
+                                <th className="text-center py-2">Escritura</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                RightList.map((item, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <td className="align-middle">{item.AppID === 1 ? 'No Auth' : 'Auth'}</td>
+                                            <td className="align-middle">{item.DisplayName}</td>
+                                            <td className="text-center align-middle">
+                                                <Checkbox checked={item.ReadRight} onChange={() => UpdateRight(item, 'Read')} />
+                                            </td>
+                                            <td className="text-center align-middle">
+                                                <Checkbox checked={item.WriteRight} onChange={() => UpdateRight(item, 'Write')} />
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </article>
         )
     }

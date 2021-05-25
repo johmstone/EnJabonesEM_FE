@@ -46,11 +46,11 @@ export const Roles = () => {
             <section className="container">
                 <div className="text-center text-font-base pt-2">
                     <h2 className="m-0">Roles</h2>
-                    <p className="subtitle">Módulo de Gestion de Roles</p>
+                    <p className="subtitle">Módulo de Gestión de Roles</p>
                 </div>
                 <hr />
                 <div className="mx-2">
-                    <AddNewRole />
+                    {Rights.WriteRight ? <AddNewRole /> : null}
                 </div>
                 <div className="justify-content-start my-2">
                     <table className="table table-hover table-responsive-xl align-content-center p-0 mx-2">
@@ -58,7 +58,7 @@ export const Roles = () => {
                             <tr className="align-middle">
                                 <th className="align-middle py-2">Rol</th>
                                 <th className="text-center align-middle py-2">Descripción</th>
-                                <th className="text-center align-middle py-2"></th>
+                                {Rights.WriteRight ? <th className="text-center align-middle py-2"></th> : null}
                             </tr>
                         </thead>
                         <tbody>
@@ -68,9 +68,11 @@ export const Roles = () => {
                                         <tr key={i}>
                                             <td className="align-middle">{item.RoleName}</td>
                                             <td className="align-middle">{item.RoleDescription}</td>
-                                            <td className="text-center align-middle" style={{ width: "160px" }}>
-                                                <RightsRole Role={item}/>
-                                            </td>
+                                            {Rights.WriteRight ?
+                                                <td className="text-center align-middle" style={{ width: "160px" }}>
+                                                    <RightsRole Role={item} />
+                                                </td> : null
+                                            }
                                         </tr>
                                     )
                                 })

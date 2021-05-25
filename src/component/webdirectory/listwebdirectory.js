@@ -61,7 +61,7 @@ export const ListWebDirectory = (props) => {
                         <th className="text-center align-middle py-2">Parametro</th>
                         <th className="text-center align-middle py-2">Orden</th>
                         <th className="text-center align-middle py-2">Status</th>
-                        <th className="text-center align-middle py-2" colSpan="2"></th>
+                        {props.WriteRight ? <th className="text-center align-middle py-2" colSpan="2"></th> : ''}
                     </tr>
                 </thead>
                 <tbody>
@@ -77,16 +77,20 @@ export const ListWebDirectory = (props) => {
                                     <td className="text-center align-middle">{item.Parameter}</td>
                                     <td className="text-center align-middle">{item.Order}</td>
                                     <td className={item.ActiveFlag ? "text-center align-middle font-weight-bolder text-success" : "text-center align-middle font-weight-bolder text-danger"}>{item.ActiveFlag ? "Activo" : "Inactivo"}</td>
-                                    <td className="text-center align-middle">
-                                        <UpsertWebDirectory isNew={false} WD={item}/>
-                                    </td>
-                                    <td className={item.ActiveFlag ? "text-center align-middle text-danger" : "text-center align-middle text-success"}>
-                                        <Tooltip title={item.ActiveFlag? "Desactivar" : "Activar"} color={item.ActiveFlag ? "red" : "green"} >
-                                            <a onClick={() => ChangeStatus(item)}>
-                                                <i className="fas fa-repeat-alt"></i>
-                                            </a>
-                                        </Tooltip>
-                                    </td>
+                                    { props.WriteRight ?
+                                        <td className="text-center align-middle">
+                                            <UpsertWebDirectory isNew={false} WD={item} />
+                                        </td> : null
+                                    }
+                                    { props.WriteRight ?
+                                        <td className={item.ActiveFlag ? "text-center align-middle text-danger" : "text-center align-middle text-success"}>
+                                            <Tooltip title={item.ActiveFlag ? "Desactivar" : "Activar"} color={item.ActiveFlag ? "red" : "green"} >
+                                                <a onClick={() => ChangeStatus(item)}>
+                                                    <i className="fas fa-repeat-alt"></i>
+                                                </a>
+                                            </Tooltip>
+                                        </td> : null
+                                    }
                                 </tr>
                             )
                         })
@@ -97,5 +101,6 @@ export const ListWebDirectory = (props) => {
     }
 }
 ListWebDirectory.propTypes = {
-    AppID: PropType.number
+    AppID: PropType.number,
+    WriteRight: PropType.bool
 }

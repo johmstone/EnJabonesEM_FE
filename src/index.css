@@ -240,15 +240,40 @@ thead[class*="ant-table-thead"] th {
 
 .profile-img .file:hover {
 	background-color: #0069d9;
-    border-color: #0062cc;
+	border-color: #0062cc;
 }
 
 .btn-saveoptions {
 	margin: -10% 0.5rem 5% 0.5rem;
-    /* padding: 0 20px;
+	/* padding: 0 20px;
     font-size: 2rem; */
 }
+.cardhorizontal {
+	width: 300px;
+	max-width: 100%;
+}
 
+.scrolldown-vertical>.row {
+	display: block;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.scrolldown-vertical>.row>.cardhorizontal {
+	display: inline-block;
+}
+
+.font-size-small {
+	font-size: 12px;
+}
+
+.withoutWhiteSpace {
+	white-space: break-spaces !important;
+}
+
+.MuiCardContent-root {
+	height: 175px !important;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

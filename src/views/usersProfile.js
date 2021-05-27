@@ -25,7 +25,8 @@ export const UsersProfile = () => {
     const { store, actions } = useContext(Context);
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
-    const [User, setUser] = useState({})
+    const [User, setUser] = useState({});
+    const [DeliveryAddresses, setDeliveryAddress] = useState([]);
     const [SaveOptions, setSaveOptions] = useState(false);
     const [srcAvatar, setsrcAvatar] = useState("");
     const [activeTab, setActiveTab] = useState('1');
@@ -33,6 +34,25 @@ export const UsersProfile = () => {
     const WebDirectorySVC = new WebDirectoryService();
     const UsersSVC = new UsersService();
     const params = useParams();
+
+    const LoadData = (UserID) => {
+        UsersSVC.Details(UserID).then(res => {
+            console.log(res);
+            setUser(res);
+            if(res.PhotoPath === "") {
+                setsrcAvatar("http://ssl.gstatic.com/accounts/ui/avatar_2x.png");
+            } else {
+                setsrcAvatar(res.PhotoPath);
+            }
+            return UserID;
+        }).then(src => {
+            UsersSVC.UsersAddress('DeliveryAddress',src).then(res => {
+                console.log(res)
+                setDeliveryAddress(res)
+                setLoading(false);
+            });
+        });
+    }
 
     const LoadPage = () => {
         setLoading(true);
@@ -44,16 +64,7 @@ export const UsersProfile = () => {
                 WriteRight: true
             });
             //Fill UserData
-            UsersSVC.Details(CurrentUser.UserID).then(res => {
-                console.log(res);
-                setUser(res);
-                if(res.PhotoPath === "") {
-                    setsrcAvatar("http://ssl.gstatic.com/accounts/ui/avatar_2x.png");
-                } else {
-                    setsrcAvatar(res.PhotoPath);
-                }
-                setLoading(false);
-            });
+            LoadData(CurrentUser.UserID);
         } else {
             //console.log("test")
             let model = {
@@ -66,16 +77,7 @@ export const UsersProfile = () => {
                 return res;
             }).then(src => {
                 if (src.ReadRight) {
-                    UsersSVC.Details(params.UserID).then(res => {
-                        //console.log(res);
-                        setUser(res);
-                        if(res.PhotoPath === "") {
-                            setsrcAvatar("http://ssl.gstatic.com/accounts/ui/avatar_2x.png");
-                        } else {
-                            setsrcAvatar(res.PhotoPath);
-                        }
-                        setLoading(false);
-                    });
+                    LoadData(params.UserID);                    
                 }
             });
         }
@@ -171,12 +173,6 @@ export const UsersProfile = () => {
                                     <NavItem>
                                         <NavLink className={classnames({ active: activeTab === '2' })}
                                             onClick={() => { toggle('2'); }} >
-                                            <strong>Direcciones</strong>
-                                        </NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <NavLink className={classnames({ active: activeTab === '3' })}
-                                            onClick={() => { toggle('3'); }} >
                                             <strong>Pedidos</strong>
                                         </NavLink>
                                     </NavItem>
@@ -185,20 +181,14 @@ export const UsersProfile = () => {
                                     <TabPane tabId="1">
                                         <Fade in={true}>
                                             <MainInfoUser User={User} WriteRight={Rights.WriteRight}/>
+                                            <AddressInfoUser Addresses={DeliveryAddresses} WriteRight={Rights.WriteRight}/>                                            
                                         </Fade>
                                     </TabPane>
                                     <TabPane tabId="2">
                                         <Fade in={true}>
-                                            <AddressInfoUser User={User} WriteRight={Rights.WriteRight}/>                                            
+                                            
                                         </Fade>
-                                    </TabPane>
-                                    <TabPane tabId="3">
-                                        <Fade in={true}>
-                                            <div>
-                                                <h4>Tab 3 Contents</h4>
-                                            </div>
-                                        </Fade>
-                                    </TabPane>
+                                    </TabPane>                                    
                                 </TabContent>
                             </div>
                         </div>

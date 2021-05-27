@@ -37,8 +37,10 @@ export const Roles = () => {
 
     }
     useEffect(() => {
-        setLoading(true);
-        LoadPage();
+        if(store.isLogged){
+            setLoading(true);
+            LoadPage();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const ContentPage = () => {
@@ -83,6 +85,7 @@ export const Roles = () => {
             </section >
         )
     }
+
     if (store.isLoading || isLoading) {
         return <Loading />
     } else {

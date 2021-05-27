@@ -38,7 +38,7 @@ export const Login = () => {
 					message.error({
 						content: auth.message,
 						style: {
-							marginTop: "30vh"
+							marginTop: "15vh"
 						}
 					});
 				} else {

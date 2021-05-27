@@ -58,7 +58,7 @@ class RolesService {
     }
 
     async Rights(Role) {
-        let baseURL = this.config.BackEnd_API_BaseURL + "/api/Roles/Rights?id=" + Role;
+        let baseURL = this.config.BackEnd_API_BaseURL + "/api/Roles/Rights/" + Role;
         let User = JSON.parse(localStorage.getItem('User'));
 
         var myHeaders = new Headers();

@@ -51,14 +51,14 @@ export const Navbar = () => {
 					{
 						store.isLogged ? (
 							<li className="nav-item MenuLink">
-								<Link to={"/Users/Profile/" + User.UserID} className="text-uppercase MenuLink text-font-base text-decoration-none">
-									Hola <span className="font-weight-bold">{User.FullName}</span>
+								<Link to={"/Profile"} className="text-uppercase MenuLink text-font-base text-decoration-none">
+									Hola <span className="font-weight-bold">{ User.FullName.split(" ")[0]}</span>
 								</Link>
 							</li>
 						) : null
 					}
 					{store.menu.map((item, i) => {
-						let url = (item.Controller === 'Home' && item.AppID === 1 ? '' : item.Controller) + (item.Action === 'Index' ? '' : "/" + item.Action)
+						let url = (item.Controller === 'Home' && item.AppID === 1 ? '' : '/' + item.Controller) + (item.Action === 'Index' ? '' : "/" + item.Action)
 						return (
 							<li className="nav-item MenuLink" key={i}>
 								<Link to={url} className="text-uppercase MenuLink text-font-base text-decoration-none">
@@ -81,7 +81,7 @@ export const Navbar = () => {
 				<ul className="navbar-nav">
 					<LoginLogout />
 					<li className="nav-item MenuLink menuLink-cart">
-						<Link to="/ShopCart" className="text-uppercase MenuLink text-font-base text-decoration-none">
+						<Link to="./ShopCart" className="text-uppercase MenuLink text-font-base text-decoration-none">
 							Carrito <Badge count={store.ShopCart.length} size="small"><i className="far fa-cart-arrow-down"></i></Badge>
 						</Link>
 					</li>

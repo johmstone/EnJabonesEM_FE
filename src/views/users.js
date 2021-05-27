@@ -29,8 +29,10 @@ export const Users = () => {
     const location = useLocation();
 
     useEffect(() => {
-        setLoading(true);
-        LoadPage();
+        if(store.isLogged) {
+            setLoading(true);
+            LoadPage();
+        }        
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -186,7 +188,7 @@ export const Users = () => {
             key: 'x',
             render: (e) => (
                 <Tooltip title="Perfil" color="blue">
-                    <Link to={ "/User/Profile/" + e.UserID} target="_blank" rel="noopener noreferrer" >
+                    <Link to={ "/Profile/" + e.UserID} target="_blank" rel="noopener noreferrer" >
                         <i className="fas fa-user-circle fa-1x" style={{ "verticalAlign": "middle" }}></i>
                     </Link>
                 </Tooltip>

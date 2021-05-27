@@ -14,6 +14,7 @@ import { ResetPassword } from './views/resetPassword';
 import { WebDirectory } from './views/webDirectory';
 import { Roles } from './views/roles';
 import { Users } from './views/users';
+import { UsersProfile } from './views/usersProfile';
 
 import injectContext from './store/appContext';
 
@@ -60,6 +61,12 @@ const Layout = () => {
 						</Route>
 						<Route exact path="/Users">
 							<Users />
+						</Route>
+						<Route exact path="/Profile">
+							<UsersProfile />
+						</Route>
+						<Route exact path="/Profile/:UserID">
+							<UsersProfile />
 						</Route>
 						<Route>
 							<h1>Not found!</h1>

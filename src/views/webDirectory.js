@@ -37,8 +37,10 @@ export const WebDirectory = () => {
     }
 
     useEffect(() => {
-        setLoading(true);
-        LoadPage();
+        if(store.isLogged) {
+            setLoading(true);
+            LoadPage();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

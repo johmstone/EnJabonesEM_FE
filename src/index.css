@@ -19,14 +19,14 @@ audio {
 }
 
 .text-font-base {
-    font-family: Montserrat,sans-serif!important;
+	font-family: Montserrat, sans-serif !important;
 }
 
 .text-primary-color {
 	color: #56CCF2;
 }
 
-.fa-15x{
+.fa-15x {
 	font-size: 1.5em;
 }
 
@@ -70,6 +70,7 @@ audio {
 .card-contact {
 	width: 350px;
 }
+
 .card-success {
 	position: relative;
 	width: 320px;
@@ -78,6 +79,7 @@ audio {
 	text-align: center;
 	font-family: 'Source Sans Pro', sans-serif;
 }
+
 .label-alert {
 	font-size: 0.75em;
 	margin: 0;
@@ -145,24 +147,29 @@ audio {
 .cursor-pointer {
 	cursor: pointer;
 }
+
 .anticon {
-	vertical-align: middle!important;
+	vertical-align: middle !important;
 }
-.ant-message-custom-content > span {
+
+.ant-message-custom-content>span {
 	margin-top: -4px;
 }
+
 .btn-cart {
 	padding: .25rem .75rem;
-    background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: .25rem;
-	border-color: rgba(255,255,255,.1);
+	background-color: transparent;
+	border: 1px solid transparent;
+	border-radius: .25rem;
+	border-color: rgba(255, 255, 255, .1);
 }
+
 .ant-badge {
 	font-size: 1.25rem !important;
-	color: rgba(255,255,255,.5) !important;    
+	color: rgba(255, 255, 255, .5) !important;
 	line-height: 1 !important;
 }
+
 .ant-modal-close {
 	display: none !important;
 }
@@ -171,31 +178,77 @@ audio {
 .ant-modal-footer {
 	background-color: black !important;
 }
+
 .menuLink-cart {
 	display: none;
 }
 
 .loading-screen-wrapper {
 	position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1040;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
-  }
-  
-  .loading-screen-icon {
+	top: 0;
+	left: 0;
+	z-index: 1040;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+.loading-screen-icon {
 	position: absolute;
 	top: 25%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-  }
+}
 
-  thead[class*="ant-table-thead"] th{
+thead[class*="ant-table-thead"] th {
 	background-color: black !important;
 	color: white !important;
-  }
+}
+
+.img-thumbnail {
+	padding: .25rem;
+	background-color: #fff;
+	border: 1px solid #dee2e6;
+	border-radius: .25rem;
+}
+
+.profile-img {
+	text-align: center;
+}
+
+.profile-img img {
+	width: 50%;
+}
+
+.profile-img .file {
+	position: relative;
+	overflow: hidden;
+	margin-top: -40%;
+	width: 70%;
+	border: none;
+	border-radius: 0;
+	font-size: 15px;
+	background: #212529b8;
+}
+
+.profile-img .file input {
+	position: absolute;
+	opacity: 0;
+	right: 0;
+	top: 0;
+}
+
+.profile-img .file:hover {
+	background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-saveoptions {
+	margin: -10% 0.5rem 5% 0.5rem;
+    /* padding: 0 20px;
+    font-size: 2rem; */
+}
+
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */
@@ -303,6 +356,7 @@ audio {
 .h-90 {
 	height: 90% !important;
 }
+
 .mh-10 {
 	max-height: 10vh !important;
 }

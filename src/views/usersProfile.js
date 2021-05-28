@@ -16,7 +16,7 @@ import UsersService from '../services/users';
 import { Error } from '../component/error';
 import { Loading } from '../component/loading';
 import { MainInfoUser } from '../component/users/mainInfoUser';
-import { AddressInfoUser } from '../component/users/addressInfoUser';
+import { DeliveryAddressInfoUser } from '../component/users/deliveryAddressInfoUser';
 
 moment.locale("es");
 
@@ -37,7 +37,7 @@ export const UsersProfile = () => {
 
     const LoadData = (UserID) => {
         UsersSVC.Details(UserID).then(res => {
-            console.log(res);
+            //console.log(res);
             setUser(res);
             if(res.PhotoPath === "") {
                 setsrcAvatar("http://ssl.gstatic.com/accounts/ui/avatar_2x.png");
@@ -47,7 +47,7 @@ export const UsersProfile = () => {
             return UserID;
         }).then(src => {
             UsersSVC.UsersAddress('DeliveryAddress',src).then(res => {
-                console.log(res)
+                //console.log(res)
                 setDeliveryAddress(res)
                 setLoading(false);
             });
@@ -181,12 +181,14 @@ export const UsersProfile = () => {
                                     <TabPane tabId="1">
                                         <Fade in={true}>
                                             <MainInfoUser User={User} WriteRight={Rights.WriteRight}/>
-                                            <AddressInfoUser Addresses={DeliveryAddresses} WriteRight={Rights.WriteRight}/>                                            
+                                            <DeliveryAddressInfoUser Addresses={DeliveryAddresses} 
+                                                WriteRight={Rights.WriteRight} UserID={User.UserID}/>                                            
                                         </Fade>
                                     </TabPane>
                                     <TabPane tabId="2">
                                         <Fade in={true}>
-                                            
+                                            <DeliveryAddressInfoUser Addresses={DeliveryAddresses} 
+                                                WriteRight={Rights.WriteRight} UserID={User.UserID}/>
                                         </Fade>
                                     </TabPane>                                    
                                 </TabContent>

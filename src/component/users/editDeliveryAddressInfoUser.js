@@ -10,7 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import CostaRicaServices from '../../services/costaRica';
 import UsersService from '../../services/users';
 
-export const EditAddressInfoUser = (props) => {
+export const EditDeliveryAddressInfoUser = (props) => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [Address, setAddress] = useState(props.Address);
@@ -78,7 +78,7 @@ export const EditAddressInfoUser = (props) => {
             ActionType: 'Update'
         }
         console.log(UpdateAddress);
-        UsersSVC.UpdateDeliveryAddress(UpdateAddress).then(res => {
+        UsersSVC.UpsertDeliveryAddress(UpdateAddress,"Update").then(res => {
             if(res){
                 window.location.reload();
             } else {
@@ -100,8 +100,7 @@ export const EditAddressInfoUser = (props) => {
             ProvinceID: props.Address.ProvinceID,
             CantonID: props.Address.CantonID,
             DistrictID: props.Address.DistrictID,
-            Street: props.Address.Street,
-            CostaRicaID: props.Address.CostaRicaID
+            Street: props.Address.Street
         });
     }
 
@@ -294,6 +293,6 @@ export const EditAddressInfoUser = (props) => {
     )
 }
 
-EditAddressInfoUser.propTypes = {
+EditDeliveryAddressInfoUser.propTypes = {
     Address: PropType.object
 };

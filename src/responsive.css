@@ -1,7 +1,26 @@
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) { 
+    .scrolldown-vertical>.row>.cardhorizontal {
+        display: inline-block;
+    }    
+
+    .AddNewAddress {
+        width: 160px !important;
+    }
     
+    .AddNewAddress .MuiCardContent-root {
+        height: 209px;
+    }
+
+    .MuiCardContent-root {
+        height: 175px;
+    }
+    
+    .AddNewAddress .vertical-center {	
+        -ms-transform: translateY(230%);
+        transform: translateY(230%);
+      }
  }
 
 /*  Medium devices (tablets, 768px and up) */

@@ -45,7 +45,7 @@ export const Register = () => {
 			<section className="container mw-90 my-5">
 				<div className="card-contact mw-100 mx-auto p-3">
 					<div className="upper-side bg-dark mb-2">
-						<h2 className="mb-0 text-font-base text-center">Registro</h2>
+						<h2 className="mb-0 text-font-base text-center text-white">Registro</h2>
 					</div>
 					<div className="text-center">
 						<p className="text-font-base">Crea tu cuenta y forma parte de nuestra familia</p>

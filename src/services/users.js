@@ -132,8 +132,8 @@ class UsersService {
             .catch(err => console.log(err));
     }
 
-    async UpdateDeliveryAddress(Model) {
-        let baseURL = this.config.BackEnd_API_BaseURL + "/api/Users/DeliveryAddress/Update";
+    async UpsertDeliveryAddress(Model,Type) {
+        let baseURL = this.config.BackEnd_API_BaseURL + "/api/Users/DeliveryAddress/" + Type;
         let User = JSON.parse(localStorage.getItem('User'));
 
         var myHeaders = new Headers();

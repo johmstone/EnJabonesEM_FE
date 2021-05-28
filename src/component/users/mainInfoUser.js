@@ -1,18 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import PropType from "prop-types";
 import { useForm, Controller, useFormState } from "react-hook-form";
 import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import { message } from 'antd';
-
-import { Context } from '../../store/appContext';
 
 import UsersService from '../../services/users';
 
 export const MainInfoUser = (props) => {
 
-    const { store } = useContext(Context);
     const { handleSubmit, control, reset } = useForm();
     const { isDirty } = useFormState({ control });
 
@@ -39,7 +35,7 @@ export const MainInfoUser = (props) => {
         reset({
             FullName: props.User.FullName,
             Email: props.User.Email,
-            RoleID: props.User.RoleID
+            RoleName: props.User.RoleName
         })
     }
 
@@ -52,6 +48,8 @@ export const MainInfoUser = (props) => {
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                     <FormControl variant="outlined" className="w-100 my-2">
                         <TextField id="FullName"
+                            style={{width: "350px"}}
+                            className="mw-100"
                             label="Nombre"
                             variant="outlined"
                             value={value}
@@ -72,43 +70,32 @@ export const MainInfoUser = (props) => {
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                     <FormControl variant="outlined" className="w-100 my-2">
                         <TextField id="Email"
+                            style={{width: "350px"}}
+                            className="mw-100"
                             label="Correo Electrónico"
                             variant="outlined"
                             value={value}
                             onChange={onChange}
-                            disabled
-                            error={!!error}
-                            helperText={error ? (<label className="text-font-base text-danger">
-                                <i className="fa fa-times-circle"></i> {error.message}
-                            </label>) : null} />
+                            disabled/>
                     </FormControl>
                 )}
                 rules={{ required: "Por favor ingrese el email" }}
             />
             <Controller
-                name="RoleID"
+                name="RoleName"
                 control={control}
-                defaultValue={props.User.RoleID}
+                defaultValue={props.User.RoleName}
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                     <FormControl variant="outlined" className="w-100 my-2">
-                        <TextField
-                            id="RoleID"
-                            select
+                        <TextField id="RoleName"
+                            style={{width: "350px"}}
+                            className="mw-100"
                             variant="outlined"
                             value={value}
                             onChange={onChange}
                             label="Rol"
-                            defaultValue={props.User.RoleID}
-                            disabled
-                            error={!!error}
-                            helperText={error ? (<label className="text-font-base text-danger">
-                                <i className="fa fa-times-circle"></i> {error.message}
-                            </label>) : null}>
-                            {
-                                store.RoleList.map((item, i) => {
-                                    return <MenuItem value={item.RoleID} key={i}>{item.RoleName}</MenuItem>
-                                })
-                            }
+                            defaultValue={props.User.RoleName}
+                            disabled>                            
                         </TextField>
                     </FormControl>
                 )}

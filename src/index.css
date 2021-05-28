@@ -164,6 +164,10 @@ audio {
 	border-color: rgba(255, 255, 255, .1);
 }
 
+.custom-form .ant-modal-body {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
 .ant-badge {
 	font-size: 1.25rem !important;
 	color: rgba(255, 255, 255, .5) !important;
@@ -173,7 +177,15 @@ audio {
 .ant-modal-close {
 	display: none !important;
 }
-
+.ant-modal-content {
+	border-radius: 10px !important;
+}
+.ant-modal-header {
+	border-radius: 10px 10px 0 0 !important;
+}
+.ant-modal-footer {
+	border-radius: 0 0 10px 10px !important;
+}
 .ant-modal-header,
 .ant-modal-footer {
 	background-color: black !important;
@@ -259,9 +271,6 @@ thead[class*="ant-table-thead"] th {
 	white-space: nowrap;
 }
 
-.scrolldown-vertical>.row>.cardhorizontal {
-	display: inline-block;
-}
 
 .font-size-small {
 	font-size: 12px;
@@ -271,9 +280,7 @@ thead[class*="ant-table-thead"] th {
 	white-space: break-spaces !important;
 }
 
-.MuiCardContent-root {
-	height: 175px !important;
-}
+
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

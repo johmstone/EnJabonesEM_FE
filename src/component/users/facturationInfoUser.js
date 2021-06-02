@@ -28,7 +28,19 @@ export const FacturationInfoUser = (props) => {
     }
 
     const MakePrincipal = (item) => {
-        console.log(item);
+        let UpdateInfo = { ...item, ActionType: 'SETPRIMARY' }
+        UsersSVC.UpsertFacturationInfo(UpdateInfo, "Update").then(res => {
+            if (res) {
+                setChangeState(2);
+            } else {
+                message.error({
+                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                    style: {
+                        marginTop: "30vh"
+                    }
+                });
+            }
+        })
     }
 
     const DisableAddres = (item) => {

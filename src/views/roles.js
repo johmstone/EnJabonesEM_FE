@@ -4,6 +4,7 @@ import { Redirect, useLocation } from "react-router-dom";
 
 import { Context } from '../store/appContext';
 
+import AuthenticationService from '../services/authentication';
 import WebDirectoryService from '../services/webdirectory';
 
 import { Error } from '../component/error';
@@ -12,11 +13,16 @@ import { AddNewRole } from '../component/roles/addnewrole';
 import { RightsRole } from '../component/roles/rightsrole';
 
 export const Roles = () => {
+    
+    const AuthSVC = new AuthenticationService();
+    const WebDirectorySVC = new WebDirectoryService();
+    const location = useLocation();
+
+    const [isLogin] = useState(AuthSVC.isAuthenticated());
     const { store, actions } = useContext(Context);
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
-    const WebDirectorySVC = new WebDirectoryService();
-    const location = useLocation();
+    
 
     const LoadPage = () => {
         const pathname = location.pathname.slice(1).split('/');
@@ -37,12 +43,13 @@ export const Roles = () => {
 
     }
     useEffect(() => {
-        if(store.isLogged){
+        if(isLogin){
             setLoading(true);
             LoadPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
     const ContentPage = () => {
         return (
             <section className="container">
@@ -89,7 +96,7 @@ export const Roles = () => {
     if (store.isLoading || isLoading) {
         return <Loading />
     } else {
-        if (store.isLogged) {
+        if (isLogin) {
             if (Rights.ReadRight) {
                 return <ContentPage />
             } else {

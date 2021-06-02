@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import "moment/locale/es";
 import { TabContent, TabPane, Nav, NavItem, NavLink, Fade } from 'reactstrap';
 import classnames from 'classnames'
-import { isExpired } from 'react-jwt';
 import { generate } from 'shortid';
 import Resizer from 'react-image-file-resizer';
 
@@ -15,6 +14,7 @@ import { Context } from '../store/appContext';
 
 import WebDirectoryService from '../services/webdirectory';
 import ConfigurationService from '../services/configuration';
+import AuthenticationService from '../services/authentication';
 import UsersService from '../services/users';
 import AzureServices from '../services/azure';
 
@@ -27,7 +27,15 @@ moment.locale("es");
 
 export const UsersProfile = () => {
 
-    const { store, actions } = useContext(Context);
+    const AuthSVC = new AuthenticationService();
+    const WebDirectorySVC = new WebDirectoryService();
+    const ConfigSVC = new ConfigurationService();
+    const UsersSVC = new UsersService();
+    const AzureSVC = new AzureServices();
+    const params = useParams();
+
+    const { store } = useContext(Context);
+    const [isLogin] = useState(AuthSVC.isAuthenticated());
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
     const [User, setUser] = useState({});
@@ -37,13 +45,6 @@ export const UsersProfile = () => {
     const [srcAvatar, setsrcAvatar] = useState("");
     const [activeTab, setActiveTab] = useState('1');
     const ValidFileExt = ['image/jpeg', 'image/png', 'image/jpg'];
-
-    const WebDirectorySVC = new WebDirectoryService();
-    const ConfigSVC = new ConfigurationService();
-    const UsersSVC = new UsersService();
-    const AzureSVC = new AzureServices();
-    const params = useParams();
-
 
     const LoadData = (UserID) => {
         UsersSVC.Details(UserID).then(res => {
@@ -98,9 +99,7 @@ export const UsersProfile = () => {
 
 
     useEffect(() => {
-        let user = JSON.parse(localStorage.getItem('User'));
-        if (!isExpired(user.Token)) {
-            actions.Login();
+        if (isLogin) {
             LoadPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -272,7 +271,7 @@ export const UsersProfile = () => {
     if (store.isLoading || isLoading) {
         return <Loading />
     } else {
-        if (store.isLogged) {
+        if (isLogin) {
             if (Rights.ReadRight) {
                 return <ContentPage />
             } else {

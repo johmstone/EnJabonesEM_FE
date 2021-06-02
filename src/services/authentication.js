@@ -1,4 +1,5 @@
 import Configuration from './configuration'
+import { isExpired } from 'react-jwt';
 
 class AuthenticationService {
 
@@ -27,7 +28,7 @@ class AuthenticationService {
     async Login(model) {
         let baseURL = this.config.BackEnd_API_BaseURL + "/api/Account/Login";
         var myHeaders = new Headers();
-        let AuthHeader = "Basic " + window.btoa(model.Email + ":" + model.Password);        
+        let AuthHeader = "Basic " + window.btoa(model.Email + ":" + model.Password);
 
         myHeaders.append("Authorization", AuthHeader);
         myHeaders.append("Content-Type", "application/json");
@@ -46,13 +47,25 @@ class AuthenticationService {
                 } else {
                     let data = {
                         status: res.status,
-                        message: res.status === 401 ? 'Contraseña Incorrecta': 'Usuario no registrado' 
+                        message: res.status === 401 ? 'Contraseña Incorrecta' : 'Usuario no registrado'
                     }
                     return data;
                 }
             })
             .then(json => { return json; })
             .catch(err => console.log(err));
+    }
+
+    isAuthenticated() {
+        let CurrentUser = JSON.parse(localStorage.getItem('User'));
+        //console.log(CurrentUser);
+        if (CurrentUser === null) {
+            return false;
+        } else if (isExpired(CurrentUser.Token)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
 

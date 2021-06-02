@@ -9,13 +9,15 @@ import Authentication from '../services/authentication';
 import Account from '../services/account';
 
 export const Login = () => {
-	const { store, actions } = useContext(Context);
-	const [Loading, setLoading] = useState(false);
-	const [NeedSomething, setNeedSomething] = useState({ Action: '', msg: '' });
-	const [User, setUser] = useState({});
 
 	const AuthSVC = new Authentication();
 	const AccountSVC = new Account();
+
+	const { actions } = useContext(Context);
+	const [isLogin, setLogin] = useState(AuthSVC.isAuthenticated());
+	const [Loading, setLoading] = useState(false);
+	const [NeedSomething, setNeedSomething] = useState({ Action: '', msg: '' });
+	const [User, setUser] = useState({});
 
 	const { register, handleSubmit, formState, reset } = useForm({
 		mode: 'onChange',
@@ -45,6 +47,7 @@ export const Login = () => {
 					if (auth.Token) {
 						localStorage.setItem('User', JSON.stringify(auth));
 						actions.Login();
+						setLogin(true);
 						let model = {
 							AppID: 2,
 							UserID: auth.UserID
@@ -80,6 +83,7 @@ export const Login = () => {
 		reset();
 	}
 
+	
 	if (NeedSomething.Action === 'ResetPassword') {
 		return <Redirect to={{ pathname: "/ResetPassword"}} />;
 	} else if (NeedSomething.Action === 'ValidateEmail') {
@@ -104,7 +108,7 @@ export const Login = () => {
 
 			</div>
 		)
-	} else if (store.isLogged) {
+	} else if (isLogin) {
 		return <Redirect to={{ pathname: "/Home" }} />;
 	} else {
 		return (

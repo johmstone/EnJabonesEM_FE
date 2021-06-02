@@ -6,12 +6,16 @@ import { Badge } from 'antd';
 import { Context } from '../store/appContext';
 
 import Configuration from '../services/configuration'
+
 export const Navbar = () => {
 
-	const { store, actions } = useContext(Context);
-	let history = useHistory();
-	let User = JSON.parse(localStorage.getItem('User'));
 	const config = new Configuration();
+	const history = useHistory();
+
+	const { store, actions } = useContext(Context);
+	
+	const User = JSON.parse(localStorage.getItem('User'));	
+
 	const Logout = () => {
 		localStorage.removeItem('User');
 		actions.Logout();

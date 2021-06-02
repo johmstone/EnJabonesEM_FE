@@ -3,19 +3,28 @@ import React, { useContext, useState, useEffect } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 
 import { Context } from '../store/appContext';
+
 import WebDirectoryService from '../services/webdirectory';
+import AuthenticationService from '../services/authentication';
+
 import { Error } from '../component/error';
 import { Loading } from '../component/loading';
 import { UpsertWebDirectory } from '../component/webdirectory/upsertWebDirectory';
 import { ListWebDirectory } from '../component/webdirectory/listwebdirectory';
 
 export const WebDirectory = () => {
+
+    const AuthSVC = new AuthenticationService();
+    const WebDirectorySVC = new WebDirectoryService();
+    const location = useLocation();
+
     const { store, actions } = useContext(Context);
+    const [isLogin] = useState(AuthSVC.isAuthenticated());
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
     const [AppID, setAppID] = useState(1);
-    const WebDirectorySVC = new WebDirectoryService();
-    const location = useLocation();
+
+
 
     const LoadPage = () => {
         const pathname = location.pathname.slice(1).split('/');
@@ -37,7 +46,7 @@ export const WebDirectory = () => {
     }
 
     useEffect(() => {
-        if(store.isLogged) {
+        if (isLogin) {
             setLoading(true);
             LoadPage();
         }
@@ -78,7 +87,7 @@ export const WebDirectory = () => {
     if (store.isLoading || isLoading) {
         return <Loading />
     } else {
-        if (store.isLogged) {
+        if (isLogin) {
             if (Rights.ReadRight) {
                 return <ContentPage />
             } else {

@@ -15,6 +15,7 @@ import { WebDirectory } from './views/webDirectory';
 import { Roles } from './views/roles';
 import { Users } from './views/users';
 import { UsersProfile } from './views/usersProfile';
+import { ProductsAdmin } from './views/productsAdmin';
 
 import injectContext from './store/appContext';
 
@@ -67,6 +68,9 @@ const Layout = () => {
 						</Route>
 						<Route exact path="/Profile/:UserID">
 							<UsersProfile />
+						</Route>
+						<Route exact path="/Products/Admin">
+							<ProductsAdmin />
 						</Route>
 						<Route>
 							<h1>Not found!</h1>

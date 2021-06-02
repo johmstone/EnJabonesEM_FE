@@ -7,6 +7,7 @@ import "moment/locale/es";
 
 import { Context } from '../store/appContext';
 
+import AuthenticationService from '../services/authentication';
 import WebDirectoryService from '../services/webdirectory';
 import UsersService from '../services/users';
 
@@ -17,19 +18,22 @@ import { EditRoleUser } from '../component/users/editRoleUser';
 moment.locale("es");
 
 export const Users = () => {
+
+    const AuthSVC = new AuthenticationService();
+    const WebDirectorySVC = new WebDirectoryService();
+    const UsersSVC = new UsersService();
+    const location = useLocation();
+
+    const [isLogin] = useState(AuthSVC.isAuthenticated());
     const { store } = useContext(Context);
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
     const [SearchInput, setSearchInput] = useState('');
     const [UserList, setUserList] = useState([]);
-    const [SearchResults, setSearchResults] = useState([]);
-
-    const WebDirectorySVC = new WebDirectoryService();
-    const UsersSVC = new UsersService();
-    const location = useLocation();
+    const [SearchResults, setSearchResults] = useState([]);    
 
     useEffect(() => {
-        if(store.isLogged) {
+        if(isLogin) {
             setLoading(true);
             LoadPage();
         }        
@@ -260,7 +264,7 @@ export const Users = () => {
     if (store.isLoading || isLoading) {
         return <Loading />
     } else {
-        if (store.isLogged) {
+        if (isLogin) {
             if (Rights.ReadRight) {
                 return <ContentPage />
             } else {

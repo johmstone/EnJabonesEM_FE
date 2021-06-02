@@ -10,10 +10,10 @@ import TextField from '@material-ui/core/TextField';
 import CostaRicaServices from '../../services/costaRica';
 import UsersService from '../../services/users';
 
-export const AddDeliveryAddressUser = (props) => {
+export const AddFacturationInfo = (props) => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [Address, setAddress] = useState(props.Address);
+    const [FacturationInfo, setFacturationInfo] = useState({ UserID: props.UserID });
     const [Provinces, setProvinces] = useState([]);
     const [EnableCanton, setEnableCanton] = useState(false)
     const [EnableDistrict, setEnableDistrict] = useState(false)
@@ -21,6 +21,7 @@ export const AddDeliveryAddressUser = (props) => {
     const [Cantons, setCantons] = useState([]);
     const [Districts, setDistricts] = useState([]);
 
+    const IdentityTypes = ['Cédula de Identidad', 'Cédela de Residencia', 'Pasaporte'];
     const CostaRicaSVC = new CostaRicaServices();
     const UsersSVC = new UsersService();
 
@@ -52,8 +53,8 @@ export const AddDeliveryAddressUser = (props) => {
     }, [isModalVisible]);
 
     const OnChangeProvince = ProvinceInput => {
-        let NewAddress = { ...Address, ProvinceID: ProvinceInput.target.value }
-        setAddress(NewAddress);
+        let NewFactInfo = { ...FacturationInfo, ProvinceID: ProvinceInput.target.value }
+        setFacturationInfo(NewFactInfo);
         CostaRicaSVC.Cantons(ProvinceInput.target.value).then(can => {
             setCantons(can);
             setEnableCanton(true);
@@ -61,32 +62,35 @@ export const AddDeliveryAddressUser = (props) => {
     }
 
     const OnChangeCanton = CantonInput => {
-        let NewAddress = { ...Address, CantonID: CantonInput.target.value }
+        let NewFactInfo = { ...FacturationInfo, CantonID: CantonInput.target.value }
 
-        CostaRicaSVC.Districts(Address.ProvinceID, CantonInput.target.value).then(res => {
+        CostaRicaSVC.Districts(FacturationInfo.ProvinceID, CantonInput.target.value).then(res => {
             setDistricts(res);
-            setAddress(NewAddress);
+            setFacturationInfo(NewFactInfo);
             setEnableDistrict(true);
         });
     }
 
     const onChangeDistrict = DistrictInput => {
-        let NewAddress = { ...Address, DistrictID: DistrictInput.target.value }
-        setAddress(NewAddress);
+        let NewFactInfo = { ...FacturationInfo, DistrictID: DistrictInput.target.value }
+        setFacturationInfo(NewFactInfo);
         setEnableStreet(true);
     }
 
     const onSubmit = data => {
         //console.log(data)
         let CostaRicaID = Districts.filter(src => src.DistrictID === data.DistrictID)[0].CostaRicaID
-        let NewAddress = {
+        let NewFactInfo = {
             UserID: props.UserID,
-            ContactName: data.ContactName,
-            PhoneNumber: parseInt(data.PhoneNumber.replace(/[^A-Z0-9]+/ig,"")),
+            FullName: data.FullName,
+            IdentityType: data.IdentityType,
+            IdentityID: data.IdentityID.replace("-",""),
+            PhoneNumber: parseInt(data.PhoneNumber.replace(/[^A-Z0-9]+/ig, "")),
             CostaRicaID: CostaRicaID,
             Street: data.Street
         }
-        UsersSVC.UpsertDeliveryAddress(NewAddress,"AddNew").then(res => {
+        //console.log(NewFactInfo);
+        UsersSVC.UpsertFacturationInfo(NewFactInfo,"AddNew").then(res => {
             if (res) {
                 window.location.reload();
             } else {
@@ -103,7 +107,9 @@ export const AddDeliveryAddressUser = (props) => {
     const handleCancel = () => {
         setIsModalVisible(false);
         reset({
-            ContactName: "",
+            FullName: "",
+            IdentityType: "",
+            IdentityID: "",
             PhoneNumber: "",
             ProvinceID: "",
             CantonID: "",
@@ -118,12 +124,12 @@ export const AddDeliveryAddressUser = (props) => {
     return (
         <div>
             <button className="btn btn-sm btn-link mx-0 px-0 vertical-center" onClick={() => setIsModalVisible(true)}>
-                <i className="far fa-map-marker-plus"></i> Agregar dirección
+                <i className="far fa-map-marker-plus"></i> {props.btnLegend}
             </button>
             <Modal className="custom-form"
                 title={[
                     <h3 key="title" className="text-center text-primary-color text-font-base m-0">
-                        Agregar Dirección
+                        Agregar Información
                     </h3>
                 ]}
                 visible={isModalVisible}
@@ -133,13 +139,13 @@ export const AddDeliveryAddressUser = (props) => {
                 <article className="card-body p-0 mw-100">
                     <form onSubmit={handleSubmit(onSubmit)} className="my-3">
                         <Controller
-                            name="ContactName"
+                            name="FullName"
                             control={control}
                             defaultValue=""
                             render={({ field: { onChange, value }, fieldState: { error } }) => (
                                 <FormControl variant="outlined" className="w-100 my-2">
-                                    <TextField id="ContactName"
-                                        label="Nombre del Contacto"
+                                    <TextField id="FullName"
+                                        label="Nombre"
                                         variant="outlined"
                                         value={value}
                                         onChange={onChange}
@@ -151,6 +157,59 @@ export const AddDeliveryAddressUser = (props) => {
                             )}
                             rules={{ required: "Por favor ingrese un nombre" }}
                         />
+                        <div className="row row-cols-2">
+                            <div className="col">
+                                <Controller name="IdentityType"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                        <FormControl variant="outlined" className="w-100 my-2">
+                                            <TextField
+                                                id="IdentityType"
+                                                select
+                                                variant="outlined"
+                                                value={value}
+                                                onChange={onChange}
+                                                label="Tipo de Identidad"
+                                                error={!!error}
+                                                helperText={error ? (<label className="text-font-base text-danger">
+                                                    <i className="fa fa-times-circle"></i> {error.message}
+                                                </label>) : null}>
+                                                {
+                                                    IdentityTypes.map((item, i) => {
+                                                        return (
+                                                            <MenuItem value={item} key={i}>{item}</MenuItem>
+                                                        )
+                                                    })
+                                                }
+                                            </TextField>
+                                        </FormControl>
+                                    )}
+                                    //onChange={e => e}
+                                    rules={{ required: "Debe seleccionar alguna opción" }}
+                                />
+                            </div>
+                            <div className="col">
+                                <Controller name="IdentityID"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                        <FormControl variant="outlined" className="w-100 my-2">
+                                            <TextField id="IdentityID"
+                                                label="Número de Identidad"
+                                                variant="outlined"
+                                                value={value}
+                                                onChange={onChange}
+                                                error={!!error}
+                                                helperText={error ? (<label className="text-font-base text-danger">
+                                                    <i className="fa fa-times-circle"></i> {error.message}
+                                                </label>) : null} />
+                                        </FormControl>
+                                    )}
+                                    rules={{ required: "Por favor ingrese su identificación" }}
+                                />
+                            </div>
+                        </div>
                         <Controller
                             name="PhoneNumber"
                             control={control}
@@ -169,7 +228,7 @@ export const AddDeliveryAddressUser = (props) => {
                                 </FormControl>
                             )}
                             rules={{
-                                required: "Por favor ingrese el número de teléfono",
+                                required: "Por favor ingrese su número de teléfono",
                                 pattern: { value: /^[5-9]\d{3}-?\d{4}$/, message: "Por favor ingrese un número de teléfono válido" }
                             }}
                         />
@@ -310,6 +369,7 @@ export const AddDeliveryAddressUser = (props) => {
     )
 }
 
-AddDeliveryAddressUser.propTypes = {
-    UserID: PropType.number
+AddFacturationInfo.propTypes = {
+    UserID: PropType.number,
+    btnLegend: PropType.string
 };

@@ -21,6 +21,10 @@
         -ms-transform: translateY(230%);
         transform: translateY(230%);
       }
+
+    .cardhorizontal {
+        width: 300px;
+    }
  }
 
 /*  Medium devices (tablets, 768px and up) */

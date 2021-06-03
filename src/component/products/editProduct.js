@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import PropType from "prop-types";
 import { Tooltip, Modal, message } from 'antd';
 
-export const EditPrimaryProduct = props => {
+export const EditProduct = props => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -18,7 +18,6 @@ export const EditPrimaryProduct = props => {
     );
 }
 
-EditPrimaryProduct.propTypes = {
-    PrimaryProduct: PropType.object
-    // 2) add here the new properties into the proptypes object
+EditProduct.propTypes = {
+    Product: PropType.object
 };

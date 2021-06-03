@@ -279,7 +279,10 @@ thead[class*="ant-table-thead"] th {
 	white-space: break-spaces !important;
 }
 
-
+.productTable thead[class*="ant-table-thead"] th {
+	background-color: lightblue !important;
+	color: black !important;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

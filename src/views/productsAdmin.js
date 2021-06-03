@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useContext } from "react";
 import { Redirect, useLocation } from "react-router-dom";
-import { Tooltip, Table, Modal, message } from 'antd';
+import { Tooltip, Table } from 'antd';
 import { Context } from '../store/appContext';
 
 import AuthenticationService from '../services/authentication';
@@ -11,7 +11,7 @@ import ProductsServices from '../services/products';
 import { Loading } from '../component/loading';
 import { Error } from '../component/error';
 import { Presentations } from '../component/products/presentations';
-import { EditPrimaryProduct } from '../component/products/editPrimaryProduct';
+import { UpsertPrimaryProduct } from '../component/products/upsertPrimaryProduct';
 
 export const ProductsAdmin = () => {
 
@@ -21,11 +21,11 @@ export const ProductsAdmin = () => {
     const location = useLocation();
 
     const [isLogin] = useState(AuthSVC.isAuthenticated());
-    const { store } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
     const [SearchInput, setSearchInput] = useState('');
-    const [ProductList, setProductList] = useState([]);
+    const [ProductList, setProductList] = useState(store.ProductList);
     const [SearchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
@@ -37,13 +37,14 @@ export const ProductsAdmin = () => {
     }, []);
 
     useEffect(() => {
+        setProductList(store.ProductList);
         const results = ProductList.filter(item =>
             item.Name.toLowerCase().includes(SearchInput.toLowerCase()) ||
             item.Technique.toLowerCase().includes(SearchInput.toLowerCase())
         );
         setSearchResults(results);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [SearchInput, ProductList]);
+    }, [SearchInput, ProductList, store.isLoading]);
 
     const LoadPage = () => {
         const pathname = location.pathname.slice(1).split('/');
@@ -57,11 +58,15 @@ export const ProductsAdmin = () => {
             return res;
         }).then(src => {
             if (src.ReadRight) {
-                ProductSVC.PrimaryProductList().then(res => {
-                    setProductList(res);
-                    console.log(res);
-                    setLoading(false);
-                });
+                actions.Loading(true);
+                actions.UploadProductList();
+                setLoading(false);
+
+                // ProductSVC.PrimaryProductList().then(res => {
+                //     setProductList(res);
+                //     console.log(res);
+                //     setLoading(false);
+                // });
             }
         });
 
@@ -71,17 +76,32 @@ export const ProductsAdmin = () => {
         setSearchInput(event.target.value);
     }
 
-    const ChangeStatus = (Product) => {
-        console.log(Product);
-    }
+    const Change = (Product,Type) => {
+        setLoading(true);
+        let UpdateProduct = {...Product, ActionType: Type}
+        //console.log(UpdateProduct);
+        ProductSVC.UpsertPrimaryProduct(UpdateProduct,'Update').then(res => {
+            if(res) {
+                LoadPage()
+            }
+        })
 
-    const ChangeVisibility = (Product) => {
-        console.log(Product);
     }
 
     const columnsAdmin = [
         { title: 'Nombre', dataIndex: 'Name', key: 'Name', fixed: 'left' },
         { title: 'Técnica', dataIndex: 'Technique', key: 'Technique'},
+        {
+            title: 'Productos',
+            dataIndex: '',
+            key: 'x',
+            className: 'text-center',
+            render: (e) => (
+                <p className="m-0">
+                    {e.Products.filter(src => src.ProductID >0 && src.ActiveFlag).length}
+                </p>
+            ),
+        },
         {
             title: 'Status',
             dataIndex: '',
@@ -113,7 +133,7 @@ export const ProductsAdmin = () => {
             key: 'x',
             render: (e) => (
                 <Tooltip title={e.ActiveFlag ? "Desactivar" : "Activar"} color={e.ActiveFlag ? "red" : "green"} >
-                    <a onClick={() => ChangeStatus(e)}>
+                    <a onClick={() => Change(e,'CHGST')}>
                         <i className="fas fa-repeat-alt align-middle"></i>
                     </a>
                 </Tooltip>
@@ -126,7 +146,7 @@ export const ProductsAdmin = () => {
             key: 'x',
             render: (e) => (
                 <Tooltip title={e.ActiveFlag ? "Ocultar" : "Mostrar"} color={e.ActiveFlag ? "green" : "red"} >
-                    <a onClick={() => ChangeVisibility(e)}>
+                    <a onClick={() => Change(e,'CHGVS')}>
                         <i className="fas fa-low-vision align-middle"></i>
                     </a>
                 </Tooltip>
@@ -137,31 +157,27 @@ export const ProductsAdmin = () => {
             colSpan: 0,
             dataIndex: '',
             key: 'x',
-            render: (e) => (<EditPrimaryProduct PrimaryProduct={e} />),
+            render: (e) => (<UpsertPrimaryProduct PrimaryProduct={e} />),
         }
     ]
 
     const ContentPage = () => {
         return (
-            <section className="container">
+            <section className="container-fluid">
                 <div className="text-center text-font-base pt-2">
                     <h2 className="m-0"><i className="fas fa-shopping-basket align-middle"></i> Productos</h2>
                     <p className="subtitle">Módulo de Gestión de Productos</p>
                 </div>
                 <hr />
                 <div className="mx-2">
-                    <div className="input-group mb-3 mw-100" style={{ width: "300px" }}>
+                    <div className="input-group mb-3 mw-100" style={{ width: "400px" }}>
                         <div className="input-group-prepend">
                             <span className="input-group-text" id="SearchInput-label"><i className="fas fa-search"></i></span>
                         </div>
                         <input type="text" className="form-control" placeholder="Palabra clave..." aria-label="Palabra clave..." aria-describedby="SearchInput-label"
                             value={SearchInput} onChange={handleChange} autoFocus />
                         <div className="input-group-append">
-                            <Tooltip title="Agregar Producto" color="blue">
-                                <button className="btn">
-                                    <i className="far fa-plus-square"></i>
-                                </button>
-                            </Tooltip>
+                            <UpsertPrimaryProduct />
                         </div>
                     </div>
 
@@ -179,7 +195,7 @@ export const ProductsAdmin = () => {
                         }}
                         dataSource={SearchResults}
                         scroll={{ x: 'max-content' }}
-                        pagination={{ position: ['bottomLeft'], pageSize: 10 }}
+                        pagination={{ position: ['bottomLeft'], pageSize: 5 }}
 
                     />
                 </div>

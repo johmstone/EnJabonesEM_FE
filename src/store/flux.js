@@ -56,7 +56,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			UploadProductList: () => {
 				setStore({ isLoading: true })				
 				ProductSVC.PrimaryProductList().then(items => {
-					//console.log(items);
 					setStore({ ProductList: items});
 					setStore({ isLoading: false })
 				});

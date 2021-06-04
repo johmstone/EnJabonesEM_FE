@@ -16,6 +16,7 @@ import { Roles } from './views/roles';
 import { Users } from './views/users';
 import { UsersProfile } from './views/usersProfile';
 import { ProductsAdmin } from './views/productsAdmin';
+import { Formula } from './views/formula';
 
 import injectContext from './store/appContext';
 
@@ -71,6 +72,9 @@ const Layout = () => {
 						</Route>
 						<Route exact path="/Products/Admin">
 							<ProductsAdmin />
+						</Route>
+						<Route exact path="/Products/Formula/:PrimaryProductID">
+							<Formula />
 						</Route>
 						<Route>
 							<h1>Not found!</h1>

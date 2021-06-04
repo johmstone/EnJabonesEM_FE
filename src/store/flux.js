@@ -59,7 +59,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ ProductList: items});
 					setStore({ isLoading: false })
 				});
-			},
+			},			
 			Login: () => {
 				setStore({ isLogged: true});
 			},

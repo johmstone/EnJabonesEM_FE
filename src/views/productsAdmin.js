@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useContext } from "react";
-import { Redirect, useLocation } from "react-router-dom";
+import { Redirect, useLocation, Link } from "react-router-dom";
 import { Tooltip, Table } from 'antd';
 import { Context } from '../store/appContext';
 
@@ -40,6 +40,7 @@ export const ProductsAdmin = () => {
         setProductList(store.ProductList);
         const results = ProductList.filter(item =>
             item.Name.toLowerCase().includes(SearchInput.toLowerCase()) ||
+            item.Description.toLowerCase().includes(SearchInput.toLowerCase()) ||
             item.Technique.toLowerCase().includes(SearchInput.toLowerCase())
         );
         setSearchResults(results);
@@ -89,7 +90,20 @@ export const ProductsAdmin = () => {
     }
 
     const columnsAdmin = [
-        { title: 'Nombre', dataIndex: 'Name', key: 'Name', fixed: 'left' },
+        { title: 'Nombre', dataIndex: 'Name', key: 'Name', fixed: 'left'},        
+        {
+            title: '',
+            className: 'fomulacolum',
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <Tooltip title="Ver Formula" color="blue" >
+                    <Link to={"/Products/Formula/" + e.PrimaryProductID} target="_blank">
+                        <i className="far fa-list-alt aline"></i>
+                    </Link>
+                </Tooltip>
+            ),
+        },
         { title: 'Técnica', dataIndex: 'Technique', key: 'Technique'},
         {
             title: 'Productos',

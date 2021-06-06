@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useContext } from "react";
-import { Redirect, useLocation, Link } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 import { Tooltip, Table } from 'antd';
 import { Context } from '../store/appContext';
 
@@ -12,6 +12,7 @@ import { Loading } from '../component/loading';
 import { Error } from '../component/error';
 import { Presentations } from '../component/products/presentations';
 import { UpsertPrimaryProduct } from '../component/products/upsertPrimaryProduct';
+import { ProductFormula } from '../component/products/productFormula';
 
 export const ProductsAdmin = () => {
 
@@ -62,12 +63,6 @@ export const ProductsAdmin = () => {
                 actions.Loading(true);
                 actions.UploadProductList();
                 setLoading(false);
-
-                // ProductSVC.PrimaryProductList().then(res => {
-                //     setProductList(res);
-                //     console.log(res);
-                //     setLoading(false);
-                // });
             }
         });
 
@@ -97,11 +92,7 @@ export const ProductsAdmin = () => {
             dataIndex: '',
             key: 'x',
             render: (e) => (
-                <Tooltip title="Ver Formula" color="blue" >
-                    <Link to={"/Products/Formula/" + e.PrimaryProductID} target="_blank">
-                        <i className="far fa-list-alt aline"></i>
-                    </Link>
-                </Tooltip>
+                <ProductFormula PrimaryProduct={e}/>
             ),
         },
         { title: 'Técnica', dataIndex: 'Technique', key: 'Technique'},

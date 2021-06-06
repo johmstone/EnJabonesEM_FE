@@ -27,8 +27,8 @@ class ProductServices {
             .catch(err => console.log(err));
     }
 
-    async Formulas() {
-        let baseURL = this.config.BackEnd_API_BaseURL + "/api/PrimaryProducts/Formulas";
+    async Formula(ProductPrimaryID) {
+        let baseURL = this.config.BackEnd_API_BaseURL + "/api/PrimaryProducts/Formula/" + ProductPrimaryID;
         let User = JSON.parse(localStorage.getItem('User'));
 
         var myHeaders = new Headers();

@@ -148,7 +148,7 @@ export const Presentations = props => {
     );
 }
 
-Error.propTypes = {
+Presentations.propTypes = {
     PrimaryProduct: PropType.object
     // 2) add here the new properties into the proptypes object
 };

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from "react";
 import PropType from "prop-types";
@@ -16,31 +17,47 @@ export const ProductFormula = props => {
     const [Formula, setFormula] = useState([]);
     const [Total, setTotal] = useState(0);
     const [inputTotal, setinputTotal] = useState(0);
+    const [AddFormulaResult, setAddFormulaResult] = useState();
 
+    
     useEffect(() => {
         setLoading(true);
         if (isModalVisible) {
-            ProductSVC.Formula(props.PrimaryProduct.PrimaryProductID).then(res => {
-                setFormula(res);
-                console.log(res);
-                let total = 0;
-                if (res !== undefined) {
-                    res.forEach(element => {
-                        total += element.Qty;
-                    });
-                    setTotal(total);
-                    setinputTotal(total);
-                    setLoading(false);
-                } else {
-                    setLoading(false);
-                }
-            });
+            LoadPage()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalVisible]);
 
+    useEffect(() => {
+        if(AddFormulaResult === 'Created') {
+            LoadPage()
+        }
+    }, [AddFormulaResult])
+
+
+    const LoadPage = () => {
+        ProductSVC.Formula(props.PrimaryProduct.PrimaryProductID).then(res => {
+            setFormula(res);
+            //console.log(res);
+            let total = 0;
+            if (res !== undefined) {
+                res.forEach(element => {
+                    total += element.Qty;
+                });
+                setTotal(total);
+                setinputTotal(total);
+                setLoading(false);
+            } else {
+                setLoading(false);
+            }
+        });
+    }
     const handleChange = (inputValue) => {
         setinputTotal(inputValue.target.value);
+    }
+
+    const handleCallback = (childData) => {
+        setAddFormulaResult(childData);        
     }
 
     const ContentPage = () => {
@@ -57,7 +74,7 @@ export const ProductFormula = props => {
                     <i className="fas fa-align-slash fa-2x"></i>
                     <h4 className="">No hay formula disponible</h4>
                     <div>
-                        <AddProductFormula PrimaryProduct={props.PrimaryProduct}/>
+                        <AddProductFormula PrimaryProduct={props.PrimaryProduct} parentCallback={handleCallback} />
                     </div>
                 </div>
             )

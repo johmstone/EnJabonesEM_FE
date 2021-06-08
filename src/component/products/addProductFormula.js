@@ -13,15 +13,19 @@ import Button from '@material-ui/core/Button';
 import IngredientServices from '../../services/ingredients';
 import ProductServices from '../../services/products';
 
+import { AddIngredient } from '../ingredients/addIngredient';
+
 export const AddProductFormula = props => {
 
     const IngredientSVC = new IngredientServices();
     const ProductSVC = new ProductServices();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [Ingredients, setIngredients] = useState([])
+    const [Ingredients, setIngredients] = useState([]);
+    const [IngredientsAdded, setIngredientsAdded] = useState([]);
     const [UnitList, setUnitList] = useState([]);
     const [Formula, setFormula] = useState([]);
+    const [AddIngResult, setAddIngResult] = useState();
 
     useEffect(() => {
         if (isModalVisible) {
@@ -30,15 +34,44 @@ export const AddProductFormula = props => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalVisible]);
 
+    useEffect(() => {
+        if (AddIngResult === "Created") {
+            LoadPage();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [AddIngResult]);
+
+    const ExcludeCommonElements = (arr1, arr2) => {
+        let newArr = []
+
+        arr1.forEach(item => {
+            if (arr2.length > 0) {
+                arr2.forEach(el => {
+                    if (el.IngredientID !== item.IngredientID) {
+                        newArr = [...newArr, item];
+                    }
+                })
+            } else {
+                newArr = [...newArr, item];
+            }
+        });
+
+        setIngredients(newArr);
+    }
+
     const LoadPage = () => {
         IngredientSVC.List().then(res => {
-            setIngredients(res);
+            ExcludeCommonElements(res, IngredientsAdded);
             IngredientSVC.UnitList().then(src => {
                 let newUnits = src.filter(item => item.Symbol === 'g' || item.Symbol === 'ml')
                 setUnitList(newUnits);
             });
         });
 
+    }
+
+    const handleCallback = (childData) => {
+        setAddIngResult(childData);
     }
 
     const handleDelete = (item) => {
@@ -54,7 +87,7 @@ export const AddProductFormula = props => {
     const { isDirty } = useFormState({ control });
 
     const onSubmit = data => {
-        console.log(data);
+        //console.log(data);
         const UnitData = UnitList.filter(src => src.UnitID === data.UnitID)[0];
 
         const newIngredient = {
@@ -70,6 +103,8 @@ export const AddProductFormula = props => {
         const newData = [...Formula, newIngredient];
         setFormula(newData);
 
+        const newIngAdded = [...IngredientsAdded, data.Ingredient];
+        setIngredientsAdded(newIngAdded);
         const newIngredients = Ingredients.filter(src => src.IngredientID !== data.Ingredient.IngredientID);
         setIngredients(newIngredients);
         handleCancel();
@@ -100,6 +135,8 @@ export const AddProductFormula = props => {
         handleCancel();
         setFormula([]);
         setIsModalVisible(false);
+        setIngredientsAdded([]);        
+        props.parentCallback('Cancel');
     }
 
     const SaveFormula = () => {
@@ -107,10 +144,12 @@ export const AddProductFormula = props => {
             ...props.PrimaryProduct,
             Formula: Formula
         };
-        console.log(model);
-        ProductSVC.UpsertFormula(model,"AddNew").then(res => {
-            if(res) {
-                window.location.reload();
+        //console.log(model);
+        ProductSVC.UpsertFormula(model, "AddNew").then(res => {
+            if (res) {
+                props.parentCallback('Created');
+                handleCancel();
+                setFormula([]);
             } else {
                 message.error({
                     content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -168,7 +207,8 @@ export const AddProductFormula = props => {
                     <h4 className="m-0 text-font-base mb-3">
                         Producto: <span className="text-primary-color">{props.PrimaryProduct.Name}</span>
                     </h4>
-                    <form onSubmit={handleSubmit(onSubmit)} className="my-3">
+                    <AddIngredient parentCallback={handleCallback}/>
+                    <form onSubmit={handleSubmit(onSubmit)} className="mt-0 mb-3">
                         <div className="row m-0">
                             <Controller
                                 name="Ingredient"
@@ -197,7 +237,7 @@ export const AddProductFormula = props => {
                                                     label="Ingrediente"
                                                     variant="outlined"
                                                     helperText={error ? (<label className="text-font-base text-danger">
-                                                       {error.message}
+                                                        {error.message}
                                                     </label>) : null}
                                                 />
                                             )}
@@ -300,5 +340,6 @@ export const AddProductFormula = props => {
 }
 
 AddProductFormula.propTypes = {
-    PrimaryProduct: PropType.object
+    PrimaryProduct: PropType.object,
+    parentCallback: PropType.func
 };

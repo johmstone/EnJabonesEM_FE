@@ -8,6 +8,8 @@ import { Tooltip, Modal } from 'antd';
 import ProductServices from '../../services/products';
 
 import { AddProductFormula } from './addProductFormula';
+import { EditProductFormula } from './editProductFormula';
+
 export const ProductFormula = props => {
 
     const ProductSVC = new ProductServices();
@@ -19,7 +21,7 @@ export const ProductFormula = props => {
     const [inputTotal, setinputTotal] = useState(0);
     const [AddFormulaResult, setAddFormulaResult] = useState();
 
-    
+
     useEffect(() => {
         setLoading(true);
         if (isModalVisible) {
@@ -29,7 +31,7 @@ export const ProductFormula = props => {
     }, [isModalVisible]);
 
     useEffect(() => {
-        if(AddFormulaResult === 'Created') {
+        if (AddFormulaResult === 'Created') {
             LoadPage()
         }
     }, [AddFormulaResult])
@@ -38,6 +40,7 @@ export const ProductFormula = props => {
     const LoadPage = () => {
         ProductSVC.Formula(props.PrimaryProduct.PrimaryProductID).then(res => {
             setFormula(res);
+            setAddFormulaResult();
             //console.log(res);
             let total = 0;
             if (res !== undefined) {
@@ -57,7 +60,7 @@ export const ProductFormula = props => {
     }
 
     const handleCallback = (childData) => {
-        setAddFormulaResult(childData);        
+        setAddFormulaResult(childData);
     }
 
     const ContentPage = () => {
@@ -125,13 +128,13 @@ export const ProductFormula = props => {
                             </tbody>
                         </table>
                     </article>
-                    <div>
-                        <button className="btn btn-outline-primary">
-                            <i className="far fa-money-check-edit"></i> Editar Formula
+                    <div className="row text-center mx-0">
+                        <EditProductFormula PrimaryProduct={props.PrimaryProduct} Formula={Formula} parentCallback={handleCallback} />
+                        <div>
+                            <button className="btn btn-outline-primary mx-2">
+                                <i className="fas fa-print"></i> Imprimir
                         </button>
-                        <button className="btn btn-outline-primary mx-2">
-                            <i className="fas fa-print"></i> Imprimir
-                        </button>
+                        </div>
                     </div>
                 </div>
             )

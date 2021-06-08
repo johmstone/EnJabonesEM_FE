@@ -46,11 +46,9 @@ export const AddProductFormula = props => {
 
         arr1.forEach(item => {
             if (arr2.length > 0) {
-                arr2.forEach(el => {
-                    if (el.IngredientID !== item.IngredientID) {
-                        newArr = [...newArr, item];
-                    }
-                })
+                if (arr2.find(el => el.IngredientID === item.IngredientID) === undefined) {
+                    newArr = [...newArr, item];
+                }
             } else {
                 newArr = [...newArr, item];
             }
@@ -222,7 +220,7 @@ export const AddProductFormula = props => {
                                 }}
                                 control={control}
                                 render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                    <FormControl variant="outlined" className="w-100 my-2">
+                                    <FormControl variant="outlined" className="w-100 my-2 mx-1">
                                         <Autocomplete
                                             id="ingredient"
                                             options={Ingredients}

@@ -1,34 +1,13 @@
 import ConfigurationService from './configuration'
 
-class ProductServices {
+class IngredientServices {
 
     constructor() {
         this.config = new ConfigurationService();
     }
 
-    async PrimaryProductList() {
-        let baseURL = this.config.BackEnd_API_BaseURL + "/api/PrimaryProducts";
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-
-        return fetch(baseURL, requestOptions)
-            .then(res => {
-                if (res.status === 200) {
-                    return res.json();
-                }
-            })
-            .then(json => { return json; })
-            .catch(err => console.log(err));
-    }
-
-    async Formula(ProductPrimaryID) {
-        let baseURL = this.config.BackEnd_API_BaseURL + "/api/PrimaryProducts/Formula/" + ProductPrimaryID;
+    async List() {
+        let baseURL = this.config.BackEnd_API_BaseURL + "/api/Ingredients/";
         let User = JSON.parse(localStorage.getItem('User'));
 
         var myHeaders = new Headers();
@@ -51,20 +30,17 @@ class ProductServices {
             .catch(err => console.log(err));
     }
 
-    async UpsertFormula(Model,Type) {
-        let baseURL = this.config.BackEnd_API_BaseURL + "/api/PrimaryProducts/Formula/" + Type;
+    async UnitList() {
+        let baseURL = this.config.BackEnd_API_BaseURL + "/api/Ingredients/Units";
         let User = JSON.parse(localStorage.getItem('User'));
 
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Authorization", "Bearer " + User.Token);
 
-        var raw = JSON.stringify(Model);
-
         var requestOptions = {
             method: 'POST',
             headers: myHeaders,
-            body: raw,
             redirect: 'follow'
         };
 
@@ -78,8 +54,8 @@ class ProductServices {
             .catch(err => console.log(err));
     }
 
-    async UpsertPrimaryProduct(Model, Type) {
-        let baseURL = this.config.BackEnd_API_BaseURL + "/api/PrimaryProducts/" + Type;
+    async UpsertIngredient(Model, Type) {
+        let baseURL = this.config.BackEnd_API_BaseURL + "/api/Ingredients/" + Type;
         let User = JSON.parse(localStorage.getItem('User'));
 
         var myHeaders = new Headers();
@@ -106,4 +82,4 @@ class ProductServices {
     }
 
 }
-export default ProductServices;
+export default IngredientServices;

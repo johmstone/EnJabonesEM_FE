@@ -2,6 +2,7 @@ import WebDirectoryService from '../services/webdirectory';
 import RolesService from '../services/roles';
 import UsersService from '../services/users';
 import ProductServices from '../services/products';
+import IngredientServices from '../services/ingredients';
 
 const getState = ({ getStore, getActions, setStore }) => {
 	
@@ -9,6 +10,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	const RolesSVC = new RolesService();
 	const UsersSVC = new UsersService();
 	const ProductSVC = new ProductServices();
+	const IngredientSVC = new IngredientServices();
 
 	return {
 		store: {
@@ -20,6 +22,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			,RoleList: []
 			,UsersList: []
 			,ProductList: []
+			,IngredientList: []
 		},
 		actions: {
 			uploadMenu: (model) => {								
@@ -59,7 +62,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ ProductList: items});
 					setStore({ isLoading: false })
 				});
-			},			
+			},		
+			UploadIngredientList: () => {
+				IngredientSVC.List().then(items => {
+					setStore({ IngredientList: items});
+				});
+			},				
 			Login: () => {
 				setStore({ isLogged: true});
 			},

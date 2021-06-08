@@ -32,7 +32,7 @@ export const Presentations = props => {
             className: 'text-center',
             render: (item) => (
                 <p className="m-0">
-                    {item.Qty} {item.Unit[0].Symbol}
+                    <CurrencyFormat value={item.Qty} displayType={"text"} thousandSeparator={true} decimalScale={2} suffix={" " + item.Unit[0].Symbol} />
                 </p>
             ),
         },

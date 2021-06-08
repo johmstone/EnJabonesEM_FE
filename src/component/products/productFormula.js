@@ -6,7 +6,7 @@ import { Tooltip, Modal } from 'antd';
 
 import ProductServices from '../../services/products';
 
-import AddProductFormula from './addProductFormula';
+import { AddProductFormula } from './addProductFormula';
 export const ProductFormula = props => {
 
     const ProductSVC = new ProductServices();
@@ -57,7 +57,7 @@ export const ProductFormula = props => {
                     <i className="fas fa-align-slash fa-2x"></i>
                     <h4 className="">No hay formula disponible</h4>
                     <div>
-                        <AddProductFormula />
+                        <AddProductFormula PrimaryProduct={props.PrimaryProduct}/>
                     </div>
                 </div>
             )

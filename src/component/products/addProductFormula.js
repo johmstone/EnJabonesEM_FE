@@ -1,247 +1,304 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useContext, useState, useEffect, useRef, Component } from "react";
-import { Table, Input, Button, Popconfirm, Form, Modal } from "antd";
-const EditableContext = React.createContext(null);
+import React, { useState, useEffect } from "react";
+import PropType from "prop-types";
+import { Modal, Table, message } from 'antd';
+import { useForm, Controller, useFormState } from "react-hook-form";
+import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import Button from '@material-ui/core/Button';
 
-const EditableRow = ({ index, ...props }) => {
-    const [form] = Form.useForm();
-    return (
-        <Form form={form} component={false}>
-            <EditableContext.Provider value={form}>
-                <tr {...props} />
-            </EditableContext.Provider>
-        </Form>
-    );
-};
+import IngredientServices from '../../services/ingredients';
+import ProductServices from '../../services/products';
 
-const EditableCell = ({
-    title,
-    editable,
-    children,
-    dataIndex,
-    record,
-    handleSave,
-    ...restProps
-}) => {
-    const [editing, setEditing] = useState(false);
-    const inputRef = useRef(null);
-    const form = useContext(EditableContext);
+export const AddProductFormula = props => {
+
+    const IngredientSVC = new IngredientServices();
+    const ProductSVC = new ProductServices();
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [Ingredients, setIngredients] = useState([])
+    const [UnitList, setUnitList] = useState([]);
+    const [Formula, setFormula] = useState([]);
+
     useEffect(() => {
-        if (editing) {
-            inputRef.current.focus();
+        if (isModalVisible) {
+            LoadPage();
         }
-    }, [editing]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isModalVisible]);
 
-    const toggleEdit = () => {
-        setEditing(!editing);
-        form.setFieldsValue({
-            [dataIndex]: record[dataIndex]
+    const LoadPage = () => {
+        IngredientSVC.List().then(res => {
+            setIngredients(res);
+            IngredientSVC.UnitList().then(src => {
+                let newUnits = src.filter(item => item.Symbol === 'g' || item.Symbol === 'ml')
+                setUnitList(newUnits);
+            });
         });
-    };
 
-    const save = async () => {
-        try {
-            const values = await form.validateFields();
-            toggleEdit();
-            handleSave({ ...record, ...values });
-        } catch (errInfo) {
-            console.log("Save failed:", errInfo);
+    }
+
+    const handleDelete = (item) => {
+        const NewData = Formula.filter(src => src.IngredientID !== item.IngredientID)
+        setFormula(NewData);
+    }
+
+    const { handleSubmit, control, reset } = useForm({
+        mode: 'onChange',
+        criteriaMode: 'all'
+    });
+
+    const { isDirty } = useFormState({ control });
+
+    const onSubmit = data => {
+        console.log(data);
+        const UnitData = UnitList.filter(src => src.UnitID === data.UnitID)[0];
+
+        const newIngredient = {
+            PrimaryProductID: props.PrimaryProduct.PrimaryProductID,
+            IngredientID: data.Ingredient.IngredientID,
+            IngredientName: data.Ingredient.IngredientName,
+            TypeName: data.Ingredient.TypeName,
+            Qty: data.Qty,
+            UnitID: data.UnitID,
+            UnitName: UnitData.UnitName,
+            Symbol: UnitData.Symbol
         }
-    };
+        const newData = [...Formula, newIngredient];
+        setFormula(newData);
 
-    let childNode = children;
+        const newIngredients = Ingredients.filter(src => src.IngredientID !== data.Ingredient.IngredientID);
+        setIngredients(newIngredients);
+        handleCancel();
+    }
 
-    if (editable) {
-        childNode = editing ? (
-            <Form.Item
-                style={{
-                    margin: 0
-                }}
-                name={dataIndex}
-                rules={[
-                    {
-                        required: true,
-                        message: `${title} is required.`
+    const handleCancel = () => {
+        reset({
+            Ingredient: {
+                IngredientID: null,
+                IngredientName: "",
+                TypeID: null,
+                TypeName: "",
+                PhotoURL: "",
+                ActionType: ""
+            },
+            Qty: "",
+            Unit: {
+                UnitID: null,
+                UnitName: "",
+                Symbol: "",
+                ActionType: ""
+            }
+        });
+        //reset();
+    }
+
+    const handleTotalCancel = () => {
+        handleCancel();
+        setFormula([]);
+        setIsModalVisible(false);
+    }
+
+    const SaveFormula = () => {
+        let model = {
+            ...props.PrimaryProduct,
+            Formula: Formula
+        };
+        console.log(model);
+        ProductSVC.UpsertFormula(model,"AddNew").then(res => {
+            if(res) {
+                window.location.reload();
+            } else {
+                message.error({
+                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                    style: {
+                        marginTop: "30vh"
                     }
-                ]}
-            >
-                <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-            </Form.Item>
-        ) : (
-            <div
-                className="editable-cell-value-wrap"
-                style={{
-                    paddingRight: 24
-                }}
-                onClick={toggleEdit}
-            >
-                {children}
-            </div>
-        );
+                });
+            }
+        })
     }
 
-    return <td {...restProps}>{childNode}</td>;
-};
-
-class AddProductFormula extends Component {
-    constructor(props) {
-        super(props);
-        this.columns = [
-            {
-                title: "Ingrediente",
-                dataIndex: "IngredientID",
-                width: "30%",
-                editable: true
-            },
-            {
-                title: "Qty",
-                dataIndex: "Qty",
-                editable: true
-            },
-            {
-                title: "Unidad",
-                dataIndex: "UnitID",
-                editable: true
-            },
-            {
-                title: "",
-                dataIndex: "operation",
-                render: (_, record) =>
-                    this.state.dataSource.length >= 1 ? (
-                        <Popconfirm
-                            title="Sure to delete?"
-                            onConfirm={() => this.handleDelete(record.key)}
-                        >
-                            <a>Delete</a>
-                        </Popconfirm>
-                    ) : null
-            }
-        ];
-        this.state = {
-            visible: false,
-            dataSource: [],
-            count: 0
-        };
-    }
-
-
-    handleDelete = (key) => {
-        const dataSource = [...this.state.dataSource];
-        this.setState({
-            dataSource: dataSource.filter((item) => item.key !== key)
-        });
-    };
-    handleAdd = () => {
-        const { count, dataSource } = this.state;
-        const newData = {
-            key: count,
-            IngredientID: 'Seleccione Ingrediente',
-            Qty: 0,
-            UnitID: 0
-        };
-        this.setState({
-            dataSource: [...dataSource, newData],
-            count: count + 1
-        });
-    };
-
-    handleSave = (row) => {
-        const newData = [...this.state.dataSource];
-        const index = newData.findIndex((item) => row.key === item.key);
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        this.setState({
-            dataSource: newData
-        });
-    };
-
-    SubmitData = () => {
-        console.log(this.state.dataSource);
-    };
-
-    showModal = () => {
-        this.setState({
-            visible: true,
-        });
-    };
-
-    handleOk = () => {
-        this.setState({
-            visible: false,
-        });
-    };
-
-    handleCancel = () => {
-        this.setState({
-            visible: false,
-        });
-    };
-
-    render() {
-
-        const { dataSource } = this.state;
-        const components = {
-            body: {
-                row: EditableRow,
-                cell: EditableCell
-            }
-        };
-        const columns = this.columns.map((col) => {
-            if (!col.editable) {
-                return col;
-            }
-
-            return {
-                ...col,
-                onCell: (record) => ({
-                    record,
-                    editable: col.editable,
-                    dataIndex: col.dataIndex,
-                    title: col.title,
-                    handleSave: this.handleSave
-                })
-            };
-        });
-
-        return (
-            <div>
-                <button onClick={this.showModal} className="btn btn-outline-primary">
-                    <i className="far fa-money-check-edit"></i> Agregar Formula
-                </button>
-                <Modal
-                    title={[
-                        <h3 key="title" className="text-center text-primary-color text-font-base m-0">Nueva Formula
+    const columnsAdmin = [
+        {
+            title: 'Ingrediente',
+            dataIndex: 'IngredientName',
+            key: 'x',
+            className: 'text-center'
+        },
+        {
+            title: 'Cantidad',
+            dataIndex: '',
+            key: 'x',
+            className: 'text-center',
+            render: (e) => (
+                <span>{e.Qty + " " + e.Symbol}</span>
+            )
+        },
+        {
+            title: '',
+            dataIndex: '',
+            key: 'x',
+            className: 'text-center',
+            render: (e) => (
+                <a onClick={() => handleDelete(e)}>
+                    Eliminar
+                </a>
+            ),
+        },
+    ]
+    return (
+        <div>
+            <button onClick={() => setIsModalVisible(true)} className="btn btn-outline-primary">
+                <i className="far fa-money-check-edit"></i> Agregar Formula
+            </button>
+            <Modal
+                title={[
+                    <h3 key="title" className="text-center text-primary-color text-font-base m-0">Nueva Formula
                         </h3>
-                    ]}
-                    visible={this.state.visible}
-                    centered
-                    onCancel={this.handleCancel}
-                    footer={[]}>
-                    <div>
-                        <Button
-                            onClick={this.handleAdd}
-                            type="primary"
-                            style={{ marginBottom: 16 }}>
-                            Add a row
+                ]}
+                visible={isModalVisible}
+                centered
+                onCancel={() => setIsModalVisible(false)}
+                footer={[]}>
+                <div>
+                    <h4 className="m-0 text-font-base mb-3">
+                        Producto: <span className="text-primary-color">{props.PrimaryProduct.Name}</span>
+                    </h4>
+                    <form onSubmit={handleSubmit(onSubmit)} className="my-3">
+                        <div className="row m-0">
+                            <Controller
+                                name="Ingredient"
+                                defaultValue={{
+                                    "IngredientID": "",
+                                    "IngredientName": "",
+                                    "TypeID": "",
+                                    "TypeName": "",
+                                    "PhotoURL": "",
+                                    "ActionType": ""
+                                }}
+                                control={control}
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <FormControl variant="outlined" className="w-100 my-2">
+                                        <Autocomplete
+                                            id="ingredient"
+                                            options={Ingredients}
+                                            value={value}
+                                            onChange={(_, data) => onChange(data)}
+                                            // onChange={onChange}
+                                            getOptionLabel={(option) => option.IngredientName}
+                                            groupBy={(option) => option.TypeName}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="Ingrediente"
+                                                    variant="outlined"
+                                                    helperText={error ? (<label className="text-font-base text-danger">
+                                                       {error.message}
+                                                    </label>) : null}
+                                                />
+                                            )}
+                                        // onChange={(event, newValue) => {
+                                        //     console.log(JSON.stringify(newValue, null, ' '));
+                                        // }}
+                                        />
+                                    </FormControl>
+                                )}
+                                rules={{ required: "Requerido" }}
+                            />
+                        </div>
+                        <div className="row row-cols-3 m-0">
+                            <div className="col-sm-3 px-1">
+                                <Controller
+                                    name="Qty"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                        <FormControl variant="outlined" className="w-100 my-2">
+                                            <TextField id="Qty"
+                                                label="Cantidad"
+                                                variant="outlined"
+                                                value={value}
+                                                type="number"
+                                                onChange={onChange}
+                                                error={!!error}
+                                                helperText={error ? (<label className="text-font-base text-danger">
+                                                    {error.message}
+                                                </label>) : null} />
+                                        </FormControl>
+                                    )}
+                                    rules={{ required: "Requerido" }}
+                                />
+                            </div>
+                            <div className="col-sm-4 px-1">
+                                <Controller name="UnitID"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                        <FormControl variant="outlined" className="w-100 my-2">
+                                            <TextField
+                                                id="UnitID"
+                                                select
+                                                variant="outlined"
+                                                value={value}
+                                                onChange={onChange}
+                                                // onChange={(_, data) => onChange(data)}
+                                                label="Unidad"
+                                                error={!!error}
+                                                helperText={error ? (<label className="text-font-base text-danger">
+                                                    {error.message}
+                                                </label>) : null}>
+                                                {
+                                                    UnitList.map((item, i) => {
+                                                        return (
+                                                            <MenuItem value={item.UnitID} key={i}>{item.UnitName}</MenuItem>
+                                                        )
+                                                    })
+                                                }
+                                            </TextField>
+                                        </FormControl>
+                                    )}
+                                    //onChange={e => e}
+                                    rules={{ required: "Requerido" }}
+                                />
+                            </div>
+                            <div className="col-sm-5 px-1">
+                                <div className="row mx-0 my-1">
+                                    <Button variant="outlined" color="primary" className="mt-2 mx-1 py-3 px-1" disabled={!isDirty} type="submit">
+                                        <i className="fas fa-check"></i>
+                                    </Button>
+                                    <Button variant="outlined" color="secondary" className="mt-2 mx-1 py-3 px-1" onClick={() => handleCancel()}>
+                                        <i className="fas fa-times"></i>
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <Table className="productTable"
+                        columns={columnsAdmin}
+                        rowKey={record => record.IngredientID}
+                        dataSource={Formula}
+                        scroll={{ x: 'max-content' }}
+                        pagination={false}
+                    />
+                    <div className="text-center">
+                        <Button variant="outlined" color="primary" className="mt-2 mx-1 p-2" onClick={() => SaveFormula()} disabled={Formula.length > 0 ? false : true}>
+                            Guardar Formula
                         </Button>
-                        <Table
-                            components={components}
-                            rowClassName={() => "editable-row"}
-                            dataSource={dataSource}
-                            columns={columns}
-                        />
-                        <Button
-                            onClick={this.SubmitData}
-                            type="primary"
-                            style={{ marginBottom: 16 }}>
-                            Submit Data
+                        <Button variant="outlined" color="secondary" className="mt-2 mx-1 p-2" onClick={() => handleTotalCancel()}>
+                            Cancelar
                         </Button>
                     </div>
-                </Modal>
-            </div>
-
-        );
-    }
+                </div>
+            </Modal>
+        </div>
+    );
 }
 
-export default AddProductFormula;
+AddProductFormula.propTypes = {
+    PrimaryProduct: PropType.object
+};

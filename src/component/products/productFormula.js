@@ -16,7 +16,8 @@ export const ProductFormula = props => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setLoading] = useState(false);
-    const [Formula, setFormula] = useState([]);
+    const [ProductFormula, setProductFormula] = useState([]);
+    const [OriginalProductFormula, setOriginalProductFormula] = useState([]);
     const [Total, setTotal] = useState(0);
     const [inputTotal, setinputTotal] = useState(0);
     const [AddFormulaResult, setAddFormulaResult] = useState();
@@ -25,21 +26,22 @@ export const ProductFormula = props => {
     useEffect(() => {
         setLoading(true);
         if (isModalVisible) {
-            LoadPage()
+            LoadPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalVisible]);
 
     useEffect(() => {
         if (AddFormulaResult === 'Created') {
-            LoadPage()
+            LoadPage();
         }
     }, [AddFormulaResult])
 
 
     const LoadPage = () => {
         ProductSVC.Formula(props.PrimaryProduct.PrimaryProductID).then(res => {
-            setFormula(res);
+            setProductFormula(res);
+            setOriginalProductFormula(res);
             setAddFormulaResult();
             //console.log(res);
             let total = 0;
@@ -71,7 +73,7 @@ export const ProductFormula = props => {
                     <div className="spinner-border ms-auto" role="status" aria-hidden="true"></div>
                 </div>
             )
-        } else if (Formula === undefined || Formula.length === 0) {
+        } else if (ProductFormula === undefined || ProductFormula.length === 0) {
             return (
                 <div className="text-center text-black-50">
                     <i className="fas fa-align-slash fa-2x"></i>
@@ -106,7 +108,7 @@ export const ProductFormula = props => {
                             </thead>
                             <tbody>
                                 {
-                                    Formula.map((item, i) => {
+                                    ProductFormula.map((item, i) => {
                                         return (
                                             <tr key={i}>
                                                 <th>{item.IngredientName}</th>
@@ -129,7 +131,10 @@ export const ProductFormula = props => {
                         </table>
                     </article>
                     <div className="row text-center mx-0">
-                        <EditProductFormula PrimaryProduct={props.PrimaryProduct} Formula={Formula} parentCallback={handleCallback} />
+                        <EditProductFormula PrimaryProduct={props.PrimaryProduct}
+                            Formula={ProductFormula}
+                            OriginalFormula={OriginalProductFormula}
+                            parentCallback={handleCallback} />
                         <div>
                             <button className="btn btn-outline-primary mx-2">
                                 <i className="fas fa-print"></i> Imprimir

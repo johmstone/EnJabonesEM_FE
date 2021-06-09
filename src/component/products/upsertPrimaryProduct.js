@@ -140,6 +140,9 @@ export const UpsertPrimaryProduct = props => {
         //console.log(model, Type);
         ProductsSVC.UpsertPrimaryProduct(model,Type).then(res => {
             if(res) {
+                if(Type === 'AddNew') {
+                    props.parentCallback(model.Name);
+                }
                 actions.UploadProductList();
                 handleCancel();
             } else {
@@ -283,6 +286,7 @@ export const UpsertPrimaryProduct = props => {
 }
 
 UpsertPrimaryProduct.propTypes = {
-    PrimaryProduct: PropType.object
+    PrimaryProduct: PropType.object,
+    parentCallback: PropType.func
     // 2) add here the new properties into the proptypes object
 };

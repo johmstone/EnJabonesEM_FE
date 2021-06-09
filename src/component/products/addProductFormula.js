@@ -234,6 +234,7 @@ export const AddProductFormula = props => {
                                                     {...params}
                                                     label="Ingrediente"
                                                     variant="outlined"
+                                                    size="small"
                                                     helperText={error ? (<label className="text-font-base text-danger">
                                                         {error.message}
                                                     </label>) : null}
@@ -261,6 +262,7 @@ export const AddProductFormula = props => {
                                                 variant="outlined"
                                                 value={value}
                                                 type="number"
+                                                size="small"
                                                 onChange={onChange}
                                                 error={!!error}
                                                 helperText={error ? (<label className="text-font-base text-danger">
@@ -282,6 +284,7 @@ export const AddProductFormula = props => {
                                                 select
                                                 variant="outlined"
                                                 value={value}
+                                                size="small"
                                                 onChange={onChange}
                                                 // onChange={(_, data) => onChange(data)}
                                                 label="Unidad"
@@ -304,11 +307,11 @@ export const AddProductFormula = props => {
                                 />
                             </div>
                             <div className="col-sm-5 px-1">
-                                <div className="row mx-0 my-1">
-                                    <Button variant="outlined" color="primary" className="mt-2 mx-1 py-3 px-1" disabled={!isDirty} type="submit">
+                                <div className="row mx-0 my-2">
+                                    <Button variant="outlined" color="primary" size="small" className="mx-1 btn-saveIngredient" disabled={!isDirty} type="submit">
                                         <i className="fas fa-check"></i>
                                     </Button>
-                                    <Button variant="outlined" color="secondary" className="mt-2 mx-1 py-3 px-1" onClick={() => handleCancel()}>
+                                    <Button variant="outlined" color="secondary" size="small" className="mx-1 btn-saveIngredient" onClick={() => handleCancel()}>
                                         <i className="fas fa-times"></i>
                                     </Button>
                                 </div>

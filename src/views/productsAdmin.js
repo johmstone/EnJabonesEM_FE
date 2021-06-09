@@ -84,6 +84,10 @@ export const ProductsAdmin = () => {
 
     }
 
+    const handleCallback = (childData) => {
+        setSearchInput(childData);
+    }
+
     const columnsAdmin = [
         { title: 'Nombre', dataIndex: 'Name', key: 'Name', fixed: 'left'},        
         {
@@ -182,10 +186,9 @@ export const ProductsAdmin = () => {
                         <input type="text" className="form-control" placeholder="Palabra clave..." aria-label="Palabra clave..." aria-describedby="SearchInput-label"
                             value={SearchInput} onChange={handleChange} autoFocus />
                         <div className="input-group-append">
-                            <UpsertPrimaryProduct />
+                            <UpsertPrimaryProduct parentCallback={handleCallback}/>
                         </div>
                     </div>
-
                 </div>
                 <div className="justify-content-start my-2">
                     <p className="mx-2 mb-0">Total de Productos: {SearchResults.length}</p>

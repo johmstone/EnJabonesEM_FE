@@ -4,7 +4,7 @@ import PropType from "prop-types";
 import CurrencyFormat from 'react-currency-format';
 import { Tooltip, Table } from 'antd';
 
-import { EditProduct } from './editProduct';
+import { UpsertProduct } from './upsertProduct';
 
 export const Presentations = props => {
 
@@ -14,7 +14,7 @@ export const Presentations = props => {
     const ChangeVisibility = (item) => {
         console.log(item);
     }
-    
+
     const columnsAdmin = [
         {
             title: 'Código',
@@ -32,7 +32,7 @@ export const Presentations = props => {
             className: 'text-center',
             render: (item) => (
                 <p className="m-0">
-                    <CurrencyFormat value={item.Qty} displayType={"text"} thousandSeparator={true} decimalScale={2} suffix={" " + item.Unit[0].Symbol} />
+                    <CurrencyFormat value={item.Qty} displayType={"text"} thousandSeparator={true} decimalScale={2} suffix={" " + item.Symbol} />
                 </p>
             ),
         },
@@ -118,7 +118,7 @@ export const Presentations = props => {
             colSpan: 0,
             dataIndex: '',
             key: 'x',
-            render: (e) => (<EditProduct Product={e} />),
+            render: (e) => (<UpsertProduct Product={e} PrimaryProduct={props.PrimaryProduct} IsAddNew={false} />),
         }
     ]
 
@@ -134,15 +134,18 @@ export const Presentations = props => {
                 </p>
             </div>
             <div className="col-sm-8">
-                <h5>Presentaciones</h5>
+                <div className='row mx-0 my-2'>
+                    <h5 className="m-0">Presentaciones</h5>
+                    <UpsertProduct IsAddNew={true} PrimaryProduct={props.PrimaryProduct} />
+                </div>
                 <Table className="productTable"
-                        columns={columnsAdmin}
-                        rowKey={record => record.ProductID}                        
-                        dataSource={props.PrimaryProduct.Products.filter(src => src.ProductID > 0)}
-                        scroll={{ x: 'max-content' }}
-                        pagination={false}
+                    columns={columnsAdmin}
+                    rowKey={record => record.ProductID}
+                    dataSource={props.PrimaryProduct.Products.filter(src => src.ProductID > 0)}
+                    scroll={{ x: 'max-content' }}
+                    pagination={false}
 
-                    />                
+                />
             </div>
         </div>
     );

@@ -7,6 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import CurrencyFormat from 'react-currency-format'
 
 import IngredientServices from '../../services/ingredients';
 import ProductServices from '../../services/products';
@@ -35,13 +36,29 @@ export const UpsertProduct = props => {
 
     const { isDirty, errors } = useFormState({ control });
 
-    const handleCancel = () => {
+    const handleCancel = (event) => {
         setIsModalVisible(false);
         reset();
+        event.preventDefault();
+    }
+
+    const handleChange = event => {
+        document.getElementById(event.target.id).focus()
     }
 
     const onSubmit = data => {
-        console.log(data);
+        //console.log(data);
+        const upsertModel = {
+            PrimaryProduct: props.PrimaryProduct.PrimaryProductID,
+            ProductID: props.IsAddNew ? 0 : props.Product.ProductID,
+            Qty: parseFloat(data.Qty),
+            UnitID: parseInt(data.UnitID),
+            Price: parseFloat(data.Price),
+            IVA: parseFloat(data.IVA),
+            Discount: parseFloat(data.Discount)
+        }
+        console.log(upsertModel);
+
     }
 
     const BtnAction = () => {
@@ -69,171 +86,124 @@ export const UpsertProduct = props => {
                 <h4 className="m-0 text-font-base mb-3">
                     Producto: <span className="text-primary-color">{props.PrimaryProduct.Name}</span>
                 </h4>
+                <hr className="text-black" />
                 <article>
                     <form onSubmit={handleSubmit(onSubmit)} className="mt-0 mb-3">
-                        <div className="row row-cols-2 m-0">
-                            <div className="col">
-                                <Controller
-                                    name="Qty"
-                                    className="col"
-                                    control={control}
+                        <div className="form-row">
+                            <div className="col-md-4 mb-3">
+                                <label for="Qty" className="fa-1x text-font-base">Cantidad</label>
+                                <input id="Qty" type="number"
+                                    className={errors.Qty ? "form-control is-invalid" : "form-control"}
+                                    {...register('Qty', {
+                                        required: { value: true, message: 'Requerido' }
+                                        , min: { value: 1, message: 'Mínimo 1!' }
+                                    })}
+                                    onChange={handleChange}
+                                    tabIndex={1}
                                     defaultValue={props.IsAddNew ? '' : props.Product.Qty}
-                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                        <FormControl variant="outlined" className="w-100 my-2">
-                                            <TextField id="Qty"
-                                                label="Cantidad"
-                                                variant="outlined"
-                                                size="small"
-                                                value={value}
-                                                type="number"
-                                                onChange={onChange}
-                                                autoFocus
-                                                error={!!error}
-                                                helperText={error ? (<label className="text-font-base text-danger">
-                                                    {error.message}
-                                                </label>) : null} />
-                                        </FormControl>
-                                    )}
-                                    rules={{
-                                        required: { value: true, message: 'Requerido' },
-                                        min: { value: 1, message: "Mínimo 1" }
-                                    }}
                                 />
-
-                                {/* <FormControl variant="outlined" className="w-100 my-2">
-                                    <TextField id="Qty"
-                                        label="Precio"
-                                        variant="outlined"
-                                        size="small"
-                                        type="number"
-
-                                        {
-                                        ...register('Qty', {
-                                            required: {value: true, message: 'test'}
-                                            , min: {value: 5, message: "Mínimo 1"}
+                                {
+                                    errors.Qty ?
+                                        (<div className="invalid-feedback fa-1x">
+                                            {errors.Qty?.message}
+                                        </div>) : null
+                                }
+                            </div>
+                            <div className="col-md-4 mb-3">
+                                <label for="UnitID" className="fa-1x text-font-base">Unidad</label>
+                                <select id="UnitID"
+                                    className={errors.UnitID ? "form-control is-invalid" : "form-control"}
+                                    {...register('UnitID', {
+                                        required: { value: true, message: 'Requerido' }
+                                    })}
+                                    onChange={handleChange}
+                                    tabIndex={2}
+                                    defaultValue={props.IsAddNew ? 1 : props.Product.Qty}
+                                >
+                                    {
+                                        UnitList.map((item, i) => {
+                                            return (
+                                                <option value={item.UnitID} key={i}>{item.UnitName} ({item.Symbol})</option>
+                                            )
                                         })
-                                        }
-                                        error={!!errors.Qty}
-                                        helperText={errors.Qty ? (<label className="text-font-base text-danger">
-                                            {errors.Qty.message}
-                                        </label>) : null} />
-                                </FormControl> */}
+                                    }
+                                </select>
+                                {
+                                    errors.UnitID ?
+                                        (<div className="invalid-feedback fa-1x">
+                                            {errors.UnitID?.message}
+                                        </div>) : null
+                                }
                             </div>
-                            {/* <div className="col">
-                                <Controller
-                                    name="UnitID"
-                                    className="col"
-                                    control={control}
-                                    defaultValue={props.IsAddNew ? 1 : props.Product.UnitID}
-                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                        <FormControl variant="outlined" className="w-100 my-2">
-                                            <TextField id="UnitID"
-                                                label="Unidad"
-                                                select
-                                                variant="outlined"
-                                                size="small"
-                                                value={value}
-                                                type="number"
-                                                onChange={onChange}
-                                                error={!!error}
-                                                helperText={error ? (<label className="text-font-base text-danger">
-                                                    {error.message}
-                                                </label>) : null}>
-                                                {
-                                                    UnitList.map((item, i) => {
-                                                        return (
-                                                            <MenuItem value={item.UnitID} key={i}>{item.UnitName}</MenuItem>
-                                                        )
-                                                    })
-                                                }
-                                            </TextField>
-                                        </FormControl>
-                                    )}
-                                    rules={{ required: true }}
-                                />
-                            </div> */}
                         </div>
-                        {/* <div className='row row-cols-3 m-0'>
-                            <div className="col pr-1">
-                                <Controller
-                                    name="Price"
-                                    control={control}
-                                    defaultValue={ props.IsAddNew? '': props.Product.Price}
-                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                        <FormControl variant="outlined" className="w-100 my-2">
-                                            <TextField id="Price"
-                                                label="Precio"
-                                                variant="outlined"
-                                                size="small"
-                                                value={value}
-                                                type="number"
-                                                InputProps={{
-                                                    startAdornment: <InputAdornment position="start">₡</InputAdornment>,
-                                                  }}
-                                                onChange={onChange}
-                                                error={!!error}
-                                                helperText={error ? (<label className="text-font-base text-danger">
-                                                    {error.message}
-                                                </label>) : null} />
-                                        </FormControl>
-                                    )}
-                                    rules={{ 
-                                        required: {value: true, message: 'test'}, 
-                                        min: {value:100, message:"Debe ser al menos ₡100"}
-                                    }}
+
+                        <div className="form-row">
+                            <div className="col-md-4 mb-3">
+                                <label for="Price" className="fa-1x text-font-base">Precio (₡)</label>
+                                <input id="Price" type="number"
+                                    className={errors.Price ? "form-control is-invalid" : "form-control"}
+                                    {...register('Price', {
+                                        required: { value: true, message: 'Requerido' }
+                                        , min: { value: 100, message: 'Mínimo ₡100!' }
+                                    })}
+                                    onChange={handleChange}
+                                    tabIndex={3}
+                                    defaultValue={props.IsAddNew ? '' : props.Product.Price}
                                 />
-                                
+                                {
+                                    errors.Price ?
+                                        (<div className="invalid-feedback fa-1x">
+                                            {errors.Price?.message}
+                                        </div>) : null
+                                }
                             </div>
-                            <div className="col px-1">
-                                <Controller
-                                    name="IVA"
-                                    control={control}
-                                    defaultValue={props.IsAddNew ? '' : props.Product.IVA}
-                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                        <FormControl variant="outlined" className="w-100 my-2">
-                                            <TextField id="IVA"
-                                                label="IVA"
-                                                variant="outlined"
-                                                size="small"
-                                                value={value}
-                                                type="number"
-                                                onChange={onChange}
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                                                }} />
-                                        </FormControl>
-                                    )}
+                            <div className="col-md-4 mb-3">
+                                <label for="IVA" className="fa-1x text-font-base">IVA (%)</label>
+                                <input id="IVA" type="number"
+                                    className={errors.IVA ? "form-control is-invalid" : "form-control"}
+                                    {...register('IVA', {
+                                        required: false
+                                        , min: { value: 0, message: 'Mínimo 0%!' }
+                                        , max: { value: 20, message: 'Máximo 20%!' }
+                                    })}
+                                    onChange={handleChange}
+                                    tabIndex={4}
+                                    defaultValue={props.IsAddNew ? 0 : props.Product.IVA}
                                 />
+                                {
+                                    errors.IVA ?
+                                        (<div className="invalid-feedback fa-1x">
+                                            {errors.IVA?.message}
+                                        </div>) : null
+                                }
                             </div>
-                            <div className="col pl-1">
-                                <Controller
-                                    name="Discount"
-                                    control={control}
-                                    defaultValue={props.IsAddNew ? '' : props.Product.Discount}
-                                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                        <FormControl variant="outlined" className="w-100 my-2">
-                                            <TextField id="Discount"
-                                                label="Descuento"
-                                                variant="outlined"
-                                                size="small"
-                                                value={value}
-                                                type="number"
-                                                onChange={onChange}
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                                                }} />
-                                        </FormControl>
-                                    )}
+                            <div className="col-md-4 mb-3">
+                                <label for="Discount" className="fa-1x text-font-base">Descuento (%)</label>
+                                <input id="Discount" type="number"
+                                    className={errors.Discount ? "form-control is-invalid" : "form-control"}
+                                    {...register('Discount', {
+                                        required: false
+                                        , min: { value: 0, message: 'Mínimo 0%!' }
+                                        , max: { value: 90, message: 'Máximo 90%!' }
+                                    })}
+                                    onChange={handleChange}
+                                    tabIndex={5}
+                                    defaultValue={props.IsAddNew ? 0 : props.Product.Discount}
                                 />
+                                {
+                                    errors.Discount ?
+                                        (<div className="invalid-feedback fa-1x">
+                                            {errors.Discount?.message}
+                                        </div>) : null
+                                }
                             </div>
-                        </div> */}
+                        </div>                        
                         <div className="form-group mt-3 mb-0 mx-0 text-center">
-                            {/* <button className="btn btn-outline-primary mx-2 py-2 text-uppercase" type="submit" disabled={!isDirty}> */}
-                            {/* <button className="btn btn-outline-primary mx-2 py-2 text-uppercase" type="submit">
+                            <button className="btn btn-outline-primary mx-2 py-2 text-uppercase" type="submit" disabled={!isDirty}>
                                 Guardar
-                            </button> */}
-                            <input type='submit' />
-                            <button className="btn btn-outline-danger mx-2 py-2 text-uppercase" type="button" onClick={() => handleCancel()}>
+                            </button>
+
+                            <button className="btn btn-outline-danger mx-2 py-2 text-uppercase" type="button" onClick={handleCancel}>
                                 Cancelar
                             </button>
                         </div>

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useContext } from "react";
 import { Redirect, useLocation } from "react-router-dom";
-import { Tooltip, Table } from 'antd';
+import { Tooltip, Table, message } from 'antd';
 import { Context } from '../store/appContext';
 
 import AuthenticationService from '../services/authentication';
@@ -79,9 +79,15 @@ export const ProductsAdmin = () => {
         ProductSVC.UpsertPrimaryProduct(UpdateProduct,'Update').then(res => {
             if(res) {
                 LoadPage()
+            } else {
+                message.error({
+                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                    style: {
+                        marginTop: "30vh"
+                    }
+                });
             }
-        })
-
+        });
     }
 
     const handleCallback = (childData) => {

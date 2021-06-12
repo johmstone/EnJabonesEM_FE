@@ -1,18 +1,65 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from "react";
+import React, { useState } from "react";
 import PropType from "prop-types";
 import CurrencyFormat from 'react-currency-format';
-import { Tooltip, Table } from 'antd';
+import { Tooltip, Table, message } from 'antd';
 
 import { UpsertProduct } from './upsertProduct';
 
+import ProductServices from '../../services/products';
+
 export const Presentations = props => {
 
+    const ProductSVC = new ProductServices();
+
+    const [Products, setProducts] = useState(props.PrimaryProduct.Products.filter(src => src.ProductID > 0))
+
     const ChangeStatus = (item) => {
-        console.log(item);
+        let UpdateProduct = {...item, ActionType: 'CHGST'}
+        // //console.log(UpdateProduct);
+        ProductSVC.UpsertProduct(UpdateProduct,'Update').then(res => {
+            if(res) {
+                //actions.UploadProductList();
+                ProductSVC.PrimaryProductDetails(props.PrimaryProduct.PrimaryProductID).then(response => {
+                    setProducts(response.Products);
+                });                
+            } else {
+                message.error({
+                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                    style: {
+                        marginTop: "30vh"
+                    }
+                });
+            }
+        });
     }
+
     const ChangeVisibility = (item) => {
-        console.log(item);
+        let UpdateProduct = {...item, ActionType: 'CHGVS'}
+        // //console.log(UpdateProduct);
+        ProductSVC.UpsertProduct(UpdateProduct,'Update').then(res => {
+            if(res) {
+                //actions.UploadProductList();
+                ProductSVC.PrimaryProductDetails(props.PrimaryProduct.PrimaryProductID).then(response => {
+                    setProducts(response.Products);
+                });                
+            } else {
+                message.error({
+                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                    style: {
+                        marginTop: "30vh"
+                    }
+                });
+            }
+        });
+    }
+
+    const handleCallback = (childData) => {
+        if(childData) {
+            ProductSVC.PrimaryProductDetails(props.PrimaryProduct.PrimaryProductID).then(response => {
+                setProducts(response.Products);
+            }); 
+        }
     }
 
     const columnsAdmin = [
@@ -118,7 +165,7 @@ export const Presentations = props => {
             colSpan: 0,
             dataIndex: '',
             key: 'x',
-            render: (e) => (<UpsertProduct Product={e} PrimaryProduct={props.PrimaryProduct} IsAddNew={false} />),
+            render: (e) => (<UpsertProduct Product={e} PrimaryProduct={props.PrimaryProduct} IsAddNew={false} parentCallback={handleCallback}/>),
         }
     ]
 
@@ -136,12 +183,12 @@ export const Presentations = props => {
             <div className="col-sm-8">
                 <div className='row mx-0 my-2'>
                     <h5 className="m-0">Presentaciones</h5>
-                    <UpsertProduct IsAddNew={true} PrimaryProduct={props.PrimaryProduct} />
+                    <UpsertProduct IsAddNew={true} PrimaryProduct={props.PrimaryProduct} parentCallback={handleCallback}/>
                 </div>
                 <Table className="productTable"
                     columns={columnsAdmin}
                     rowKey={record => record.ProductID}
-                    dataSource={props.PrimaryProduct.Products.filter(src => src.ProductID > 0)}
+                    dataSource={Products}
                     scroll={{ x: 'max-content' }}
                     pagination={false}
 

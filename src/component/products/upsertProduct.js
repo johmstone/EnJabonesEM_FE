@@ -1,13 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import PropType from "prop-types";
 import { Tooltip, Modal, Button, message } from 'antd';
-import { useForm, Controller, useFormState } from "react-hook-form";
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import CurrencyFormat from 'react-currency-format'
+import { useForm, useFormState } from "react-hook-form";
 
 import IngredientServices from '../../services/ingredients';
 import ProductServices from '../../services/products';
@@ -49,15 +44,30 @@ export const UpsertProduct = props => {
     const onSubmit = data => {
         //console.log(data);
         const upsertModel = {
-            PrimaryProduct: props.PrimaryProduct.PrimaryProductID,
+            PrimaryProductID: props.PrimaryProduct.PrimaryProductID,
             ProductID: props.IsAddNew ? 0 : props.Product.ProductID,
             Qty: parseFloat(data.Qty),
             UnitID: parseInt(data.UnitID),
             Price: parseFloat(data.Price),
             IVA: parseFloat(data.IVA),
-            Discount: parseFloat(data.Discount)
+            Discount: parseFloat(data.Discount),
+            ActionType: props.IsAddNew ? null : 'Update'
         }
-        console.log(upsertModel);
+        //console.log(upsertModel);
+        ProductSVC.UpsertProduct(upsertModel, props.IsAddNew?'AddNew':'Update').then(res => {
+            if(res){
+                props.parentCallback(res);
+                reset();
+                setIsModalVisible(false);
+            } else {
+                message.error({
+                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                    style: {
+                        marginTop: "30vh"
+                    }
+                });
+            }
+        })
 
     }
 

@@ -101,7 +101,7 @@ export const UpsertProduct = props => {
                     <form onSubmit={handleSubmit(onSubmit)} className="mt-0 mb-3">
                         <div className="form-row">
                             <div className="col-sm-4 mb-3">
-                                <label for="Qty" className="fa-1x text-font-base">Cantidad</label>
+                                <label className="fa-1x text-font-base">Cantidad</label>
                                 <input id="Qty" type="number"
                                     className={errors.Qty ? "form-control is-invalid" : "form-control"}
                                     {...register('Qty', {
@@ -120,7 +120,7 @@ export const UpsertProduct = props => {
                                 }
                             </div>
                             <div className="col-sm-4 mb-3">
-                                <label for="UnitID" className="fa-1x text-font-base">Unidad</label>
+                                <label className="fa-1x text-font-base">Unidad</label>
                                 <select id="UnitID"
                                     className={errors.UnitID ? "form-control is-invalid" : "form-control"}
                                     {...register('UnitID', {
@@ -149,7 +149,7 @@ export const UpsertProduct = props => {
 
                         <div className="form-row">
                             <div className="col-sm-4 mb-3">
-                                <label for="Price" className="fa-1x text-font-base">Precio (₡)</label>
+                                <label className="fa-1x text-font-base">Precio (₡)</label>
                                 <input id="Price" type="number"
                                     className={errors.Price ? "form-control is-invalid" : "form-control"}
                                     {...register('Price', {
@@ -168,7 +168,7 @@ export const UpsertProduct = props => {
                                 }
                             </div>
                             <div className="col-sm-4 mb-3">
-                                <label for="IVA" className="fa-1x text-font-base">IVA (%)</label>
+                                <label className="fa-1x text-font-base">IVA (%)</label>
                                 <input id="IVA" type="number"
                                     className={errors.IVA ? "form-control is-invalid" : "form-control"}
                                     {...register('IVA', {
@@ -188,7 +188,7 @@ export const UpsertProduct = props => {
                                 }
                             </div>
                             <div className="col-sm-4 mb-3">
-                                <label for="Discount" className="fa-1x text-font-base">Descuento (%)</label>
+                                <label className="fa-1x text-font-base">Descuento (%)</label>
                                 <input id="Discount" type="number"
                                     className={errors.Discount ? "form-control is-invalid" : "form-control"}
                                     {...register('Discount', {

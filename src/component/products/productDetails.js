@@ -1,18 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import PropType from "prop-types";
-import { Modal, Table, message, Card, Button } from 'antd';
+import { Modal, Card, Button } from 'antd';
 import CurrencyFormat from 'react-currency-format';
 import { useForm, Controller, useFormState } from "react-hook-form";
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 
+import { Context } from '../../store/appContext';
+
 export const ProductDetails = props => {
 
+    const { actions } = useContext(Context);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [AddIngResult, setAddIngResult] = useState();
     const [QtyValue, setQtyValue] = useState(1);
 
     useEffect(() => {
@@ -22,30 +24,21 @@ export const ProductDetails = props => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalVisible]);
 
-    const handleCallback = (childData) => {
-        setAddIngResult(childData);
-    }
-
-    const { handleSubmit, control, reset, register } = useForm({
+    const { handleSubmit, control, reset, setValue, getValues } = useForm({
         mode: 'onChange',
         criteriaMode: 'all'
     });
 
-    const { isDirty, errors } = useFormState({ control });
+    const { isDirty } = useFormState({ control });
 
-    const handleChange = event => {
-        document.getElementById(event.target.id).focus()
-    }
-
-    const handleMinusPlus = (value) => {
-        var x = document.getElementById("Qty");
-        if(parseInt(x.value) === 1 && value === -1) {
-            
+   const handleMinusPlus = (value) => {
+        var x = getValues('Qty');
+        if (x === 1 && value === -1) {
+            console.log("minimun Value")
         } else {
-            var y = parseInt(x.value) + value;
-            x.value = y;
+            var y = parseInt(x) + value;
+            setValue('Qty', y, { shouldDirty: true });
         }
-        
     }
     const handleCancel = () => {
         setQtyValue(1);
@@ -57,7 +50,20 @@ export const ProductDetails = props => {
     }
 
     const onSubmit = data => {
-        console.log(data);
+        console.log(data)
+        const NewItem = {
+            ProductID: data.ProductID,
+            Qty: parseInt(data.Qty),
+            PrimaryProductID: props.PrimaryProduct.PrimaryProductID,
+            Name: props.PrimaryProduct.Name,
+            PhotoURL: props.PrimaryProduct.PhotoURL,
+            ProductDetails: props.PrimaryProduct.Products.filter(src => src.ProductID === data.ProductID)[0]
+        };
+        // console.log(NewItem);
+        actions.AddItemShopCart(NewItem);
+        handleCancel();
+
+        
     }
 
     return (
@@ -140,14 +146,11 @@ export const ProductDetails = props => {
                                                 <i className="fas fa-minus"></i>
                                             </button>
                                         </div>
-                                        <input id='Qty' type="number" className="form-control input-NumberText"
-                                            {...register('Qty', {
-                                                required: { value: true, message: 'Requerido' }
-                                                , min: { value: 1, message: 'Mínimo 1' }
-                                            })}
-                                            onChange={handleChange}
+                                        <Controller
+                                            render={({ field }) => <input {...field} id='Qty' type="number" className="form-control input-NumberText" />}
+                                            name="Qty"
+                                            control={control}
                                             defaultValue={QtyValue}
-                                            min={0}
                                         />
                                         <div className="input-group-append">
                                             <button className="btn btn-outline-secondary" type="button" onClick={() => handleMinusPlus(+1)}>

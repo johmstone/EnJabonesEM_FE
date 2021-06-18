@@ -1,12 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect, useContext } from "react";
-import { Card } from 'antd';
-import CurrencyFormat from 'react-currency-format';
+import React, { useState, useEffect } from "react";
 
-import { Context } from '../store/appContext';
-
-import AuthenticationService from '../services/authentication';
-import WebDirectoryService from '../services/webdirectory';
 import ProductServices from "../services/products";
 
 import { Loading } from '../component/loading';
@@ -14,12 +8,8 @@ import { ProductDetails } from '../component/products/productDetails';
 
 export const Products = () => {
 
-    const AuthSVC = new AuthenticationService();
-    const WebDirectorySVC = new WebDirectoryService();
     const ProductSVC = new ProductServices();
 
-    const [isLogin] = useState(AuthSVC.isAuthenticated());
-    const { store, actions } = useContext(Context);
     const [isLoading, setLoading] = useState(false);
     const [SearchInput, setSearchInput] = useState('');
     const [ProductList, setProductList] = useState([]);
@@ -52,11 +42,6 @@ export const Products = () => {
     const handleChange = (event) => {
         setSearchInput(event.target.value);
     }
-
-    const Test = (PProduct) => {
-        console.log(PProduct);
-    }
-
     const ContentPage = () => {
         return (
             <section className="container-fluid">

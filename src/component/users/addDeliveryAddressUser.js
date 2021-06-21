@@ -88,7 +88,12 @@ export const AddDeliveryAddressUser = (props) => {
         }
         UsersSVC.UpsertDeliveryAddress(NewAddress,"AddNew").then(res => {
             if (res) {
-                window.location.reload();
+                if(props.NeedResult) {
+                    props.parentCallback(res);
+                    handleCancel();
+                } else {
+                    window.location.reload();
+                }                
             } else {
                 message.error({
                     content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -311,5 +316,7 @@ export const AddDeliveryAddressUser = (props) => {
 }
 
 AddDeliveryAddressUser.propTypes = {
-    UserID: PropType.number
+    UserID: PropType.number,
+    NeedResult: PropType.bool,
+    parentCallback: PropType.func
 };

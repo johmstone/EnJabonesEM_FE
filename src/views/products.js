@@ -64,26 +64,6 @@ export const Products = () => {
                         {
                             SearchResults.map((item, i) => {
                                 return (
-                                    // <div className="mx-2" key={i}>
-                                    //     <Card size="small"
-                                    //         hoverable
-                                    //         cover={<img alt="example" src={item.PhotoURL} onClick={() => Test(item)} />}
-                                    //         actions={[
-                                    //             <i className="far fa-cart-arrow-down"></i>,
-                                    //         ]}
-                                    //         style={{ width: 300 }}>
-                                    //         <h5 className="text-font-base" onClick={() => Test(item)} >{item.Name}</h5>
-                                    //         <p className="text-font-base" onClick={() => Test(item)} >{item.Description}</p>
-                                    //         <p className="text-font-base m-0" onClick={() => Test(item)}>
-                                    //             Desde: 
-                                    //             <CurrencyFormat value={Math.min(...item.Products.map(src => src.Price))} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={0} className="mx-2"/>
-                                    //         </p>
-                                    //         <p className="text-font-base" onClick={() => Test(item)} >
-                                    //             Hasta: 
-                                    //             <CurrencyFormat value={Math.max(...item.Products.map(src => src.Price))} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={0} className="mx-2"/>
-                                    //         </p>
-                                    //     </Card>
-                                    // </div>
                                     <ProductDetails PrimaryProduct={item} key={i}/>
                                 )
                             })

@@ -50,7 +50,7 @@ export const ProductDetails = props => {
     }
 
     const onSubmit = data => {
-        console.log(data)
+        //console.log(data)
         const NewItem = {
             ProductID: data.ProductID,
             Qty: parseInt(data.Qty),
@@ -61,9 +61,7 @@ export const ProductDetails = props => {
         };
         // console.log(NewItem);
         actions.AddItemShopCart(NewItem);
-        handleCancel();
-
-        
+        handleCancel();        
     }
 
     return (

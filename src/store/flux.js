@@ -104,6 +104,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({ ShopCart: cart })
 					}					
 				}				
+			},
+			UpdateShopCart: () => {
+				let cart = JSON.parse(localStorage.getItem('ShopCart'));
+				setStore({ ShopCart: cart })
+			},
+			RemoveItemShopCart: (ProductID) => {
+				let cart = JSON.parse(localStorage.getItem('ShopCart'));
+				const NewCart = cart.filter(src => src.ProductID !== ProductID);
+				localStorage.removeItem('ShopCart');
+				localStorage.setItem('ShopCart',JSON.stringify(NewCart));
+				setStore({ ShopCart: NewCart });				
 			}
 		}
 	};

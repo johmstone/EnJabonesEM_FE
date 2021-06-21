@@ -292,6 +292,13 @@ thead[class*="ant-table-thead"] th {
 	-webkit-appearance: none;
 
 }
+.summaryCell {
+	border-bottom: none !important;
+}
+
+.conditions-txt {
+	font-size: 11px;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import PropType from "prop-types";
 import { Modal, Button, Tooltip } from 'antd';
 import Card from '@material-ui/core/Card';
@@ -51,10 +52,18 @@ export const ChangeDeliveryAddress = (props) => {
     }
 
     const HandleCallback = (ChildData) => {
-        if(ChildData) {
+        if (ChildData) {
             setLoading(true);
             LoadData();
         }
+    }
+
+    const SetLocalPickUp = () => {
+        props.parentCallback({});
+        setIsModalVisible(false);
+    }
+    const InviteUser = () => {
+
     }
 
     const ContentPage = () => {
@@ -104,22 +113,65 @@ export const ChangeDeliveryAddress = (props) => {
                                             </div>
                                         )
                                     })
-                                }                                
+                                }
                             </div>
                         </div>
-                        <div className="my-2">
-                            <AddDeliveryAddressUser UserID={UserID} NeedResult={true} parentCallback={HandleCallback}/>
+                        <div className="row m-0">
+                            <div className="my-2 mr-3">
+                                <button className="btn btn-sm btn-link mx-0 px-0 vertical-center" onClick={() => SetLocalPickUp()}>
+                                    <i className="far fa-map-marker-plus"></i> Recoger en Tienda
+                                </button>
+                            </div>
+                            <div className="my-2">
+                                <AddDeliveryAddressUser UserID={UserID} NeedResult={true} parentCallback={HandleCallback} />
+                            </div>
                         </div>
                     </>
+                )
+            } else if (isLogin && DeliveryAddresses.length === 0) {
+                return (
+                    <div className="row m-0">
+                        <div className="my-2 mr-3">
+                            <button className="btn btn-sm btn-link mx-0 px-0 vertical-center" onClick={() => SetLocalPickUp()}>
+                                <i className="far fa-map-marker-plus"></i> Recoger en Tienda
+                            </button>
+                        </div>
+                        <div className="my-2">
+                            <AddDeliveryAddressUser UserID={UserID} NeedResult={true} parentCallback={HandleCallback} />
+                        </div>
+                    </div>
                 )
             } else {
                 return (
                     <div className='Addresses'>
-                        <h5>Direcciones de Envio</h5>
-                        <div className="scrolldown-vertical">
-                            <div className="row m-0">
-                                <AddDeliveryAddressUser UserID={props.UserID} NeedResult={true} parentCallback={HandleCallback}/>
+                        <div className="row row-cols-2 m-0">
+                            <div className="col">
+                                <Card variant="outlined">
+                                    <CardContent className="text-center">
+                                        <Link to="/Login" className="text-font-base mx-auto">
+                                            <div className="my-5">
+                                                <i className="fas fa-sign-in-alt fa-2x"></i>
+                                                <br />
+                                                <span>Ingresar</span>
+                                            </div>
+                                        </Link>
+                                    </CardContent>
+                                </Card>
                             </div>
+                            <div className="col">
+                                <Card variant="outlined" className="col">
+                                    <CardContent className="text-center">
+                                        <a className="text-font-base mx-auto" onClick={() => InviteUser()}>
+                                            <div className="my-5">
+                                                <i className="far fa-user fa-2x"></i>
+                                                <br />
+                                                <span>Seguir de Invitado</span>
+                                            </div>
+                                        </a>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                            {/* <AddDeliveryAddressUser UserID={props.UserID} NeedResult={true} parentCallback={HandleCallback}/> */}
                         </div>
                     </div>
                 )

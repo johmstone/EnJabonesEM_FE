@@ -1,9 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect, useContext } from "react";
+
 import { Link } from 'react-router-dom';
 import CurrencyFormat from 'react-currency-format';
 import { Tooltip, Table, Button, Modal } from 'antd';
-
+import { DebounceInput } from 'react-debounce-input';
 import { Context } from '../store/appContext';
 
 import AuthenticationService from '../services/authentication';
@@ -15,7 +16,6 @@ export const ShopCart = () => {
 
     const AuthSVC = new AuthenticationService();
 
-    const [isLogin] = useState(AuthSVC.isAuthenticated());
     const { store, actions } = useContext(Context);
     const [TotalCart, setTotalCart] = useState(0);
     const [Delivery, setDelivery] = useState({});
@@ -24,6 +24,7 @@ export const ShopCart = () => {
 
 
     useEffect(() => {
+        setLoading(true);
         LoadPage();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -42,15 +43,24 @@ export const ShopCart = () => {
         let shopcart = JSON.parse(localStorage.getItem('ShopCart'));
         if (store.ShopCart.length === 0 && shopcart !== null) {
             actions.UpdateShopCart();
+            setLoading(false);
+        } else {
+            setLoading(false);
         }
     }
 
     const DeliveryAddress = () => {
         if (Delivery.DeliveryAddressID === undefined) {
+            setTotalDelivery(0);
             return (
-                <p className="m-0">Recogida Local</p>
+                <p className="m-0">Recoger en Tienda</p>
             )
         } else {
+            if (Delivery.GAMFlag) {
+                setTotalDelivery(3500)
+            } else {
+                setTotalDelivery(5000)
+            }
             return (
                 <>
                     <p className="font-weight-bold m-0 font-italic">{Delivery.ContactName}</p>
@@ -66,6 +76,13 @@ export const ShopCart = () => {
     const handleCallback = (childData) => {
         if (childData) {
             setDelivery(childData);
+            if (childData.DeliveryAddressID === undefined) {
+                setTotalDelivery(0);
+            } else if (childData.GAMFlag) {
+                setTotalDelivery(3500);
+            } else {
+                setTotalDelivery(5000);
+            }
         }
     }
 
@@ -80,6 +97,36 @@ export const ShopCart = () => {
             okText: 'Si',
             cancelText: 'No',
         });
+    }
+
+    const handleMinusPlus = (item, value) => {
+        let shopcart = JSON.parse(localStorage.getItem('ShopCart'));
+
+        shopcart.forEach(src => {
+            if(src.ProductID === item.ProductID) {
+                if(src.Qty > 1 && parseInt(value) === -1) {
+                    src.Qty = src.Qty + parseInt(value)
+                } else if (src.Qty >= 1 && parseInt(value) === 1) {
+                    src.Qty = src.Qty + parseInt(value)
+                }
+            }
+        });
+        localStorage.removeItem('ShopCart');
+		localStorage.setItem('ShopCart',JSON.stringify(shopcart));
+        actions.UpdateShopCart();
+    }
+
+    const SetQtyProduct = (item, value) => {
+        let shopcart = JSON.parse(localStorage.getItem('ShopCart'));
+
+        shopcart.forEach(src => {
+            if(src.ProductID === item.ProductID) {
+                src.Qty = parseInt(value);
+            }
+        });
+        localStorage.removeItem('ShopCart');
+		localStorage.setItem('ShopCart',JSON.stringify(shopcart));
+        actions.UpdateShopCart();
     }
 
     const columnsAdmin = [
@@ -120,9 +167,37 @@ export const ShopCart = () => {
         },
         {
             title: 'Cantidad',
-            dataIndex: 'Qty',
+            dataIndex: '',
             key: 'Qty',
-            className: "text-center"
+            className: "text-center",
+            render: (e) => (
+                <div className="input-group input-group-sm my-auto" style={{ width: "100px" }}>
+                    <div className="input-group-prepend">
+                        <button className="btn btn-outline-secondary" type="button" onClick={() => handleMinusPlus(e, -1)}>
+                            <i className="fas fa-minus"></i>
+                        </button>
+                    </div>
+                    {/* <input type="number" className="form-control input-NumberText"
+                        defaultValue={e.Qty}
+                        min={1}
+                        onChange={(value) => {
+                            setTimeout(SetQtyProduct(e, value),2000);
+                        }}
+                    /> */}
+                    <DebounceInput
+                        className="form-control input-NumberText"
+                        type="number"
+                        value={e.Qty}
+                        debounceTimeout={500}
+                        onChange={event => SetQtyProduct(e, event.target.value)} 
+                    />
+                    <div className="input-group-append">
+                        <button className="btn btn-outline-secondary" type="button" onClick={() => handleMinusPlus(e, +1)}>
+                            <i className="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            )
         },
         {
             title: 'Subtotal',
@@ -159,7 +234,7 @@ export const ShopCart = () => {
                             <div className="m-3">
                                 <h6 className="text-font-base text-uppercase">Total del Carrito</h6>
                                 <hr className="mt-1" />
-                                <table className="table table-hover table-borderless">
+                                <table className="table table-borderless">
                                     <tbody>
                                         <tr>
                                             <td className='px-0' colSpan={2}>SubTotal</td>

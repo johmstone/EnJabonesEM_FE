@@ -299,6 +299,13 @@ thead[class*="ant-table-thead"] th {
 .conditions-txt {
 	font-size: 11px;
 }
+
+.inviteFacturationInfo .MuiFormLabel-root, .MuiInputBase-input {
+	font-size: 0.85rem !important;
+}
+.Orderdetails .ant-card-body {
+	padding: 0 !important;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

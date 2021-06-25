@@ -79,30 +79,43 @@ export const AddDeliveryAddressUser = (props) => {
     const onSubmit = data => {
         //console.log(data)
         let CostaRicaID = Districts.filter(src => src.DistrictID === data.DistrictID)[0].CostaRicaID
+        let GAMFlag = Districts.filter(src => src.DistrictID === data.DistrictID)[0].GAMFlag
         let NewAddress = {
             UserID: props.UserID,
             ContactName: data.ContactName,
-            PhoneNumber: parseInt(data.PhoneNumber.replace(/[^A-Z0-9]+/ig,"")),
+            PhoneNumber: parseInt(data.PhoneNumber.replace(/[^A-Z0-9]+/ig, "")),
             CostaRicaID: CostaRicaID,
-            Street: data.Street
+            Street: data.Street,
+            GAMFlag: GAMFlag
         }
-        UsersSVC.UpsertDeliveryAddress(NewAddress,"AddNew").then(res => {
-            if (res) {
-                if(props.NeedResult) {
-                    props.parentCallback(res);
-                    handleCancel();
-                } else {
-                    window.location.reload();
-                }                
-            } else {
-                message.error({
-                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
-                    style: {
-                        marginTop: "30vh"
+        if (props.UserID === 0) {
+            localStorage.removeItem('DeliveryAddress');
+            let Province = Provinces.filter(src => src.ProvinceID === data.ProvinceID)[0].Province;
+            let Canton = Cantons.filter(src => src.CantonID === data.CantonID)[0].Canton;
+            let District = Districts.filter(src => src.DistrictID === data.DistrictID)[0].District;
+            let InviteAddress = {...NewAddress, DeliveryAddressID: 0, Province: Province, Canton: Canton, District: District};
+            localStorage.setItem('DeliveryAddress',JSON.stringify(InviteAddress));
+            props.parentCallback(true);
+            handleCancel();
+        } else {
+            UsersSVC.UpsertDeliveryAddress(NewAddress, "AddNew").then(res => {
+                if (res) {
+                    if (props.NeedResult) {
+                        props.parentCallback(res);
+                        handleCancel();
+                    } else {
+                        window.location.reload();
                     }
-                });
-            }
-        })
+                } else {
+                    message.error({
+                        content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                        style: {
+                            marginTop: "30vh"
+                        }
+                    });
+                }
+            });
+        }
     }
 
     const handleCancel = () => {

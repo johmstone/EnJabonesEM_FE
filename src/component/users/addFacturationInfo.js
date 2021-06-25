@@ -21,7 +21,7 @@ export const AddFacturationInfo = (props) => {
     const [Cantons, setCantons] = useState([]);
     const [Districts, setDistricts] = useState([]);
 
-    const IdentityTypes = ['Cédula de Identidad', 'Cédela de Residencia', 'Pasaporte'];
+    const IdentityTypes = ['Cédula Jurídica','Cédula de Identidad', 'Cédula de Residencia', 'Pasaporte'];
     const CostaRicaSVC = new CostaRicaServices();
     const UsersSVC = new UsersService();
 
@@ -84,15 +84,21 @@ export const AddFacturationInfo = (props) => {
             UserID: props.UserID,
             FullName: data.FullName,
             IdentityType: data.IdentityType,
-            IdentityID: data.IdentityID.replace("-",""),
+            IdentityID: data.IdentityID.replaceAll("-",""),
             PhoneNumber: parseInt(data.PhoneNumber.replace(/[^A-Z0-9]+/ig, "")),
             CostaRicaID: CostaRicaID,
             Street: data.Street
         }
         //console.log(NewFactInfo);
+        
         UsersSVC.UpsertFacturationInfo(NewFactInfo,"AddNew").then(res => {
             if (res) {
-                window.location.reload();
+                if (props.NeedResult) {
+                    props.parentCallback(res);
+                    handleCancel();
+                } else {
+                    props.parentCallback(res);
+                }
             } else {
                 message.error({
                     content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -371,5 +377,7 @@ export const AddFacturationInfo = (props) => {
 
 AddFacturationInfo.propTypes = {
     UserID: PropType.number,
-    btnLegend: PropType.string
+    btnLegend: PropType.string,
+    NeedResult: PropType.bool,
+    parentCallback: PropType.func
 };

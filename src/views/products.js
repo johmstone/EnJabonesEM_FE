@@ -35,7 +35,7 @@ export const Products = () => {
         ProductSVC.ProductList().then(res => {
             setProductList(res);
             setLoading(false);
-            console.log(res);
+            //console.log(res);
         });
     }
 

@@ -47,7 +47,6 @@ const injectContext = PassedComponent => {
 				state.actions.uploadMenu(model);
 			}
 			state.actions.UploadProductList();
-			state.actions.UpdateShopCart();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, []);
 		return (

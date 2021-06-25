@@ -9,9 +9,9 @@ import { CardActions, CardContent } from "@material-ui/core";
 import AuthenticationService from '../../services/authentication';
 import UsersService from '../../services/users';
 
-import { AddDeliveryAddressUser } from '../users/addDeliveryAddressUser';
+import { AddFacturationInfo } from '../users/addFacturationInfo';
 
-export const ChangeDeliveryAddress = (props) => {
+export const ChangeFacturationInfo = (props) => {
 
     const AuthSVC = new AuthenticationService();
     const UserSVC = new UsersService();
@@ -20,7 +20,7 @@ export const ChangeDeliveryAddress = (props) => {
     const [isLoading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [UserID, setUserID] = useState(0);
-    const [DeliveryAddresses, setDeliveryAddresses] = useState([]);
+    const [FactInfos, setFactInfos] = useState([]);
     const [InvitedUser, setInvitedUser] = useState(false);
 
 
@@ -38,13 +38,13 @@ export const ChangeDeliveryAddress = (props) => {
     const LoadData = () => {
         let User = JSON.parse(localStorage.getItem('User'));
         setUserID(User.UserID);
-        UserSVC.UsersAddress('DeliveryAddress', User.UserID).then(res => {
-            setDeliveryAddresses(res);
-        });
-        setLoading(false);
+        UserSVC.UsersAddress('FacturationInfo', User.UserID).then(res => {
+            setFactInfos(res);
+            setLoading(false);
+        });        
     }
 
-    const ChangeDeliveryAddress = () => {
+    const CHGFactInfo = () => {
         setIsModalVisible(true)
     }
 
@@ -101,28 +101,27 @@ export const ChangeDeliveryAddress = (props) => {
                                 <Card variant="outlined" className="col">
                                     <CardContent className="text-center">
                                         <div className="my-5">
-                                            <AddDeliveryAddressUser UserID={0} NeedResult={true} parentCallback={HandleCallback} />
+                                            <AddFacturationInfo UserID={0} btnLegend='Agregar Información' NeedResult={true} parentCallback={HandleCallback} />
                                         </div>
                                     </CardContent>
                                 </Card>
                             </div>
-                            {/* <AddDeliveryAddressUser UserID={props.UserID} NeedResult={true} parentCallback={HandleCallback}/> */}
                         </div>
                     </div>
                 )
-            } else if (isLogin && DeliveryAddresses.length > 0) {
+            } else if (isLogin && FactInfos.length > 0) {
                 return (
                     <>
                         <div className="scrolldown-vertical">
                             <div className="row m-0">
                                 {
-                                    DeliveryAddresses.map((item, i) => {
+                                    FactInfos.map((item, i) => {
                                         return (
                                             <div className='cardhorizontal m-2' key={i}>
                                                 <Card className="bg-light">
                                                     <CardContent className="pt-3 px-3 pb-0">
                                                         <div className="row m-0 w-100">
-                                                            <p className="font-weight-bold m-0 font-italic">{item.ContactName}</p>
+                                                            <p className="font-weight-bold m-0 font-italic">{item.FullName}</p>
                                                             <div className="float-right ml-auto mr-0 my-0">
                                                                 {
                                                                     item.PrimaryFlag ?
@@ -134,10 +133,12 @@ export const ChangeDeliveryAddress = (props) => {
                                                                 }
                                                             </div>
                                                         </div>
+                                                        <p className="m-0">{item.IdentityType}: {item.IdentityID}</p>
                                                         <p className="m-0">Teléfono: {item.PhoneNumber}</p>
                                                         <p className="m-0  withoutWhiteSpace">{item.Street}</p>
                                                         <p className="m-0">{item.Canton}, {item.District}</p>
                                                         <p className="m-0">{item.Province}, CR {item.CostaRicaID}</p>
+                                                        
                                                     </CardContent>
                                                     <CardActions className="px-3 pt-0 text-center">
                                                         <Button type="dashed" shape="round" className="mx-auto text-uppercase" onClick={() => SelectAddress(item)}>
@@ -152,27 +153,17 @@ export const ChangeDeliveryAddress = (props) => {
                             </div>
                         </div>
                         <div className="row m-0">
-                            <div className="my-2 mr-3">
-                                <button className="btn btn-sm btn-link mx-0 px-0 vertical-center" onClick={() => SetLocalPickUp()}>
-                                    <i className="far fa-map-marker-plus"></i> Recoger en Tienda
-                                </button>
-                            </div>
                             <div className="my-2">
-                                <AddDeliveryAddressUser UserID={UserID} NeedResult={true} parentCallback={HandleCallback} />
+                                <AddFacturationInfo UserID={UserID} btnLegend='Agregar Información' NeedResult={true} parentCallback={HandleCallback} />
                             </div>
                         </div>
                     </>
                 )
-            } else if (isLogin && DeliveryAddresses.length === 0) {
+            } else if (isLogin && FactInfos.length === 0) {
                 return (
                     <div className="row m-0">
-                        <div className="my-2 mr-3">
-                            <button className="btn btn-sm btn-link mx-0 px-0 vertical-center" onClick={() => SetLocalPickUp()}>
-                                <i className="far fa-map-marker-plus"></i> Recoger en Tienda
-                            </button>
-                        </div>
                         <div className="my-2">
-                            <AddDeliveryAddressUser UserID={UserID} NeedResult={true} parentCallback={HandleCallback} />
+                            <AddFacturationInfo UserID={UserID} btnLegend='Agregar Información' NeedResult={true} parentCallback={HandleCallback} />
                         </div>
                     </div>
                 )
@@ -215,16 +206,16 @@ export const ChangeDeliveryAddress = (props) => {
 
     return (
         <div>
-            <Tooltip title="Cambiar Dirección" color="blue" placement="right">
+            <Tooltip title="Cambiar Información" color="blue" placement="right">
                 <u>
-                    <a onClick={() => ChangeDeliveryAddress()} className="cursor-pointer">
+                    <a onClick={() => CHGFactInfo()} className="cursor-pointer">
                         Cambiar
                     </a>
                 </u>
             </Tooltip>
             <Modal
                 title={[
-                    <h3 key="title" className="text-center text-primary-color text-font-base m-0">Dirección de Envío
+                    <h3 key="title" className="text-center text-primary-color text-font-base m-0">Opciones de Facturación
                     </h3>
                 ]}
                 visible={isModalVisible}
@@ -238,6 +229,6 @@ export const ChangeDeliveryAddress = (props) => {
     );
 }
 
-ChangeDeliveryAddress.propTypes = {
+ChangeFacturationInfo.propTypes = {
     parentCallback: PropType.func
 };

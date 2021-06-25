@@ -68,6 +68,12 @@ export const FacturationInfoUser = (props) => {
         });
     }
 
+    const HandleCallback = (ChildData) => {
+        if(ChildData) {
+            LoadData();
+        }
+    }
+
     if (FactInfo.length > 0) {
         return (
             <div className='Addresses'>
@@ -119,7 +125,7 @@ export const FacturationInfoUser = (props) => {
                         <div className='cardhorizontal m-2 AddNewAddress'>
                             <Card className="bg-light">
                                 <CardContent className="p-3">
-                                    <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Info"/>
+                                    <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Info" NeedResult={false} parentCallback={HandleCallback}/>
                                 </CardContent>
                             </Card>
                         </div>
@@ -133,7 +139,7 @@ export const FacturationInfoUser = (props) => {
                 <h5>Direcciones de Envio</h5>
                 <div className="scrolldown-vertical">
                     <div className="row m-0">
-                        <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Información de Facturación" />                        
+                        <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Información de Facturación" NeedResult={false} parentCallback={HandleCallback}/>                        
                     </div>
                 </div>
             </div>

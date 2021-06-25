@@ -14,8 +14,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 	return {
 		store: {
-			isLoading: true
-			, isLogged: false
+			// isLoading: true
+			// , 
+			isLogged: false
 			, menu: []
 			, ShopCart: []
 			, WDList: []
@@ -70,13 +71,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			Login: () => {
 				setStore({ isLogged: true });
+				localStorage.removeItem('DeliveryAddress');
 			},
 			Logout: () => {
 				setStore({ isLogged: false });
+				localStorage.removeItem('DeliveryAddress');
 			},
-			Loading: (value) => {
-				setStore({ isLoading: value })
-			},
+			// Loading: (value) => {
+			// 	setStore({ isLoading: value })
+			// },
 			AddItemShopCart: (item) => {
 				let shopcart = localStorage.getItem('ShopCart');
 				if (shopcart === null) {
@@ -107,7 +110,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			UpdateShopCart: () => {
 				let cart = JSON.parse(localStorage.getItem('ShopCart'));
-				setStore({ ShopCart: cart })
+				if(cart === null) {
+					setStore({ ShopCart: [] })
+				} else {
+					setStore({ ShopCart: cart })
+				}
 			},
 			RemoveItemShopCart: (ProductID) => {
 				let cart = JSON.parse(localStorage.getItem('ShopCart'));

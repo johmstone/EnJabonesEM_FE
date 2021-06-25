@@ -39,7 +39,7 @@ export const Navbar = () => {
 		} else {
 			return (
 				<li className="nav-item MenuLink">
-					<Link to="Login" className="text-uppercase MenuLink text-font-base text-decoration-none">
+					<Link to="/Login" className="text-uppercase MenuLink text-font-base text-decoration-none">
 						Accesar
 					</Link>
 				</li>

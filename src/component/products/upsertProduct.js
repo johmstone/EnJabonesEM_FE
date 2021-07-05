@@ -51,7 +51,8 @@ export const UpsertProduct = props => {
             Price: parseFloat(data.Price),
             IVA: parseFloat(data.IVA),
             Discount: parseFloat(data.Discount),
-            ActionType: props.IsAddNew ? null : 'Update'
+            ActionType: props.IsAddNew ? null : 'Update',
+            visibleFlag: props.IsAddNew ? true: props.PrimaryProduct.VisibleFlag
         }
         //console.log(upsertModel);
         ProductSVC.UpsertProduct(upsertModel, props.IsAddNew?'AddNew':'Update').then(res => {
@@ -150,7 +151,7 @@ export const UpsertProduct = props => {
                         <div className="form-row">
                             <div className="col-sm-4 mb-3">
                                 <label className="fa-1x text-font-base">Precio (₡)</label>
-                                <input id="Price" type="number"
+                                <input id="Price" type="number" step="any"
                                     className={errors.Price ? "form-control is-invalid" : "form-control"}
                                     {...register('Price', {
                                         required: { value: true, message: 'Requerido' }
@@ -169,7 +170,7 @@ export const UpsertProduct = props => {
                             </div>
                             <div className="col-sm-4 mb-3">
                                 <label className="fa-1x text-font-base">IVA (%)</label>
-                                <input id="IVA" type="number"
+                                <input id="IVA" type="number" step="any"
                                     className={errors.IVA ? "form-control is-invalid" : "form-control"}
                                     {...register('IVA', {
                                         required: false
@@ -189,7 +190,7 @@ export const UpsertProduct = props => {
                             </div>
                             <div className="col-sm-4 mb-3">
                                 <label className="fa-1x text-font-base">Descuento (%)</label>
-                                <input id="Discount" type="number"
+                                <input id="Discount" type="number" step="any"
                                     className={errors.Discount ? "form-control is-invalid" : "form-control"}
                                     {...register('Discount', {
                                         required: false

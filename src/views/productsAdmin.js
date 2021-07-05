@@ -60,7 +60,6 @@ export const ProductsAdmin = () => {
             return res;
         }).then(src => {
             if (src.ReadRight) {
-                actions.Loading(true);
                 actions.UploadProductList();
                 setLoading(false);
             }

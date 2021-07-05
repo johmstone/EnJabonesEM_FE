@@ -113,7 +113,7 @@ export const Presentations = props => {
             key: 'x',
             className: 'text-center',
             render: (item) => (
-                <CurrencyFormat value={item.Price} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={0} />
+                <CurrencyFormat value={item.Price} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={2} />
             ),
         },
         {

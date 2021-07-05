@@ -11,11 +11,13 @@ import { ChangeDeliveryAddress } from '../component/shopCart/changeDeliveryAddre
 
 import AuthenticationService from '../services/authentication';
 import OrdersService from '../services/orders';
+import HelperServices from '../services/helpers';
 
 export const ShopCart = () => {
 
     const AuthSVC = new AuthenticationService();
     const OrderSVC = new OrdersService();
+    const HelperSVC = new HelperServices();
     const history = useHistory();
 
     const { store, actions } = useContext(Context);
@@ -23,6 +25,7 @@ export const ShopCart = () => {
     const [Delivery, setDelivery] = useState({});
     const [TotalDelivery, setTotalDelivery] = useState(0);
     const [isLoading, setLoading] = useState(false);
+    const [ExchangeRate, setExchangeRate] = useState();
 
     useEffect(() => {
         setLoading(true);
@@ -47,7 +50,7 @@ export const ShopCart = () => {
             setTotalDelivery(0);
         } else {
             if (Delivery.GAMFlag) {
-                setTotalDelivery(3500)
+                setTotalDelivery(3000)
             } else {
                 setTotalDelivery(5000)
             }
@@ -59,7 +62,12 @@ export const ShopCart = () => {
         let shopcart = JSON.parse(localStorage.getItem('ShopCart'));
         if (store.ShopCart.length === 0 && shopcart !== null) {
             actions.UpdateShopCart();
-            setLoading(false);
+            HelperSVC.ExchangeRate().then(res => {
+                var doc = new DOMParser().parseFromString(res.result, 'text/html')
+                var exchangerateHTML = doc.getElementsByTagName("b")[0]
+                setExchangeRate(exchangerateHTML.outerHTML);
+                setLoading(false);                
+            });
         } else {
             setLoading(false);
         }
@@ -90,7 +98,7 @@ export const ShopCart = () => {
             if (childData.DeliveryAddressID === undefined) {
                 setTotalDelivery(0);
             } else if (childData.GAMFlag) {
-                setTotalDelivery(3500);
+                setTotalDelivery(3000);
             } else {
                 setTotalDelivery(5000);
             }
@@ -203,7 +211,7 @@ export const ShopCart = () => {
             key: 'x',
             className: 'text-center',
             render: (e) => (
-                <CurrencyFormat value={e.ProductDetails.Price} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={0} />
+                <CurrencyFormat value={e.ProductDetails.Price} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={2} />
             ),
         },
         {
@@ -212,7 +220,7 @@ export const ShopCart = () => {
             key: 'Qty',
             className: "text-center",
             render: (e) => (
-                <div className="input-group input-group-sm my-auto" style={{ width: "100px" }}>
+                <div className="input-group input-group-sm m-auto" style={{ width: "100px" }}>
                     <div className="input-group-prepend">
                         <button className="btn btn-outline-secondary" type="button" onClick={() => handleMinusPlus(e, -1)}>
                             <i className="fas fa-minus"></i>
@@ -237,8 +245,9 @@ export const ShopCart = () => {
             title: 'Subtotal',
             dataIndex: '',
             key: 'x',
+            className: 'text-center',
             render: (e) => (
-                <CurrencyFormat value={e.ProductDetails.Price * e.Qty} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={0} />
+                <CurrencyFormat value={e.ProductDetails.Price * e.Qty} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={2} />
             ),
         }
     ]
@@ -277,7 +286,7 @@ export const ShopCart = () => {
                                                     displayType={"text"}
                                                     thousandSeparator={true}
                                                     prefix={"₡"}
-                                                    decimalScale={0}
+                                                    decimalScale={2}
                                                     className="text-font-base m-0 text-primary" />
                                             </td>
                                         </tr>
@@ -294,7 +303,7 @@ export const ShopCart = () => {
                                                     displayType={"text"}
                                                     thousandSeparator={true}
                                                     prefix={"₡"}
-                                                    decimalScale={0}
+                                                    decimalScale={2}
                                                     className="text-font-base m-0 text-primary" />
                                             </td>
                                         </tr>
@@ -305,8 +314,18 @@ export const ShopCart = () => {
                                                     displayType={"text"}
                                                     thousandSeparator={true}
                                                     prefix={"₡"}
-                                                    decimalScale={0}
+                                                    decimalScale={2}
                                                     className="text-font-base m-0 text-primary font-weight-bold fa-15x" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className='px-0' colSpan={2}></td>
+                                            <td className='px-0 text-right'>
+                                                <p className="float-left m-0">Tipo de Cambio</p>
+                                                <p className="text-font-base m-0 text-primary"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: ExchangeRate
+                                                    }}></p>
                                             </td>
                                         </tr>
                                     </tbody>

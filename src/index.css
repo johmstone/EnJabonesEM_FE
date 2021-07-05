@@ -306,6 +306,11 @@ thead[class*="ant-table-thead"] th {
 .Orderdetails .ant-card-body {
 	padding: 0 !important;
 }
+
+.inviteFacturationInfo .ant-card-body {
+	padding-top: 1rem !important;
+	padding-bottom: 1rem !important;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

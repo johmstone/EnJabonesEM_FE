@@ -26,7 +26,7 @@ export const CheckOutOrderDetails = (props) => {
             setTotalDelivery(0);
         } else {
             if (Delivery.GAMFlag) {
-                setTotalDelivery(3500)
+                setTotalDelivery(3000)
             } else {
                 setTotalDelivery(5000)
             }
@@ -38,7 +38,7 @@ export const CheckOutOrderDetails = (props) => {
         setTotalCart(props.OrderDetails.TotalCart);
         setDelivery(props.OrderDetails.DeliveryAddress);
         setTotalDelivery(props.OrderDetails.TotalDelivery);
-        setLoading(false);
+        setLoading(false);               
     }
     const columnsAdmin = [
         {
@@ -72,7 +72,7 @@ export const CheckOutOrderDetails = (props) => {
             key: 'x',
             className: "text-center",
             render: (e) => (
-                <CurrencyFormat value={e.ProductDetails.Price * e.Qty} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={0} />
+                <CurrencyFormat value={e.ProductDetails.Price * e.Qty} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={2} />
             ),
         }
     ]
@@ -119,7 +119,7 @@ export const CheckOutOrderDetails = (props) => {
                                             displayType={"text"}
                                             thousandSeparator={true}
                                             prefix={"₡"}
-                                            decimalScale={0}
+                                            decimalScale={2}
                                             className="text-font-base m-0 text-primary" />
                                     </td>
                                 </tr>
@@ -130,7 +130,7 @@ export const CheckOutOrderDetails = (props) => {
                                             displayType={"text"}
                                             thousandSeparator={true}
                                             prefix={"₡"}
-                                            decimalScale={0}
+                                            decimalScale={2}
                                             className="text-font-base m-0 text-primary" />
                                     </td>
                                 </tr>
@@ -141,8 +141,27 @@ export const CheckOutOrderDetails = (props) => {
                                             displayType={"text"}
                                             thousandSeparator={true}
                                             prefix={"₡"}
-                                            decimalScale={0}
+                                            decimalScale={2}
                                             className="text-font-base m-0 text-primary font-weight-bold fa-15x" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className='p-0'>Tipo de Cambio</td>
+                                    <td className='p-0 text-right'>
+                                         <p className="text-font-base m-0 text-primary">
+                                             <b>1.00 USD = {props.ExchangeRate} CRC</b>
+                                         </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className='p-0'>Total Aprox. $</td>
+                                    <td className='p-0 text-right'>
+                                        <CurrencyFormat value={(TotalCart + TotalDelivery)/props.ExchangeRate}
+                                            displayType={"text"}
+                                            thousandSeparator={true}
+                                            prefix={"$"}
+                                            decimalScale={2}
+                                            className="text-font-base m-0 text-primary" />
                                     </td>
                                 </tr>
                             </tbody>
@@ -177,5 +196,6 @@ export const CheckOutOrderDetails = (props) => {
 
 }
 CheckOutOrderDetails.propTypes = {
-    OrderDetails: PropType.object
+    OrderDetails: PropType.object,
+    ExchangeRate: PropType.number
 };

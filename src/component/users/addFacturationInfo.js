@@ -21,7 +21,7 @@ export const AddFacturationInfo = (props) => {
     const [Cantons, setCantons] = useState([]);
     const [Districts, setDistricts] = useState([]);
 
-    const IdentityTypes = ['Cédula Jurídica','Cédula de Identidad', 'Cédula de Residencia', 'Pasaporte'];
+    const IdentityTypes = ['Cédula Jurídica', 'Cédula de Identidad', 'Cédula de Residencia', 'Pasaporte'];
     const CostaRicaSVC = new CostaRicaServices();
     const UsersSVC = new UsersService();
 
@@ -84,14 +84,15 @@ export const AddFacturationInfo = (props) => {
             UserID: props.UserID,
             FullName: data.FullName,
             IdentityType: data.IdentityType,
-            IdentityID: data.IdentityID.replaceAll("-",""),
+            IdentityID: data.IdentityID.replaceAll("-", ""),
             PhoneNumber: parseInt(data.PhoneNumber.replace(/[^A-Z0-9]+/ig, "")),
+            Email: data.Email,
             CostaRicaID: CostaRicaID,
             Street: data.Street
         }
         //console.log(NewFactInfo);
-        
-        UsersSVC.UpsertFacturationInfo(NewFactInfo,"AddNew").then(res => {
+
+        UsersSVC.UpsertFacturationInfo(NewFactInfo, "AddNew").then(res => {
             if (res) {
                 if (props.NeedResult) {
                     props.parentCallback(res);
@@ -117,6 +118,7 @@ export const AddFacturationInfo = (props) => {
             IdentityType: "",
             IdentityID: "",
             PhoneNumber: "",
+            Email: "",
             ProvinceID: "",
             CantonID: "",
             DistrictID: "",
@@ -236,6 +238,29 @@ export const AddFacturationInfo = (props) => {
                             rules={{
                                 required: "Por favor ingrese su número de teléfono",
                                 pattern: { value: /^[5-9]\d{3}-?\d{4}$/, message: "Por favor ingrese un número de teléfono válido" }
+                            }}
+                        />
+                        <Controller
+                            name="Email"
+                            control={control}
+                            defaultValue=""
+                            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                <FormControl variant="outlined" className="w-100 my-2">
+                                    <TextField id="Email"
+                                        label="Correo Electrónico*"
+                                        variant="outlined"
+                                        value={value}
+                                        onChange={onChange}
+                                        //disabled={isLogin}
+                                        error={!!error}
+                                        helperText={error ? (<label className="text-font-base text-danger">
+                                            <i className="fa fa-times-circle"></i> {error.message}
+                                        </label>) : null} />
+                                </FormControl>
+                            )}
+                            rules={{
+                                required: { value: true, message: "Por favor ingrese un email." },
+                                pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Cuenta de correo Invalida!' }
                             }}
                         />
                         <Controller

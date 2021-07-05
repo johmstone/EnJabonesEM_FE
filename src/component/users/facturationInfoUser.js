@@ -92,6 +92,7 @@ export const FacturationInfoUser = (props) => {
                                                 </div>
                                                 <p className="m-0">{item.IdentityType}: {item.IdentityID}</p>
                                                 <p className="m-0">Teléfono: {item.PhoneNumber}</p>
+                                                <p className="m-0">Email: {item.Email}</p>
                                                 <p className="m-0 withoutWhiteSpace">Dirección: {item.Street}, {item.District}, {item.Canton}, {item.Province}, CR {item.CostaRicaID}</p>
                                             </CardContent>
                                             <CardActions className="px-3 pt-0">

@@ -9,10 +9,6 @@ export const PayPalButtons = (props) => {
     const sleep = (ms) => {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
-    // useEffect(() => {
-    //     console.log(props.OrderDetails);
-    // }, [])
-
     // To show PayPal buttons once the component loads
     useEffect(() => {
         (async () => {
@@ -21,6 +17,7 @@ export const PayPalButtons = (props) => {
                 window.paypal
                     .Buttons({
                         createOrder: (data, actions) => {
+
                             return actions.order.create({
                                 intent: "CAPTURE",
                                 purchase_units: [
@@ -35,12 +32,12 @@ export const PayPalButtons = (props) => {
                                             method: "Correos de Costa Rica",
                                             address: {
                                                 name: {
-                                                    give_name: props.OrderDetails.DeliveryAddress.ContactName
+                                                    give_name: props.ShippingAddress.ContactName
                                                 },
-                                                address_line_1: props.OrderDetails.DeliveryAddress.Street + ', ' + props.OrderDetails.DeliveryAddress.District,
-                                                admin_area_2: props.OrderDetails.DeliveryAddress.Province,
-                                                admin_area_1: props.OrderDetails.DeliveryAddress.Canton,
-                                                postal_code: props.OrderDetails.DeliveryAddress.CostaRicaID,
+                                                address_line_1: props.ShippingAddress.Street + ', ' + props.ShippingAddress.District,
+                                                admin_area_2: props.ShippingAddress.Province,
+                                                admin_area_1: props.ShippingAddress.Canton,
+                                                postal_code: props.ShippingAddress.CostaRicaID,
                                                 country_code: "CR"
                                             }
                                         },
@@ -75,6 +72,6 @@ PayPalButtons.propTypes = {
     TotalCart: PropType.number,
     StageOrderID: PropType.string,
     parentCallback: PropType.func,
-    OrderDetails: PropType.object,
+    ShippingAddress: PropType.object,
     ExchangeRate: PropType.number
 };

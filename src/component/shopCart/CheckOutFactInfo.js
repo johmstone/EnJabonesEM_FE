@@ -157,255 +157,34 @@ export const CheckOutFactInfo = (props) => {
         props.parentCallback(undefined, true);
     }
 
-    return (
+    if (DisableFields) {
+        return (
+            <div className='inviteFacturationInfo'>
+                <Card hoverable>
+                    <h6 className="text-primary">{FacturationInfo.FullName}</h6>
+                    <p className="m-0">{FacturationInfo.IdentityType}: {FacturationInfo.IdentityID}</p>
+                    <p className="m-0">Teléfono: {FacturationInfo.PhoneNumber}</p>
+                    <p className="m-0">Email: {FacturationInfo.Email}</p>
+                    <p className="m-0  withoutWhiteSpace">{FacturationInfo.Street}</p>
+                    <p className="m-0">{FacturationInfo.Canton}, {FacturationInfo.District}</p>
+                    <p className="m-0">{FacturationInfo.Province}, CR {FacturationInfo.CostaRicaID}</p>
+                </Card>
+            </div>
+        )
+    } else {
 
-        <form onSubmit={handleSubmit(onSubmit)} className="inviteFacturationInfo">
-            <Card hoverable>
-                <Controller
-                    name="FullName"
-                    control={control}
-                    defaultValue={FacturationInfo.FullName}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                        <FormControl variant="outlined" className="w-100 my-2">
-                            <TextField id="FullName"
-                                label="Nombre*"
-                                variant="outlined"
-                                size="small"
-                                value={value}
-                                onChange={onChange}
-                                disabled={DisableFields}
-                                error={!!error}
-                                helperText={error ? (<label className="text-font-base text-danger">
-                                    <i className="fa fa-times-circle"></i> {error.message}
-                                </label>) : null} />
-                        </FormControl>
-                    )}
-                    rules={{
-                        required: "Por favor ingrese un nombre",
-                        minLength: { value: 2, message: 'Debe ser de al menos 2 caractéres!' }
-                    }}
-                />
-                <div className="row row-cols-2">
-                    <div className="col">
-                        <Controller name="IdentityType"
-                            control={control}
-                            defaultValue={FacturationInfo.IdentityType}
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <FormControl variant="outlined" className="w-100 my-2">
-                                    <TextField
-                                        id="IdentityType"
-                                        select
-                                        variant="outlined"
-                                        size="small"
-                                        value={value}
-                                        onChange={onChange}
-                                        disabled={DisableFields}
-                                        label="Tipo de Identidad*"
-                                        error={!!error}
-                                        helperText={error ? (<label className="text-font-base text-danger">
-                                            <i className="fa fa-times-circle"></i> {error.message}
-                                        </label>) : null}>
-                                        {
-                                            IdentityTypes.map((item, i) => {
-                                                return (
-                                                    <MenuItem value={item} key={i}>{item}</MenuItem>
-                                                )
-                                            })
-                                        }
-                                    </TextField>
-                                </FormControl>
-                            )}
-                            //onChange={e => e}
-                            rules={{ required: "Debe seleccionar alguna opción" }}
-                        />
-                    </div>
-                    <div className="col">
-                        <Controller name="IdentityID"
-                            control={control}
-                            defaultValue={FacturationInfo.IdentityID}
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <FormControl variant="outlined" className="w-100 my-2">
-                                    <TextField id="IdentityID"
-                                        label="Número de Identidad*"
-                                        variant="outlined"
-                                        size="small"
-                                        value={value}
-                                        onChange={onChange}
-                                        disabled={DisableFields}
-                                        error={!!error}
-                                        helperText={error ? (<label className="text-font-base text-danger">
-                                            <i className="fa fa-times-circle"></i> {error.message}
-                                        </label>) : null} />
-                                </FormControl>
-                            )}
-                            rules={{ required: { value: true, message: "Por favor ingrese su identificación" } }}
-                        />
-                    </div>
-                </div>
-                <Controller
-                    name="Email"
-                    control={control}
-                    defaultValue={FacturationInfo.Email}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                        <FormControl variant="outlined" className="w-100 my-2">
-                            <TextField id="Email"
-                                label="Correo Electrónico*"
-                                variant="outlined"
-                                size="small"
-                                value={value}
-                                onChange={onChange}
-                                disabled={DisableFields}
-                                error={!!error}
-                                helperText={error ? (<label className="text-font-base text-danger">
-                                    <i className="fa fa-times-circle"></i> {error.message}
-                                </label>) : null} />
-                        </FormControl>
-                    )}
-                    rules={{
-                        required: { value: true, message: "Por favor ingrese un email." },
-                        pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Cuenta de correo Invalida!' }
-                    }}
-                />
-                <Controller
-                    name="PhoneNumber"
-                    control={control}
-                    defaultValue={FacturationInfo.PhoneNumber}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                        <FormControl variant="outlined" className="w-100 my-2">
-                            <TextField id="PhoneNumber"
-                                label="Teléfono*"
-                                variant="outlined"
-                                size="small"
-                                value={value}
-                                onChange={onChange}
-                                disabled={DisableFields}
-                                error={!!error}
-                                helperText={error ? (<label className="text-font-base text-danger">
-                                    <i className="fa fa-times-circle"></i> {error.message}
-                                </label>) : null} />
-                        </FormControl>
-                    )}
-                    rules={{
-                        required: { value: true, message: "Por favor ingrese un número de teléfono" },
-                        pattern: { value: /^[5-9]\d{3}-?\d{4}$/, message: "Por favor ingrese un número de teléfono válido" }
-                    }}
-                />
-                <Controller
-                    name="ProvinceID"
-                    control={control}
-                    defaultValue={FacturationInfo.ProvinceID}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                        <FormControl variant="outlined" className="w-100 my-2">
-                            <TextField
-                                id="ProvinceID"
-                                select
-                                variant="outlined"
-                                size="small"
-                                value={value}
-                                onChange={e => {
-                                    OnChangeProvince(e.target.value);
-                                    onChange(e);
-                                }}
-                                disabled={DisableFields}
-                                label="Provincia*"
-                                error={!!error}
-                                helperText={error ? (<label className="text-font-base text-danger">
-                                    <i className="fa fa-times-circle"></i> {error.message}
-                                </label>) : null}>
-                                {
-                                    Provinces.map((item, i) => {
-                                        return (
-                                            <MenuItem value={item.ProvinceID} key={i}>{item.Province}</MenuItem>
-                                        )
-                                    })
-                                }
-                            </TextField>
-                        </FormControl>
-                    )}
-                    //onChange={e => e}
-                    rules={{ required: "Debe seleccionar la Provincia" }}
-                />
-                <div style={{ display: EnableCanton ? 'block' : 'none' }}>
+        return (
+
+            <form onSubmit={handleSubmit(onSubmit)} className="inviteFacturationInfo">
+                <Card hoverable>
                     <Controller
-                        name="CantonID"
+                        name="FullName"
                         control={control}
-                        defaultValue={FacturationInfo.CantonID}
+                        defaultValue={FacturationInfo.FullName}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <FormControl variant="outlined" className="w-100 my-2">
-                                <TextField
-                                    id="CantonID"
-                                    select
-                                    variant="outlined"
-                                    size="small"
-                                    value={value}
-                                    onChange={e => {
-                                        OnChangeCanton(e.target.value);
-                                        onChange(e);
-                                    }}
-                                    disabled={DisableFields}
-                                    label="Canton*"
-                                    error={!!error}
-                                    helperText={error ? (<label className="text-font-base text-danger">
-                                        <i className="fa fa-times-circle"></i> {error.message}
-                                    </label>) : null}>
-                                    {
-                                        Cantons.map((item, i) => {
-                                            return (
-                                                <MenuItem value={item.CantonID} key={i}>{item.Canton}</MenuItem>
-                                            )
-                                        })
-                                    }
-                                </TextField>
-                            </FormControl>
-                        )}
-                        rules={{ required: "Debe seleccionar el Canton" }}
-                    />
-                </div>
-                <div style={{ display: EnableDistrict ? 'block' : 'none' }}>
-                    <Controller
-                        name="DistrictID"
-                        control={control}
-                        defaultValue={FacturationInfo.DistrictID}
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
-                            <FormControl variant="outlined" className="w-100 my-2">
-                                <TextField
-                                    id="DistrictID"
-                                    select
-                                    variant="outlined"
-                                    size="small"
-                                    value={value}
-                                    onChange={e => {
-                                        onChangeDistrict(e.target.value);
-                                        onChange(e)
-                                    }}
-                                    disabled={DisableFields}
-                                    label="Distrito*"
-                                    error={!!error}
-                                    helperText={error ? (<label className="text-font-base text-danger">
-                                        <i className="fa fa-times-circle"></i> {error.message}
-                                    </label>) : null}>
-                                    {
-                                        Districts.map((item, i) => {
-                                            return (
-                                                <MenuItem value={item.DistrictID} key={i}>{item.District}</MenuItem>
-                                            )
-                                        })
-                                    }
-                                </TextField>
-                            </FormControl>
-                        )}
-                        rules={{ required: "Debe seleccionar el Distrito" }}
-                    />
-                </div>
-                <div style={{ display: EnableStreet ? 'block' : 'none' }}>
-                    <Controller
-                        name="Street"
-                        control={control}
-                        defaultValue={FacturationInfo.Street}
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
-                            <FormControl variant="outlined" className="w-100 my-2">
-                                <TextField id="Street"
-                                    label="Barrio y otras señas*"
+                                <TextField id="FullName"
+                                    label="Nombre*"
                                     variant="outlined"
                                     size="small"
                                     value={value}
@@ -417,34 +196,272 @@ export const CheckOutFactInfo = (props) => {
                                     </label>) : null} />
                             </FormControl>
                         )}
-                        rules={{ required: "Por favor ingrese una ubicación más exacta" }}
+                        rules={{
+                            required: "Por favor ingrese un nombre",
+                            minLength: { value: 2, message: 'Debe ser de al menos 2 caractéres!' }
+                        }}
                     />
-                </div>
-                <div className="form-group m-0 text-center">
-                    {
-                        DisableFields ? null :
-                            (
-                                <button className="btn btn-outline-primary mx-2 py-2 text-uppercase" type="submit" disabled={!isDirty}>
-                                    {Validated ? 'Confirmar' : 'Confirmar Información'}
-                                </button>
-                            )
-                    }
-                    {
-                        Validated ?
+                    <div className="row row-cols-2">
+                        <div className="col">
+                            <Controller name="IdentityType"
+                                control={control}
+                                defaultValue={FacturationInfo.IdentityType}
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <FormControl variant="outlined" className="w-100 my-2">
+                                        <TextField
+                                            id="IdentityType"
+                                            select
+                                            variant="outlined"
+                                            size="small"
+                                            value={value}
+                                            onChange={onChange}
+                                            disabled={DisableFields}
+                                            label="Tipo de Identidad*"
+                                            error={!!error}
+                                            helperText={error ? (<label className="text-font-base text-danger">
+                                                <i className="fa fa-times-circle"></i> {error.message}
+                                            </label>) : null}>
+                                            {
+                                                IdentityTypes.map((item, i) => {
+                                                    return (
+                                                        <MenuItem value={item} key={i}>{item}</MenuItem>
+                                                    )
+                                                })
+                                            }
+                                        </TextField>
+                                    </FormControl>
+                                )}
+                                //onChange={e => e}
+                                rules={{ required: "Debe seleccionar alguna opción" }}
+                            />
+                        </div>
+                        <div className="col">
+                            <Controller name="IdentityID"
+                                control={control}
+                                defaultValue={FacturationInfo.IdentityID}
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <FormControl variant="outlined" className="w-100 my-2">
+                                        <TextField id="IdentityID"
+                                            label="Número de Identidad*"
+                                            variant="outlined"
+                                            size="small"
+                                            value={value}
+                                            onChange={onChange}
+                                            disabled={DisableFields}
+                                            error={!!error}
+                                            helperText={error ? (<label className="text-font-base text-danger">
+                                                <i className="fa fa-times-circle"></i> {error.message}
+                                            </label>) : null} />
+                                    </FormControl>
+                                )}
+                                rules={{ required: { value: true, message: "Por favor ingrese su identificación" } }}
+                            />
+                        </div>
+                    </div>
+                    <Controller
+                        name="Email"
+                        control={control}
+                        defaultValue={FacturationInfo.Email}
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <FormControl variant="outlined" className="w-100 my-2">
+                                <TextField id="Email"
+                                    label="Correo Electrónico*"
+                                    variant="outlined"
+                                    size="small"
+                                    value={value}
+                                    onChange={onChange}
+                                    disabled={DisableFields}
+                                    error={!!error}
+                                    helperText={error ? (<label className="text-font-base text-danger">
+                                        <i className="fa fa-times-circle"></i> {error.message}
+                                    </label>) : null} />
+                            </FormControl>
+                        )}
+                        rules={{
+                            required: { value: true, message: "Por favor ingrese un email." },
+                            pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Cuenta de correo Invalida!' }
+                        }}
+                    />
+                    <Controller
+                        name="PhoneNumber"
+                        control={control}
+                        defaultValue={FacturationInfo.PhoneNumber}
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <FormControl variant="outlined" className="w-100 my-2">
+                                <TextField id="PhoneNumber"
+                                    label="Teléfono*"
+                                    variant="outlined"
+                                    size="small"
+                                    value={value}
+                                    onChange={onChange}
+                                    disabled={DisableFields}
+                                    error={!!error}
+                                    helperText={error ? (<label className="text-font-base text-danger">
+                                        <i className="fa fa-times-circle"></i> {error.message}
+                                    </label>) : null} />
+                            </FormControl>
+                        )}
+                        rules={{
+                            required: { value: true, message: "Por favor ingrese un número de teléfono" },
+                            pattern: { value: /^[5-9]\d{3}-?\d{4}$/, message: "Por favor ingrese un número de teléfono válido" }
+                        }}
+                    />
+                    <Controller
+                        name="ProvinceID"
+                        control={control}
+                        defaultValue={FacturationInfo.ProvinceID}
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <FormControl variant="outlined" className="w-100 my-2">
+                                <TextField
+                                    id="ProvinceID"
+                                    select
+                                    variant="outlined"
+                                    size="small"
+                                    value={value}
+                                    onChange={e => {
+                                        OnChangeProvince(e.target.value);
+                                        onChange(e);
+                                    }}
+                                    disabled={DisableFields}
+                                    label="Provincia*"
+                                    error={!!error}
+                                    helperText={error ? (<label className="text-font-base text-danger">
+                                        <i className="fa fa-times-circle"></i> {error.message}
+                                    </label>) : null}>
+                                    {
+                                        Provinces.map((item, i) => {
+                                            return (
+                                                <MenuItem value={item.ProvinceID} key={i}>{item.Province}</MenuItem>
+                                            )
+                                        })
+                                    }
+                                </TextField>
+                            </FormControl>
+                        )}
+                        //onChange={e => e}
+                        rules={{ required: "Debe seleccionar la Provincia" }}
+                    />
+                    <div style={{ display: EnableCanton ? 'block' : 'none' }}>
+                        <Controller
+                            name="CantonID"
+                            control={control}
+                            defaultValue={FacturationInfo.CantonID}
+                            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                <FormControl variant="outlined" className="w-100 my-2">
+                                    <TextField
+                                        id="CantonID"
+                                        select
+                                        variant="outlined"
+                                        size="small"
+                                        value={value}
+                                        onChange={e => {
+                                            OnChangeCanton(e.target.value);
+                                            onChange(e);
+                                        }}
+                                        disabled={DisableFields}
+                                        label="Canton*"
+                                        error={!!error}
+                                        helperText={error ? (<label className="text-font-base text-danger">
+                                            <i className="fa fa-times-circle"></i> {error.message}
+                                        </label>) : null}>
+                                        {
+                                            Cantons.map((item, i) => {
+                                                return (
+                                                    <MenuItem value={item.CantonID} key={i}>{item.Canton}</MenuItem>
+                                                )
+                                            })
+                                        }
+                                    </TextField>
+                                </FormControl>
+                            )}
+                            rules={{ required: "Debe seleccionar el Canton" }}
+                        />
+                    </div>
+                    <div style={{ display: EnableDistrict ? 'block' : 'none' }}>
+                        <Controller
+                            name="DistrictID"
+                            control={control}
+                            defaultValue={FacturationInfo.DistrictID}
+                            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                <FormControl variant="outlined" className="w-100 my-2">
+                                    <TextField
+                                        id="DistrictID"
+                                        select
+                                        variant="outlined"
+                                        size="small"
+                                        value={value}
+                                        onChange={e => {
+                                            onChangeDistrict(e.target.value);
+                                            onChange(e)
+                                        }}
+                                        disabled={DisableFields}
+                                        label="Distrito*"
+                                        error={!!error}
+                                        helperText={error ? (<label className="text-font-base text-danger">
+                                            <i className="fa fa-times-circle"></i> {error.message}
+                                        </label>) : null}>
+                                        {
+                                            Districts.map((item, i) => {
+                                                return (
+                                                    <MenuItem value={item.DistrictID} key={i}>{item.District}</MenuItem>
+                                                )
+                                            })
+                                        }
+                                    </TextField>
+                                </FormControl>
+                            )}
+                            rules={{ required: "Debe seleccionar el Distrito" }}
+                        />
+                    </div>
+                    <div style={{ display: EnableStreet ? 'block' : 'none' }}>
+                        <Controller
+                            name="Street"
+                            control={control}
+                            defaultValue={FacturationInfo.Street}
+                            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                <FormControl variant="outlined" className="w-100 my-2">
+                                    <TextField id="Street"
+                                        label="Barrio y otras señas*"
+                                        variant="outlined"
+                                        size="small"
+                                        value={value}
+                                        onChange={onChange}
+                                        disabled={DisableFields}
+                                        error={!!error}
+                                        helperText={error ? (<label className="text-font-base text-danger">
+                                            <i className="fa fa-times-circle"></i> {error.message}
+                                        </label>) : null} />
+                                </FormControl>
+                            )}
+                            rules={{ required: "Por favor ingrese una ubicación más exacta" }}
+                        />
+                    </div>
+                    <div className="form-group m-0 text-center">
+                        {
                             DisableFields ? null :
                                 (
-                                    <button className="btn btn-outline-danger mx-2 py-2 text-uppercase" type="button" onClick={() => CancelTaks()}>
-                                        Cancelar
+                                    <button className="btn btn-outline-primary mx-2 py-2 text-uppercase" type="submit" disabled={!isDirty}>
+                                        {Validated ? 'Confirmar' : 'Confirmar Información'}
                                     </button>
                                 )
-                            : null
-                    }
-                </div>
+                        }
+                        {
+                            Validated ?
+                                DisableFields ? null :
+                                    (
+                                        <button className="btn btn-outline-danger mx-2 py-2 text-uppercase" type="button" onClick={() => CancelTaks()}>
+                                            Cancelar
+                                        </button>
+                                    )
+                                : null
+                        }
+                    </div>
 
 
-            </Card>
-        </form>
-    )
+                </Card>
+            </form>
+        )
+    }
 }
 
 CheckOutFactInfo.propTypes = {

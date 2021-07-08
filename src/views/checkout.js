@@ -2,12 +2,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from 'react-router-dom';
-import { Card, Tooltip } from 'antd';
+import { Card, Tooltip, message } from 'antd';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import moment from "moment";
+import { generate } from 'shortid';
 
 import AuthenticationService from '../services/authentication';
 import OrdersService from "../services/orders";
@@ -18,6 +20,7 @@ import { Context } from '../store/appContext';
 import { Loading } from "../component/loading";
 import { CheckOutOrderDetails } from "../component/shopCart/checkOutOrderDetails";
 import { ChangeFacturationInfo } from "../component/shopCart/changeFacturationInfo";
+import { ConfirmOrderDetails } from "../component/shopCart/ConfirmOrderDetails";
 
 import { PayPalButtons } from "../component/shopCart/paypalbuttons";
 import { CheckOutFactInfo } from "../component/shopCart/CheckOutFactInfo";
@@ -41,9 +44,14 @@ export const CheckOut = () => {
     const [ExchangeRate, setExchangeRate] = useState(0);
     const [PaymentOption, setPaymentOption] = useState();
     const [ProofPayment, setProofPayment] = useState('');
+    const [GeneringOrder, setGeneringOrder] = useState(false);
+    const [NewOrder, setNewOrder] = useState({});
+    const [SuccessOrder, setSuccessOrder] = useState(false);
 
     useEffect(() => {
+        setGeneringOrder(false);
         setLoading(true);
+        setSuccessOrder(false);
         const StagingOrder = localStorage.getItem('StagingOrder');
         LoadPage(StagingOrder);
     }, []);
@@ -103,22 +111,95 @@ export const CheckOut = () => {
 
     const HandleCallbackPaypal = (data) => {
         setProofPayment(data);
+        GenerateOrden(data);
     }
 
     const PaymentOptions = () => {
         if (PaymentOption === 'PayPal') {
             return (
                 <>
-                    <PayPalButtons parentCallback={HandleCallbackPaypal} TotalCart={round(((OrderDetails.TotalCart + OrderDetails.TotalDelivery) / ExchangeRate), 2)} StageOrderID={StageOrder} OrderDetails={OrderDetails} ExchangeRate={ExchangeRate} />
+                    <PayPalButtons parentCallback={HandleCallbackPaypal} TotalCart={round(((OrderDetails.TotalCart + OrderDetails.TotalDelivery) / ExchangeRate), 2)} StageOrderID={StageOrder} ShippingAddress={FacturationInfo} ExchangeRate={ExchangeRate} />
                 </>
             )
         } else if (PaymentOption === 'SINPE' || PaymentOption === 'Deposit') {
             return (
-                <TextField id="ProofPayment" label={PaymentOption === 'Deposit' ? "Número de Transacción (Depósito)" : "Número de Transacción (SINPE)"} variant="outlined" className="w-100" />
+                <div className="text-center">
+                    <TextField id="ProofPayment"
+                        label={PaymentOption === 'Deposit' ? "Número de Transacción (Depósito)" : "Número de Transacción (SINPE)"}
+                        variant="outlined"
+                        value={ProofPayment}
+                        className="w-100 mb-2"
+                        autoFocus
+                        onChange={(e) => setProofPayment(e.target.value)} />
+                    <button className="btn btn-outline-primary mx-auto py-2 text-uppercase"
+                        type="button"
+                        disabled={ProofPayment === '' ? true : false}
+                        onClick={() => GenerateOrden(ProofPayment)}>
+                        Generar Orden
+                    </button>
+                </div>
             )
         } else {
             return null;
         }
+    }
+
+    const GenerateOrden = (Proof) => {
+        setGeneringOrder(true);
+        // console.log(StageOrder);
+        //console.log(OrderDetails);        
+        // console.log(FacturationInfo);
+        // console.log(ProofPayment);
+        //console.log(moment().format());
+        const NewOrderDetails = {
+            OrderDate: moment().format("YYYY-MM-DD hh:mm:ss"),
+            StageOrder: StageOrder,
+            Products: OrderDetails.Products,
+            DeliveryAddress: OrderDetails.DeliveryAddress,
+            FacturationInfo: FacturationInfo,
+            PaymentMethod: PaymentOption,
+            ProofPayment: Proof,
+            TotalCart: OrderDetails.TotalCart,
+            TotalDelivery: OrderDetails.TotalDelivery
+        }
+
+        const NewOrder = {
+            OrderID: moment().format("YYYYMMDD") + generate(),
+            OrderDetails: JSON.stringify(NewOrderDetails)
+        }
+        console.log(NewOrder);
+        setNewOrder(NewOrder);
+
+        OrderSVC.AddNewOrder(NewOrder).then(res => {
+            console.log(res);
+            if (res) {
+                setSuccessOrder(res);
+                return res;
+                // localStorage.removeItem('ShopCart');
+                // localStorage.removeItem('StagingOrder');
+                // actions.UpdateShopCart();
+            } else {
+                message.error({
+                    content: "Ocurrio un error inesperado, intente de nuevo!!!",
+                    style: {
+                        marginTop: "30vh"
+                    }
+                });
+                return false;
+            }
+        }).then(src => {
+            console.log(src);
+            if (src) {
+                localStorage.removeItem('ShopCart');
+                localStorage.removeItem('StagingOrder');
+            }
+            return src;
+        }).then(result => {
+            console.log(result);
+            if (result) {
+                actions.UpdateShopCart();
+            }
+        });
     }
     const handleChange = (event) => {
         setPaymentOption(event.target.value);
@@ -126,74 +207,81 @@ export const CheckOut = () => {
 
     const ContentPage = () => {
         return (
-            <section className="container-lg">
-                <div className="text-center text-font-base pt-2">
-                    <h2 className="m-0">CheckOut</h2>
-                    <p className="subtitle">Confirmación de Pedido</p>
-                </div>
-                <hr />
-                <div className="row m-0">
-                    <div className="col-md-6">
-                        <CheckOutOrderDetails OrderDetails={OrderDetails} ExchangeRate={ExchangeRate} />
+            <>
+                <section className="container-lg">
+                    <div className="text-center text-font-base pt-2">
+                        <h2 className="m-0">CheckOut</h2>
+                        <p className="subtitle">Confirmación de Pedido</p>
                     </div>
-                    <div className="col-md-6">
-                        <div className="row m-0">
-                            <h6 className="text-font-base text-uppercase">Datos de Facturación</h6>
-                            {
-                                isLogin ?
-                                    (
-                                        <div className="float-right ml-auto">
-                                            <ChangeFacturationInfo parentCallback={HandleCallback} />
-                                        </div>
-                                    ) :
-                                    (
-                                        EditFactInfoFlag ? null :
-                                            (
-                                                <div className="float-right ml-auto">
-                                                    <Tooltip title="Cambiar Información" color="blue" placement="right">
-                                                        <u>
-                                                            <a onClick={() => {
-                                                                setEditFactInfoFlag(true);
-                                                                setFacturationInfoVerified(false);
-                                                            }} className="cursor-pointer">
-                                                                Cambiar
-                                                            </a>
-                                                        </u>
-                                                    </Tooltip>
-                                                </div>
-                                            )
-                                    )
-                            }
-
+                    <hr />
+                    <div className="row m-0">
+                        <div className="col-md-6">
+                            <CheckOutOrderDetails OrderDetails={OrderDetails} ExchangeRate={ExchangeRate} />
                         </div>
-                        <CheckOutFactInfo parentCallback={HandleCallbackFactInfo} FacturationInfo={FacturationInfo} EditFlag={EditFactInfoFlag} />
-                        {
-                            FacturationInfoVerified ?
-                                (
-                                    <>
-                                        <div className="my-3">
-                                            <h6 className="text-font-base text-uppercase">Datos de Pago</h6>
-                                        </div>
-                                        <Card>
-                                            <FormControl component="fieldset">
-                                                <RadioGroup aria-label="gender" name="gender1" value={PaymentOption} onChange={handleChange}>
-                                                    <FormControlLabel value="Deposit" control={<Radio />} label="Depósito Bancario" />
-                                                    <FormControlLabel value="SINPE" control={<Radio />} label="SINPE Móvil" />
-                                                    <FormControlLabel value="PayPal" control={<Radio />} label="PayPal" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <PaymentOptions />
-                                        </Card>
-                                    </>
-                                )
-                                : null
-                        }
+                        <div className="col-md-6">
+                            <div className="row m-0">
+                                <h6 className="text-font-base text-uppercase">Datos de Facturación</h6>
+                                {
+                                    isLogin ?
+                                        (
+                                            <div className="float-right ml-auto">
+                                                <ChangeFacturationInfo parentCallback={HandleCallback} />
+                                            </div>
+                                        ) :
+                                        (
+                                            EditFactInfoFlag ? null :
+                                                (
+                                                    <div className="float-right ml-auto">
+                                                        <Tooltip title="Cambiar Información" color="blue" placement="right">
+                                                            <u>
+                                                                <a onClick={() => {
+                                                                    setEditFactInfoFlag(true);
+                                                                    setFacturationInfoVerified(false);
+                                                                }} className="cursor-pointer">
+                                                                    Cambiar
+                                                                </a>
+                                                            </u>
+                                                        </Tooltip>
+                                                    </div>
+                                                )
+                                        )
+                                }
+
+                            </div>
+                            <CheckOutFactInfo parentCallback={HandleCallbackFactInfo} FacturationInfo={FacturationInfo} EditFlag={EditFactInfoFlag} />
+                            {
+                                FacturationInfoVerified ?
+                                    (
+                                        <>
+                                            <div className="my-3">
+                                                <h6 className="text-font-base text-uppercase">Datos de Pago</h6>
+                                            </div>
+                                            <Card hoverable>
+                                                <FormControl component="fieldset">
+                                                    <RadioGroup aria-label="gender" name="gender1" value={PaymentOption} onChange={handleChange}>
+                                                        <FormControlLabel value="Deposit" control={<Radio />} label="Depósito Bancario" />
+                                                        <FormControlLabel value="SINPE" control={<Radio />} label="SINPE Móvil" />
+                                                        <FormControlLabel value="PayPal" control={<Radio />} label="PayPal" />
+                                                    </RadioGroup>
+                                                </FormControl>
+                                                <PaymentOptions />
+                                            </Card>
+                                        </>
+                                    )
+                                    : null
+                            }
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+                {
+                    GeneringOrder ? <Loading /> : null
+                }
+            </>
         )
     }
-    if (isLoading) {
+    if (SuccessOrder) {
+        return <ConfirmOrderDetails NewOrder={NewOrder} /> 
+    } else if (isLoading) {
         return <Loading />
     } else {
         return <ContentPage />

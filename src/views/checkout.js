@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 import { Card, Tooltip, message } from 'antd';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
@@ -45,7 +45,6 @@ export const CheckOut = () => {
     const [PaymentOption, setPaymentOption] = useState();
     const [ProofPayment, setProofPayment] = useState('');
     const [GeneringOrder, setGeneringOrder] = useState(false);
-    const [NewOrder, setNewOrder] = useState({});
     const [SuccessOrder, setSuccessOrder] = useState(false);
 
     useEffect(() => {
@@ -167,17 +166,14 @@ export const CheckOut = () => {
             OrderID: moment().format("YYYYMMDD") + generate(),
             OrderDetails: JSON.stringify(NewOrderDetails)
         }
-        console.log(NewOrder);
-        setNewOrder(NewOrder);
+        //console.log(NewOrder);
 
         OrderSVC.AddNewOrder(NewOrder).then(res => {
-            console.log(res);
+            //console.log(res);
             if (res) {
-                setSuccessOrder(res);
+                localStorage.removeItem('ShopCart');
+                localStorage.removeItem('StagingOrder');
                 return res;
-                // localStorage.removeItem('ShopCart');
-                // localStorage.removeItem('StagingOrder');
-                // actions.UpdateShopCart();
             } else {
                 message.error({
                     content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -190,14 +186,15 @@ export const CheckOut = () => {
         }).then(src => {
             console.log(src);
             if (src) {
-                localStorage.removeItem('ShopCart');
-                localStorage.removeItem('StagingOrder');
+                actions.UpdateShopCart();
             }
             return src;
         }).then(result => {
-            console.log(result);
-            if (result) {
-                actions.UpdateShopCart();
+            //console.log(result);
+            if (result) {   
+                localStorage.removeItem('LastOrderConfirmed');
+                localStorage.setItem('LastOrderConfirmed',NewOrder.OrderID);
+                setSuccessOrder(result);                
             }
         });
     }
@@ -280,7 +277,7 @@ export const CheckOut = () => {
         )
     }
     if (SuccessOrder) {
-        return <ConfirmOrderDetails NewOrder={NewOrder} /> 
+        return <Redirect to={{ pathname: "/CheckOut/Confirmation" }} />;
     } else if (isLoading) {
         return <Loading />
     } else {

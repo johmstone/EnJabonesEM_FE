@@ -19,6 +19,7 @@ import { ProductsAdmin } from './views/productsAdmin';
 import { Products } from './views/products';
 import { ShopCart } from './views/shopCart';
 import { CheckOut } from './views/checkout';
+import { CheckOutConfirmation } from './views/checkoutConfirmation';
 
 import injectContext from './store/appContext';
 
@@ -83,6 +84,9 @@ const Layout = () => {
 						</Route>
 						<Route exact path="/ShopCart/CheckOut">
 							<CheckOut />
+						</Route>
+						<Route exact path="/CheckOut/Confirmation">
+							<CheckOutConfirmation />
 						</Route>
 						<Route>
 							<h1>Not found!</h1>

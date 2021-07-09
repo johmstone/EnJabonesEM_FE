@@ -18,6 +18,7 @@ export const Navbar = () => {
 
 	const Logout = () => {
 		localStorage.removeItem('User');
+		localStorage.clear();
 		actions.Logout();
 		let model = {
 			AppID: 1,

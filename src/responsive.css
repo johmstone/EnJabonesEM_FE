@@ -29,7 +29,9 @@
 
 /*  Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) { 
-    
+    .col-Address-Facturation {
+        padding: 0.5rem;
+    }
  }
 
 /* Large devices (desktops, 992px and up) */

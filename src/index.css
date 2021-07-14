@@ -319,6 +319,11 @@ thead[class*="ant-table-thead"] th {
 .ModalOrderdetails {
 	width: 1000px !important;
 }
+
+.dropdown-menu {
+	right: 0 !important;
+	left: auto;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

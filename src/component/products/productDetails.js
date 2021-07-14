@@ -65,8 +65,9 @@ export const ProductDetails = props => {
     }
 
     return (
-        <div className="mx-2">
+        <div className="col m-2">
             <Card size="small"
+                className="mx-auto"
                 hoverable
                 cover={<img alt="example" src={props.PrimaryProduct.PhotoURL} onClick={() => setIsModalVisible(true)} />}
                 actions={[

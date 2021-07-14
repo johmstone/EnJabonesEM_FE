@@ -115,16 +115,7 @@ export const Presentations = props => {
             render: (item) => (
                 <CurrencyFormat value={item.Price} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={2} />
             ),
-        },
-        {
-            title: 'IVA',
-            dataIndex: '',
-            key: 'x',
-            className: 'text-center',
-            render: (item) => (
-                <CurrencyFormat value={item.IVA} displayType={"text"} thousandSeparator={true} decimalScale={2} suffix="%" />
-            ),
-        },
+        },        
         {
             title: 'Desc.',
             dataIndex: '',

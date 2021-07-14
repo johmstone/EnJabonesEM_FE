@@ -88,6 +88,9 @@ const Layout = () => {
 						<Route exact path="/CheckOut/Confirmation">
 							<CheckOutConfirmation />
 						</Route>
+						<Route exact path="/Order/:OrderID">
+							<CheckOutConfirmation />
+						</Route>
 						<Route>
 							<h1>Not found!</h1>
 						</Route>

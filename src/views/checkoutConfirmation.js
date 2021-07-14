@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from "react";
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, useParams } from 'react-router-dom';
 import { Card, Table, Modal } from 'antd';
 import CurrencyFormat from 'react-currency-format';
 
@@ -11,25 +11,38 @@ export const CheckOutConfirmation = () => {
 
     const OrderSVC = new OrdersService();
     const history = useHistory();
+    const params = useParams();
 
     const [isLoading, setLoading] = useState(true);
-    const [OrderID] = useState(localStorage.getItem('LastOrderConfirmed'));
+    const [OrderID, setOrderID] = useState(localStorage.getItem('LastOrderConfirmed'));
     const [Order, setOrder] = useState({});
     const [OrderDetails, setOrderDetails] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
 
 
     useEffect(() => {
-        if (OrderID.length === 0) {
+        if (OrderID === null && params.OrderID === undefined) {
             history.push("/ShopCart");
         } else {
-            OrderSVC.OrderDetails(OrderID).then(res => {
-                console.log(res);
-                console.log(JSON.parse(res.OrderDetails));
-                setOrder(res);
-                setOrderDetails(JSON.parse(res.OrderDetails));
-                setLoading(false);
-            });
+            if (params.OrderID !== undefined) {
+                setOrderID(params.OrderID);
+                OrderSVC.OrderDetails(params.OrderID).then(res => {
+                    console.log(res);
+                    console.log(JSON.parse(res.OrderDetails));
+                    setOrder(res);
+                    setOrderDetails(JSON.parse(res.OrderDetails));
+                    setLoading(false);
+                });
+            } else {
+                //console.log(params.OrderID);
+                OrderSVC.OrderDetails(OrderID).then(res => {
+                    console.log(res);
+                    console.log(JSON.parse(res.OrderDetails));
+                    setOrder(res);
+                    setOrderDetails(JSON.parse(res.OrderDetails));
+                    setLoading(false);
+                });
+            }
         }
     }, []);
 
@@ -54,7 +67,7 @@ export const CheckOutConfirmation = () => {
         {
             title: 'Producto',
             dataIndex: '',
-            key: 'x',
+            key: 'y',
             render: (e) => (
                 <p className="m-0 p-0">
                     {e.Name} - {e.ProductDetails.Qty} {e.ProductDetails.Symbol}
@@ -70,7 +83,7 @@ export const CheckOutConfirmation = () => {
         {
             title: 'Subtotal',
             dataIndex: '',
-            key: 'x',
+            key: 'w',
             className: "text-center",
             render: (e) => (
                 <CurrencyFormat value={e.ProductDetails.Price * e.Qty} displayType={"text"} thousandSeparator={true} prefix={"₡"} decimalScale={2} />
@@ -117,11 +130,6 @@ export const CheckOutConfirmation = () => {
     const ContentPage = () => {
         return (
             <section className="container-lg">
-                {/* <div className="text-center text-font-base pt-2">
-                    <h2 className="m-0">CheckOut</h2>
-                    <p className="subtitle">Confirmación de Pedido</p>
-                </div>
-                <hr /> */}
                 <div className="container my-5 text-center">
                     <p className="fa fa-check-circle fa-5x m-3 text-success" />
                     <h2 className="text-font-base text-success">Su pedido fue procesado exitosamente!!!</h2>
@@ -173,7 +181,7 @@ export const CheckOutConfirmation = () => {
                                         <Card hoverable>
                                             <table className="table table-borderless m-0">
                                                 <tbody>
-                                                    <tr>
+                                                    <tr data-row-key="subtotal">
                                                         <td className='p-0 text-font-base'>SubTotal</td>
                                                         <td className='p-0'>
                                                             <CurrencyFormat value={OrderDetails.TotalCart}
@@ -184,7 +192,7 @@ export const CheckOutConfirmation = () => {
                                                                 className="text-font-base m-0 text-primary" />
                                                         </td>
                                                     </tr>
-                                                    <tr className="border-bottom">
+                                                    <tr data-row-key="delivery" className="border-bottom">
                                                         <td className='p-0 text-font-base'>Envío</td>
                                                         <td className='p-0'>
                                                             <CurrencyFormat value={OrderDetails.TotalDelivery}
@@ -195,7 +203,7 @@ export const CheckOutConfirmation = () => {
                                                                 className="text-font-base m-0 text-primary" />
                                                         </td>
                                                     </tr>
-                                                    <tr>
+                                                    <tr data-row-key="total">
                                                         <td className='p-0 text-font-base text-uppercase font-weight-bolder'>Total</td>
                                                         <td className='p-0'>
                                                             <CurrencyFormat value={OrderDetails.TotalCart + OrderDetails.TotalDelivery}
@@ -206,11 +214,11 @@ export const CheckOutConfirmation = () => {
                                                                 className="text-font-base m-0 text-primary font-weight-bolder" />
                                                         </td>
                                                     </tr>
-                                                    <tr>
+                                                    <tr data-row-key="empty">
                                                         <td></td>
                                                         <td></td>
                                                     </tr>
-                                                    <tr>
+                                                    <tr data-row-key="paymentmethod">
                                                         <td className='p-0 text-font-base'>Método de Pago</td>
                                                         <td className='p-0'>
                                                             <span className="text-font-base m-0 text-primary">
@@ -218,7 +226,7 @@ export const CheckOutConfirmation = () => {
                                                             </span>
                                                         </td>
                                                     </tr>
-                                                    <tr>
+                                                    <tr data-row-key="proofpayment">
                                                         <td className='p-0 text-font-base'>Comprobante</td>
                                                         <td className='p-0'>
                                                             <span className="text-font-base m-0 text-primary">
@@ -246,94 +254,7 @@ export const CheckOutConfirmation = () => {
                             </div>
                         </div>
                     </Modal>
-                </div>
-                {/* <div className="row mx-0 my-4">
-                    <div className="col-md-6">
-                        <div className="card-success mw-100 w-100 mt-0">
-                            <div className="upper-side bg-primary">
-                                <i className="fa fa-check fa-2x" />
-                                <h4 className="m-0 text-white"> Pedido Exitoso </h4>
-                            </div>
-                            <Card hoverable>
-                                <h2 className="card-message text-font-base">Su pedido fue procesado exitosamente</h2>
-                                <div className="my-4">
-                                    <Card hoverable>
-                                        <h6 className="text-font-base text-uppercase">Orden</h6>
-                                        <h5 className="text-primary text-font-base">{Order.OrderID}</h5>
-                                    </Card>
-                                </div>
-                                <div className="my-4">
-                                    <h6 className="text-font-base text-uppercase">Detalle del Pedido</h6>
-                                    <Card hoverable className='Orderdetails'>
-                                        <Table
-                                            columns={columnsAdmin}
-                                            rowKey={record => record.ProductID}
-                                            dataSource={OrderDetails.Products}
-                                            pagination={false}
-                                        />
-                                    </Card>
-                                </div>
-                                <div className="my-4">
-                                    <h6 className="text-font-base text-uppercase">Total del Carrito</h6>
-                                    <Card hoverable>
-                                        <table className="table table-borderless m-0">
-                                            <tbody>
-                                                <tr>
-                                                    <td className='p-0 text-font-base'>SubTotal</td>
-                                                    <td className='p-0'>
-                                                        <CurrencyFormat value={OrderDetails.TotalCart}
-                                                            displayType={"text"}
-                                                            thousandSeparator={true}
-                                                            prefix={"₡"}
-                                                            decimalScale={2}
-                                                            className="text-font-base m-0 text-primary" />
-                                                    </td>
-                                                </tr>
-                                                <tr className="border-bottom">
-                                                    <td className='p-0 text-font-base'>Envío</td>
-                                                    <td className='p-0'>
-                                                        <CurrencyFormat value={OrderDetails.TotalDelivery}
-                                                            displayType={"text"}
-                                                            thousandSeparator={true}
-                                                            prefix={"₡"}
-                                                            decimalScale={2}
-                                                            className="text-font-base m-0 text-primary" />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td className='p-0 text-font-base text-uppercase font-weight-bolder'>Total</td>
-                                                    <td className='p-0'>
-                                                        <CurrencyFormat value={OrderDetails.TotalCart + OrderDetails.TotalDelivery}
-                                                            displayType={"text"}
-                                                            thousandSeparator={true}
-                                                            prefix={"₡"}
-                                                            decimalScale={2}
-                                                            className="text-font-base m-0 text-primary font-weight-bolder" />
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </Card>
-                                </div>
-                                <div className="justify-content-start my-4">
-                                    <h6 className="text-font-base text-uppercase">Dirección de Envío</h6>
-                                    <Card hoverable>
-                                        <DeliveryAddressComponent />
-                                    </Card>
-                                </div>
-                                <div className="justify-content-start my-4">
-                                    <h6 className="text-font-base text-uppercase">Detalle Facturación y Pago</h6>
-                                    <Card hoverable>
-                                        <FacturationInfo />
-                                    </Card>
-                                </div>
-                            </Card>
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        yrd
-                    </div>
-                </div> */}
+                </div>                
             </section>
         )
     }

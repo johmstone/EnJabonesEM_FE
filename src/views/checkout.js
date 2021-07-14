@@ -20,7 +20,6 @@ import { Context } from '../store/appContext';
 import { Loading } from "../component/loading";
 import { CheckOutOrderDetails } from "../component/shopCart/checkOutOrderDetails";
 import { ChangeFacturationInfo } from "../component/shopCart/changeFacturationInfo";
-import { ConfirmOrderDetails } from "../component/shopCart/ConfirmOrderDetails";
 
 import { PayPalButtons } from "../component/shopCart/paypalbuttons";
 import { CheckOutFactInfo } from "../component/shopCart/CheckOutFactInfo";
@@ -211,7 +210,7 @@ export const CheckOut = () => {
                         <p className="subtitle">Confirmación de Pedido</p>
                     </div>
                     <hr />
-                    <div className="row m-0">
+                    <div className="row mx-0 mb-4">
                         <div className="col-md-6">
                             <CheckOutOrderDetails OrderDetails={OrderDetails} ExchangeRate={ExchangeRate} />
                         </div>

@@ -49,10 +49,10 @@ export const UpsertProduct = props => {
             Qty: parseFloat(data.Qty),
             UnitID: parseInt(data.UnitID),
             Price: parseFloat(data.Price),
-            IVA: parseFloat(data.IVA),
+            IVA: 0,
             Discount: parseFloat(data.Discount),
             ActionType: props.IsAddNew ? null : 'Update',
-            visibleFlag: props.IsAddNew ? true: props.PrimaryProduct.VisibleFlag
+            visibleFlag: true
         }
         //console.log(upsertModel);
         ProductSVC.UpsertProduct(upsertModel, props.IsAddNew?'AddNew':'Update').then(res => {
@@ -101,7 +101,7 @@ export const UpsertProduct = props => {
                 <article>
                     <form onSubmit={handleSubmit(onSubmit)} className="mt-0 mb-3">
                         <div className="form-row">
-                            <div className="col-sm-4 mb-3">
+                            <div className="col-sm-6 mb-3">
                                 <label className="fa-1x text-font-base">Cantidad</label>
                                 <input id="Qty" type="number"
                                     className={errors.Qty ? "form-control is-invalid" : "form-control"}
@@ -120,7 +120,7 @@ export const UpsertProduct = props => {
                                         </div>) : null
                                 }
                             </div>
-                            <div className="col-sm-4 mb-3">
+                            <div className="col-sm-6 mb-3">
                                 <label className="fa-1x text-font-base">Unidad</label>
                                 <select id="UnitID"
                                     className={errors.UnitID ? "form-control is-invalid" : "form-control"}
@@ -149,7 +149,7 @@ export const UpsertProduct = props => {
                         </div>
 
                         <div className="form-row">
-                            <div className="col-sm-4 mb-3">
+                            <div className="col-sm-6 mb-3">
                                 <label className="fa-1x text-font-base">Precio (₡)</label>
                                 <input id="Price" type="number" step="any"
                                     className={errors.Price ? "form-control is-invalid" : "form-control"}
@@ -167,28 +167,8 @@ export const UpsertProduct = props => {
                                             {errors.Price?.message}
                                         </div>) : null
                                 }
-                            </div>
-                            <div className="col-sm-4 mb-3">
-                                <label className="fa-1x text-font-base">IVA (%)</label>
-                                <input id="IVA" type="number" step="any"
-                                    className={errors.IVA ? "form-control is-invalid" : "form-control"}
-                                    {...register('IVA', {
-                                        required: false
-                                        , min: { value: 0, message: 'Mínimo 0%!' }
-                                        , max: { value: 20, message: 'Máximo 20%!' }
-                                    })}
-                                    onChange={handleChange}
-                                    tabIndex={4}
-                                    defaultValue={props.IsAddNew ? 0 : props.Product.IVA}
-                                />
-                                {
-                                    errors.IVA ?
-                                        (<div className="invalid-feedback fa-1x">
-                                            {errors.IVA?.message}
-                                        </div>) : null
-                                }
-                            </div>
-                            <div className="col-sm-4 mb-3">
+                            </div>                            
+                            <div className="col-sm-6 mb-3">
                                 <label className="fa-1x text-font-base">Descuento (%)</label>
                                 <input id="Discount" type="number" step="any"
                                     className={errors.Discount ? "form-control is-invalid" : "form-control"}

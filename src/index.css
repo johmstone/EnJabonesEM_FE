@@ -30,6 +30,10 @@ audio {
 	font-size: 1.5em;
 }
 
+.fa-125x {
+	font-size: 1.25em;
+}
+
 #NavMenu {
 	flex-direction: row-reverse;
 	position: absolute;
@@ -159,9 +163,12 @@ audio {
 .btn-cart {
 	padding: .25rem .75rem;
 	background-color: transparent;
-	border: 1px solid transparent;
-	border-radius: .25rem;
-	border-color: rgba(255, 255, 255, .1);
+	border: none !important;	
+	display: none;
+}
+
+.btn-login {
+	display: none;
 }
 
 .custom-form .ant-modal-body {
@@ -191,6 +198,13 @@ audio {
 	background-color: black !important;
 }
 
+.btn-toggler {
+    color: rgba(255,255,255,.5);
+    border: none;
+}
+.btn-toggler:hover {
+    color: white;    
+}
 .menuLink-cart {
 	display: none;
 }

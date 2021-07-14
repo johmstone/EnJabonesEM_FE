@@ -71,12 +71,12 @@ export const ProductsAdmin = () => {
         setSearchInput(event.target.value);
     }
 
-    const Change = (Product,Type) => {
+    const Change = (Product, Type) => {
         setLoading(true);
-        let UpdateProduct = {...Product, ActionType: Type}
+        let UpdateProduct = { ...Product, ActionType: Type }
         //console.log(UpdateProduct);
-        ProductSVC.UpsertPrimaryProduct(UpdateProduct,'Update').then(res => {
-            if(res) {
+        ProductSVC.UpsertPrimaryProduct(UpdateProduct, 'Update').then(res => {
+            if (res) {
                 LoadPage()
             } else {
                 message.error({
@@ -94,17 +94,17 @@ export const ProductsAdmin = () => {
     }
 
     const columnsAdmin = [
-        { title: 'Nombre', dataIndex: 'Name', key: 'Name', fixed: 'left'},        
+        { title: 'Nombre', dataIndex: 'Name', key: 'Name', fixed: 'left' },
         {
             title: '',
             className: 'fomulacolum',
             dataIndex: '',
             key: 'x',
             render: (e) => (
-                <ProductFormula PrimaryProduct={e}/>
+                <ProductFormula PrimaryProduct={e} />
             ),
         },
-        { title: 'Técnica', dataIndex: 'Technique', key: 'Technique'},
+        { title: 'Técnica', dataIndex: 'Technique', key: 'Technique' },
         {
             title: 'Productos',
             dataIndex: '',
@@ -112,7 +112,7 @@ export const ProductsAdmin = () => {
             className: 'text-center',
             render: (e) => (
                 <p className="m-0">
-                    {e.Products.filter(src => src.ProductID >0 && src.ActiveFlag).length}
+                    {e.Products.filter(src => src.ProductID > 0 && src.ActiveFlag).length}
                 </p>
             ),
         },
@@ -147,7 +147,7 @@ export const ProductsAdmin = () => {
             key: 'x',
             render: (e) => (
                 <Tooltip title={e.ActiveFlag ? "Desactivar" : "Activar"} color={e.ActiveFlag ? "red" : "green"} >
-                    <a onClick={() => Change(e,'CHGST')}>
+                    <a onClick={() => Change(e, 'CHGST')}>
                         <i className="fas fa-repeat-alt align-middle"></i>
                     </a>
                 </Tooltip>
@@ -160,7 +160,7 @@ export const ProductsAdmin = () => {
             key: 'x',
             render: (e) => (
                 <Tooltip title={e.ActiveFlag ? "Ocultar" : "Mostrar"} color={e.ActiveFlag ? "green" : "red"} >
-                    <a onClick={() => Change(e,'CHGVS')}>
+                    <a onClick={() => Change(e, 'CHGVS')}>
                         <i className="fas fa-low-vision align-middle"></i>
                     </a>
                 </Tooltip>
@@ -183,17 +183,17 @@ export const ProductsAdmin = () => {
                     <p className="subtitle">Módulo de Gestión de Productos</p>
                 </div>
                 <hr />
-                <div className="mx-2">
-                    <div className="input-group mb-3 mw-100" style={{ width: "400px" }}>
-                        <div className="input-group-prepend">
-                            <span className="input-group-text" id="SearchInput-label"><i className="fas fa-search"></i></span>
-                        </div>
-                        <input type="text" className="form-control" placeholder="Palabra clave..." aria-label="Palabra clave..." aria-describedby="SearchInput-label"
-                            value={SearchInput} onChange={handleChange} autoFocus />
-                        <div className="input-group-append">
-                            <UpsertPrimaryProduct parentCallback={handleCallback}/>
+                <div className="row m-0">
+                    <div className="mx-2">
+                        <div className="input-group mb-3 mw-100" style={{ width: "250px" }}>
+                            <div className="input-group-prepend">
+                                <span className="input-group-text" id="SearchInput-label"><i className="fas fa-search"></i></span>
+                            </div>
+                            <input type="text" className="form-control" placeholder="Palabra clave..." aria-label="Palabra clave..." aria-describedby="SearchInput-label"
+                                value={SearchInput} onChange={handleChange} autoFocus />                            
                         </div>
                     </div>
+                    <UpsertPrimaryProduct parentCallback={handleCallback}/>
                 </div>
                 <div className="justify-content-start my-2">
                     <p className="mx-2 mb-0">Total de Productos: {SearchResults.length}</p>

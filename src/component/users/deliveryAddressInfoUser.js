@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropType from "prop-types";
 import Card from '@material-ui/core/Card';
 import { CardActions, CardContent } from "@material-ui/core";
@@ -12,12 +12,27 @@ import { AddDeliveryAddressUser } from './addDeliveryAddressUser';
 export const DeliveryAddressInfoUser = (props) => {
 
     const UsersSVC = new UsersService();
+    
+    const [Addresses, setAddresses] = useState([]);
+    const [ChangeState, setChangeState] = useState(0);
+
+    useEffect(() => {
+        LoadData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ChangeState]);
+
+    const LoadData = () => {
+        UsersSVC.UsersAddress('DeliveryAddress', props.UserID).then(res => {
+             //console.log(res)
+             setAddresses(res)
+        });
+    }
 
     const MakePrincipal = (Address) => {
         let UpdateAddress = { ...Address, ActionType: 'SETPRIMARY' }
         UsersSVC.UpsertDeliveryAddress(UpdateAddress, "Update").then(res => {
             if (res) {
-                window.location.reload();
+                setChangeState(2);
             } else {
                 message.error({
                     content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -37,7 +52,7 @@ export const DeliveryAddressInfoUser = (props) => {
                 let UpdateAddress = { ...Addrees, ActionType: 'DISABLE' }
                 UsersSVC.UpsertDeliveryAddress(UpdateAddress, "Update").then(res => {
                     if (res) {
-                        window.location.reload();
+                        setChangeState(1);
                     } else {
                         message.error({
                             content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -53,14 +68,14 @@ export const DeliveryAddressInfoUser = (props) => {
         });
     }
 
-    if (props.Addresses.length > 0) {
+    if (Addresses.length > 0) {
         return (
             <div className='Addresses'>
                 <h5>Direcciones de Envio</h5>
                 <div className="scrolldown-vertical">
                     <div className="row m-0">
                         {
-                            props.Addresses.map((item, i) => {
+                            Addresses.map((item, i) => {
                                 return (
                                     <div className='cardhorizontal m-2' key={i}>
                                         <Card className="bg-light">
@@ -129,6 +144,5 @@ export const DeliveryAddressInfoUser = (props) => {
 
 DeliveryAddressInfoUser.propTypes = {
     UserID: PropType.number,
-    Addresses: PropType.array,
     WriteRight: PropType.bool
 };

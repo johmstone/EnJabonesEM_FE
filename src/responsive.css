@@ -25,6 +25,12 @@
     .cardhorizontal {
         width: 300px;
     }
+    .btn-cart {
+        display: block;
+    }
+    .btn-login {
+        display: block;
+    }
  }
 
 /*  Medium devices (tablets, 768px and up) */
@@ -39,12 +45,12 @@
     #NavMenu {
         top: auto;
     }
-    .btn-cart {
+    /* .btn-cart {
         display: none;
     }
     .menuLink-cart {
         display: block;
-    }
+    } */
  }
 
 /* Extra large devices (large desktops, 1200px and up) */

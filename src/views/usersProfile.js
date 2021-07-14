@@ -39,7 +39,6 @@ export const UsersProfile = () => {
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
     const [User, setUser] = useState({});
-    const [DeliveryAddresses, setDeliveryAddress] = useState([]);
     const [SaveOptions, setSaveOptions] = useState(false);
     const [imageFile, setImageFile] = useState();
     const [srcAvatar, setsrcAvatar] = useState("");
@@ -48,20 +47,14 @@ export const UsersProfile = () => {
 
     const LoadData = (UserID) => {
         UsersSVC.Details(UserID).then(res => {
-            //console.log(res);
+            console.log(res);
             setUser(res);
-            if (res.PhotoPath === "") {
+            if (res.PhotoPath === undefined || res.PhotoPath === "") {
                 setsrcAvatar("http://ssl.gstatic.com/accounts/ui/avatar_2x.png");
             } else {
                 setsrcAvatar(res.PhotoPath);
             }
-            return UserID;
-        }).then(src => {
-            UsersSVC.UsersAddress('DeliveryAddress', src).then(res => {
-                //console.log(res)
-                setDeliveryAddress(res)
-                setLoading(false);
-            });
+            setLoading(false);
         });
     }
 
@@ -135,16 +128,16 @@ export const UsersProfile = () => {
 
                     Resizer.imageFileResizer(
                         file
-                        ,350
-                        ,newHeight
-                        ,"JPG"
-                        ,100
-                        ,0
-                        ,(uri) => {
+                        , 350
+                        , newHeight
+                        , "JPG"
+                        , 100
+                        , 0
+                        , (uri) => {
                             //console.log(uri);
                             setImageFile(uri);
                         }
-                        ,"blob");
+                        , "blob");
                 }
                 img.src = reader.result;
             }
@@ -153,17 +146,17 @@ export const UsersProfile = () => {
         reader.readAsDataURL(file);
     }
 
-    
+
     const SaveNewImage = () => {
         const fileName = "IMG_Profile_" + User.UserID + "_" + generate() + ".JPG";
         AzureSVC.UploadImages(imageFile, fileName).then(res => {
             const NewUser = {
-                ...User, 
+                ...User,
                 PhotoPath: ConfigSVC.AzureHostName + '/images/' + fileName,
                 ActionType: "Update"
             }
-            UsersSVC.Upsert(NewUser,'Update').then(res => {
-                if(res){
+            UsersSVC.Upsert(NewUser, 'Update').then(res => {
+                if (res) {
                     LoadPage();
 
                 } else {
@@ -243,19 +236,28 @@ export const UsersProfile = () => {
                                     <NavItem>
                                         <NavLink className={classnames({ active: activeTab === '2' })}
                                             onClick={() => { toggle('2'); }} >
-                                            <strong>Pedidos</strong>
+                                            <strong>Direcciones de Envío</strong>
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink className={classnames({ active: activeTab === '3' })}
+                                            onClick={() => { toggle('3'); }} >
+                                            <strong>Información de Facturación</strong>
                                         </NavLink>
                                     </NavItem>
                                 </Nav>
                                 <TabContent activeTab={activeTab}>
                                     <TabPane tabId="1">
                                         <Fade in={true}>
-                                            <MainInfoUser User={User} WriteRight={Rights.WriteRight} />
-                                            <DeliveryAddressInfoUser Addresses={DeliveryAddresses}
-                                                WriteRight={Rights.WriteRight} UserID={User.UserID} />
+                                            <MainInfoUser User={User} WriteRight={Rights.WriteRight} />                                            
                                         </Fade>
                                     </TabPane>
                                     <TabPane tabId="2">
+                                        <Fade in={true}>
+                                            <DeliveryAddressInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} />
+                                        </Fade>
+                                    </TabPane>
+                                    <TabPane tabId="3">
                                         <Fade in={true}>
                                             <FacturationInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} />
                                         </Fade>

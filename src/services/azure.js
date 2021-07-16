@@ -23,7 +23,7 @@ class AzureServices {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 201) {
                     return res;

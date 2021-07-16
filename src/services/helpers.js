@@ -15,7 +15,7 @@ class HelperService {
             redirect: 'follow'
         };
 
-        return fetch("https://www.paypal.com/smarthelp/currency-conversion?fromCountry=CR&fromPaymentCurrency=CRC&toTransCurrency=USD&tType=FX_ON_SENDER&transAmount=1", requestOptions)
+        return await fetch("https://www.paypal.com/smarthelp/currency-conversion?fromCountry=CR&fromPaymentCurrency=CRC&toTransCurrency=USD&tType=FX_ON_SENDER&transAmount=1", requestOptions)
             .then(res => res.json())
             .then(data => { return data; })
             .catch(err => console.log(err));

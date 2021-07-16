@@ -20,7 +20,7 @@ class UsersService {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 200) {
                     return res.json();
@@ -44,7 +44,7 @@ class UsersService {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 200) {
                     return res.json();
@@ -71,7 +71,7 @@ class UsersService {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 200) {
                     return res.json();
@@ -98,7 +98,7 @@ class UsersService {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 200) {
                     return res.json();
@@ -122,7 +122,7 @@ class UsersService {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 200) {
                     return res.json();
@@ -149,7 +149,7 @@ class UsersService {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 200) {
                     return res.json();
@@ -173,7 +173,7 @@ class UsersService {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 200) {
                     return res.json();
@@ -200,7 +200,7 @@ class UsersService {
             redirect: 'follow'
         };
 
-        return fetch(baseURL, requestOptions)
+        return await fetch(baseURL, requestOptions)
             .then(res => {
                 if (res.status === 200) {
                     return res.json();

@@ -27,8 +27,8 @@ export const CheckOutConfirmation = () => {
             if (params.OrderID !== undefined) {
                 setOrderID(params.OrderID);
                 OrderSVC.OrderDetails(params.OrderID).then(res => {
-                    console.log(res);
-                    console.log(JSON.parse(res.OrderDetails));
+                    //console.log(res);
+                    //console.log(JSON.parse(res.OrderDetails));
                     setOrder(res);
                     setOrderDetails(JSON.parse(res.OrderDetails));
                     setLoading(false);
@@ -36,8 +36,8 @@ export const CheckOutConfirmation = () => {
             } else {
                 //console.log(params.OrderID);
                 OrderSVC.OrderDetails(OrderID).then(res => {
-                    console.log(res);
-                    console.log(JSON.parse(res.OrderDetails));
+                    //console.log(res);
+                    //console.log(JSON.parse(res.OrderDetails));
                     setOrder(res);
                     setOrderDetails(JSON.parse(res.OrderDetails));
                     setLoading(false);

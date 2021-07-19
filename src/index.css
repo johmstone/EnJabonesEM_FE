@@ -346,6 +346,14 @@ thead[class*="ant-table-thead"] th {
 .navbar-header .MuiPaper-root {
 	background-color: #343a40!important;
 }
+
+.modal-text-center {
+	text-align: center;
+}
+
+.modal-text-center .ant-modal-confirm-btns {
+	float: inherit !important;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

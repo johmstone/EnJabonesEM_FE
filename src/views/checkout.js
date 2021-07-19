@@ -164,7 +164,9 @@ export const CheckOut = () => {
         const NewOrder = {
             OrderID: moment().format("YYYYMMDD") + generate(),
             OrderDetails: JSON.stringify(NewOrderDetails),
-            EmailNotification: FacturationInfo.Email
+            EmailNotification: FacturationInfo.Email,
+            PaymentMethod: PaymentOption,
+            ProofPayment: Proof,
         }
         //console.log(NewOrder);
 

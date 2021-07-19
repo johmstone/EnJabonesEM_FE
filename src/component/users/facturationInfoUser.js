@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import PropType from "prop-types";
 import Card from '@material-ui/core/Card';
@@ -13,11 +14,12 @@ export const FacturationInfoUser = (props) => {
     const UsersSVC = new UsersService();
 
     const [ChangeState, setChangeState] = useState(0);
-    const [FactInfo, setFactInfo] = useState([]);
+    const [FactInfo, setFactInfo] = useState(props.FactInfo);
 
     useEffect(() => {
-        LoadData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (ChangeState !== 0) {
+            LoadData();
+        }
     }, [ChangeState]);
 
     const LoadData = () => {
@@ -31,7 +33,7 @@ export const FacturationInfoUser = (props) => {
         let UpdateInfo = { ...item, ActionType: 'SETPRIMARY' }
         UsersSVC.UpsertFacturationInfo(UpdateInfo, "Update").then(res => {
             if (res) {
-                setChangeState(2);
+                setChangeState(ChangeState + 1);
             } else {
                 message.error({
                     content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -52,7 +54,7 @@ export const FacturationInfoUser = (props) => {
                 let UpdateInfo = { ...item, ActionType: 'DISABLE' }
                 UsersSVC.UpsertFacturationInfo(UpdateInfo, "Update").then(res => {
                     if (res) {
-                        setChangeState(1);
+                        setChangeState(ChangeState + 1);
                     } else {
                         message.error({
                             content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -69,7 +71,7 @@ export const FacturationInfoUser = (props) => {
     }
 
     const HandleCallback = (ChildData) => {
-        if(ChildData) {
+        if (ChildData) {
             LoadData();
         }
     }
@@ -126,7 +128,7 @@ export const FacturationInfoUser = (props) => {
                         <div className='cardhorizontal m-2 AddNewAddress'>
                             <Card className="bg-light">
                                 <CardContent className="p-3">
-                                    <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Info" NeedResult={false} parentCallback={HandleCallback}/>
+                                    <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Info" NeedResult={false} parentCallback={HandleCallback} />
                                 </CardContent>
                             </Card>
                         </div>
@@ -140,7 +142,7 @@ export const FacturationInfoUser = (props) => {
                 <h5>Direcciones de Envio</h5>
                 <div className="scrolldown-vertical">
                     <div className="row m-0">
-                        <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Información de Facturación" NeedResult={false} parentCallback={HandleCallback}/>                        
+                        <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Información de Facturación" NeedResult={false} parentCallback={HandleCallback} />
                     </div>
                 </div>
             </div>
@@ -151,5 +153,6 @@ export const FacturationInfoUser = (props) => {
 }
 FacturationInfoUser.propTypes = {
     UserID: PropType.number,
-    WriteRight: PropType.bool
+    WriteRight: PropType.bool,
+    FactInfo: PropType.array
 };

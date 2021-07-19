@@ -254,12 +254,12 @@ export const UsersProfile = () => {
                                     </TabPane>
                                     <TabPane tabId="2">
                                         <Fade in={true}>
-                                            <DeliveryAddressInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} />
+                                            <DeliveryAddressInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} Addresses={User.DeliveryAddresses}/>
                                         </Fade>
                                     </TabPane>
                                     <TabPane tabId="3">
                                         <Fade in={true}>
-                                            <FacturationInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} />
+                                            <FacturationInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} FactInfo={User.FacturatioInfos}/>
                                         </Fade>
                                     </TabPane>
                                 </TabContent>

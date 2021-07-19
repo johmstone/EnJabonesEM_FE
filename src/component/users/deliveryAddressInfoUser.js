@@ -13,26 +13,27 @@ export const DeliveryAddressInfoUser = (props) => {
 
     const UsersSVC = new UsersService();
     
-    const [Addresses, setAddresses] = useState([]);
+    const [Addresses,setAddresses] = useState(props.Addresses);
     const [ChangeState, setChangeState] = useState(0);
 
     useEffect(() => {
-        LoadData();
+        if(ChangeState !== 0)
+        {
+            UsersSVC.UsersAddress('DeliveryAddress', props.UserID).then(res => {
+                //console.log(res)
+                setAddresses(res)
+           });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ChangeState]);
 
-    const LoadData = () => {
-        UsersSVC.UsersAddress('DeliveryAddress', props.UserID).then(res => {
-             //console.log(res)
-             setAddresses(res)
-        });
-    }
+    
 
     const MakePrincipal = (Address) => {
         let UpdateAddress = { ...Address, ActionType: 'SETPRIMARY' }
         UsersSVC.UpsertDeliveryAddress(UpdateAddress, "Update").then(res => {
             if (res) {
-                setChangeState(2);
+                setChangeState(ChangeState + 1);
             } else {
                 message.error({
                     content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -52,7 +53,7 @@ export const DeliveryAddressInfoUser = (props) => {
                 let UpdateAddress = { ...Addrees, ActionType: 'DISABLE' }
                 UsersSVC.UpsertDeliveryAddress(UpdateAddress, "Update").then(res => {
                     if (res) {
-                        setChangeState(1);
+                        setChangeState(ChangeState + 1);
                     } else {
                         message.error({
                             content: "Ocurrio un error inesperado, intente de nuevo!!!",
@@ -144,5 +145,6 @@ export const DeliveryAddressInfoUser = (props) => {
 
 DeliveryAddressInfoUser.propTypes = {
     UserID: PropType.number,
+    Addresses: PropType.array,
     WriteRight: PropType.bool
 };

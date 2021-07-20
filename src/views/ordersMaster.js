@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 import { Context } from '../store/appContext';
-import { useForm, Controller, useFormState } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 
 import { FormControl, MenuItem, TextField } from '@material-ui/core';
 import { Card } from "antd";
@@ -32,12 +32,14 @@ export const OrdersMaster = () => {
     const [Rights, setRights] = useState({});
     const [Statuses, setStatuses] = useState([]);
     const [SearchOrder, setSearchOrder] = useState({
-        ExternalStatusID: 20000,
+        ExternalStatusID: 10000,
         StartDate: moment().add(-1, 'month').format("YYYY-MM-DD"),
         EndDate: moment().format("YYYY-MM-DD")
     })
-    const [OrderList, setOrderList] = useState({});
+    const [OrderList, setOrderList] = useState({Orders: [], Summary:[]});
     const [ChartData, setChartData] = useState({});
+    const [SearchInput, setSearchInput] = useState('');
+    const [SearchResults, setSearchResults] = useState([]);
 
     //#region Formart Chart Data 
     // const data = {
@@ -80,6 +82,14 @@ export const OrdersMaster = () => {
         }
     }, [SearchOrder])
 
+    useEffect(() => {
+        const results = OrderList.Orders.filter(item =>
+            item.OrderID.toLowerCase().includes(SearchInput.toLowerCase()) ||
+            item.FullName.toLowerCase().includes(SearchInput.toLowerCase())
+        );
+        setSearchResults(results);
+    }, [SearchInput, OrderList]);
+
     const LoadPage = () => {
         setLoading(true);
         const pathname = location.pathname.slice(1).split('/');
@@ -104,10 +114,8 @@ export const OrdersMaster = () => {
     }
 
     const LoadData = () => {
-        setLoading(true);
-        //console.log(SearchOrder);
         OrdersSVC.OrderList(SearchOrder).then(res => {
-            console.log(res);
+            //console.log(res);
             setOrderList(res);
             const labels = res.Summary.filter(fil => fil.QtyOrders > 0).map(item => {
                 return item.ExternalStatus + " (" + item.QtyOrders.toString() + ")";
@@ -153,13 +161,18 @@ export const OrdersMaster = () => {
         criteriaMode: 'all'
     });
 
-    //const { isDirty } = useFormState({ control });
-
     const onSubmit = data => {
-        // setDefaultStatus(data.StatusID);
-        // setStartDate(data.StartDate);
-        // setEndDate(data.EndDate);
         setSearchOrder(data);
+    }
+
+    const HandleCallback = (data) => {
+        if (data) {
+            LoadData();
+        }
+    }
+
+    const handleChange = (event) => {
+        setSearchInput(event.target.value);
     }
 
     const ContentPage = () => {
@@ -280,7 +293,16 @@ export const OrdersMaster = () => {
                         </div>
                     </div>
                     <div className="mt-4 mx-3">
-                        <OrdersTable Orders={OrderList.Orders} />
+                        <div className="">
+                            <div className="input-group mb-3 mw-100" style={{ width: "300px" }}>
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text" id="SearchInput-label"><i className="fas fa-search"></i></span>
+                                </div>
+                                <input type="text" className="form-control" placeholder="Palabra clave..." aria-label="Palabra clave..." aria-describedby="SearchInput-label"
+                                    value={SearchInput} onChange={handleChange} autoFocus />
+                            </div>
+                        </div>
+                        <OrdersTable Orders={SearchResults} ParentCallback={HandleCallback} />
                     </div>
                 </div>
             </section>

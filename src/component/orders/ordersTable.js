@@ -1,37 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PropType from "prop-types";
 
-
-import { Tooltip, Table, message } from 'antd';
+import { Table } from 'antd';
 import moment from 'moment';
+import { OrdersDetails } from "./orderDetails";
+import { OrderChangeStatus } from "./orderChangeStatus";
 
 export const OrdersTable = props => {
 
-    const [SearchInput, setSearchInput] = useState('');
-    const [SearchResults, setSearchResults] = useState(props.Orders);
-
-    useEffect(() => {
-        var Statues = SearchResults.map(item => item.InternalStatus)
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .map(item => {
-                return {
-                    text: item,
-                    value: item
-                }
-            })
-        console.log(Statues)
-    })
+    const HandleCallback = (data) => {
+        props.ParentCallback(data);
+    }
 
     const columns = [
         { title: 'OrderID', dataIndex: 'OrderID', key: 'OrderID', fixed: 'left' },
-        { title: 'A nombre de', dataIndex: 'FullName', key: 'FullName', fixed: 'left' },
-        { title: 'StatusID', dataIndex: 'StatusID', key: 'StatusID' },
+        { title: 'A nombre de', dataIndex: 'FullName', key: 'FullName' },
         {
-            title: 'Status',
-            dataIndex: 'InternalStatus',
-            key: 'InternalStatus',            
-            onFilter:(value, record) => record.InternalStatus.indexOf(value) === 0,
-            filters: SearchResults.map(item => item.InternalStatus)
+            title: (<p className="text-center m-0">Status</p>),
+            colSpan: 2,
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <p className="text-center align-middle m-0">
+                    {e.InternalStatus}
+                </p>
+            ),
+            onFilter: (value, record) => record.InternalStatus.indexOf(value) === 0,
+            filters: props.Orders.map(item => item.InternalStatus)
                 .filter((value, index, self) => self.indexOf(value) === index)
                 .map(item => {
                     return {
@@ -41,7 +36,16 @@ export const OrdersTable = props => {
                 })
         },
         {
-            title: 'Validado',
+            title: 'Cambiar Status',
+            colSpan: 0,
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <OrderChangeStatus OrderID={e.OrderID} StatusID={e.StatusID} ParentCallback={HandleCallback}/>
+            ),
+        },
+        {
+            title: (<p className="text-center m-0">Pago Validado</p>),
             dataIndex: '',
             key: 'x',
             render: (e) => (
@@ -54,10 +58,11 @@ export const OrdersTable = props => {
             title: 'Fecha',
             dataIndex: '',
             key: 'x',
-            sorter: (a, b) => a.OrderDate.length - b.OrderDate.length,
+            sorter: (a, b) => moment(a.OrderDate).unix() - moment(b.OrderDate).unix(),
+            defaultSortOrder: 'descend',
             render: (e) => (
                 <p className="text-center align-middle m-0 text-capitalize">
-                    {moment(e.OrderDate).format('DD MMM YYYY hh:mm A')}
+                    {moment(e.OrderDate).format('DD/MMM YYYY hh:mm A')}
                 </p>
             ),
         },
@@ -67,41 +72,38 @@ export const OrdersTable = props => {
         console.log('params', pagination, filters, sorter, extra);
     }
 
-    const handleChange = (event) => {
-        setSearchInput(event.target.value);
-    }
+    
 
     return (
-        <>
-            <div className="">
-                <div className="input-group mb-3 mw-100" style={{ width: "300px" }}>
-                    <div className="input-group-prepend">
-                        <span className="input-group-text" id="SearchInput-label"><i className="fas fa-search"></i></span>
-                    </div>
-                    <input type="text" className="form-control" placeholder="Palabra clave..." aria-label="Palabra clave..." aria-describedby="SearchInput-label"
-                        value={SearchInput} onChange={handleChange} autoFocus />
-                </div>
-            </div>
-            <div className="">
+        <div className="">
                 <Table columns={columns}
-                    dataSource={SearchResults}
+                    dataSource={props.Orders}
+                    rowKey={record => record.OrderID}
                     onChange={onChange}
+                    scroll={{ x: 'max-content' }}
                     expandable={{
                         expandedRowRender: record => (
-                            <div>
-                                <p className="m-0 font-weight-bold">Tipo de Pago: <span className="font-weight-normal">{record.OrderType}</span></p>
-                                <p className="m-0 font-weight-bold">Comprobante: <span className="font-weight-normal">{record.ProofPayment}</span></p>
+                            <div className="row m-0">
+                                <div className="col-sm-6">
+                                    <p className="m-0 font-weight-bold">Status: <span className="font-weight-normal">{record.StatusID} - {record.InternalStatus}</span></p>
+                                    <p className="m-0 font-weight-bold">Tipo de Pago: <span className="font-weight-normal">{record.OrderType}</span></p>
+                                    <p className="m-0 font-weight-bold">Comprobante: <span className="font-weight-normal">{record.ProofPayment}</span></p>
+                                </div>
+                                <div className="col-sm-6">
+                                    <OrdersDetails Order={record}/>
+                                </div>
                             </div>
                         ),
                         rowExpandable: record => record.FullName !== 'Not Expandable',
                     }}
                     pagination={false} />
             </div>
-        </>
+        
     )
 }
 
 
 OrdersTable.propTypes = {
-    Orders: PropType.array
+    Orders: PropType.array,
+    ParentCallback: PropType.func
 };

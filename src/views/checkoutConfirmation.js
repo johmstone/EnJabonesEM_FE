@@ -100,20 +100,20 @@ export const CheckOutConfirmation = () => {
             )
         } else {
             return (
-                <>
+                <div key="DelAddress">
                     <p className="m-0"><i className="fas fa-user"></i> <span className="font-italic">{OrderDetails.DeliveryAddress.ContactName}</span></p>
                     <p className="m-0"><i className="fas fa-phone-alt"></i> {OrderDetails.DeliveryAddress.PhoneNumber}</p>
                     <p className="m-0  withoutWhiteSpace"><i className="fas fa-map-marker-alt"></i> {OrderDetails.DeliveryAddress.Street}</p>
                     <p className="m-0">{OrderDetails.DeliveryAddress.Canton}, {OrderDetails.DeliveryAddress.District}</p>
                     <p className="m-0">{OrderDetails.DeliveryAddress.Province}, CR {OrderDetails.DeliveryAddress.CostaRicaID}</p>
-                </>
+                </div>
             )
         }
     }
 
     const FacturationInfo = () => {
         return (
-            <>
+            <div key="FactInfo">
                 <h6 className="text-primary">{OrderDetails.FacturationInfo.FullName}</h6>
                 <p className="m-0"><i className="fas fa-user"></i> {OrderDetails.FacturationInfo.IdentityType}</p>
                 <p className="m-0"><i className="fas fa-user"></i> {OrderDetails.FacturationInfo.IdentityID}</p>
@@ -123,7 +123,7 @@ export const CheckOutConfirmation = () => {
                 <p className="m-0">{OrderDetails.FacturationInfo.Canton}, {OrderDetails.FacturationInfo.District}</p>
                 <p className="m-0">{OrderDetails.FacturationInfo.Province}, CR {OrderDetails.FacturationInfo.CostaRicaID}</p>
 
-            </>
+            </div>
         )
     }
 

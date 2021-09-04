@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useParams } from 'react-router-dom';
-import { Card, Table, Modal } from 'antd';
+import { useParams } from 'react-router-dom';
+import { Modal } from 'antd';
 
 import OrdersService from "../services/orders";
 

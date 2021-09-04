@@ -354,6 +354,10 @@ thead[class*="ant-table-thead"] th {
 .modal-text-center .ant-modal-confirm-btns {
 	float: inherit !important;
 }
+
+.ant-btn .anticon-right {
+	margin-bottom: 5px;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

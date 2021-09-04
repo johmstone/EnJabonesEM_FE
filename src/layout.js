@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
+import esES from 'antd/lib/locale/es_ES'
 import ScrollToTop from './component/scrollToTop';
 import { Navbar } from './component/navbar';
 import { Footer } from './component/footer';
@@ -31,82 +33,84 @@ const Layout = () => {
 	const basename = process.env.BASENAME || "";
 
 	return (
-		<div className="d-flex flex-column">
-			<BrowserRouter basename={basename}>
-				<ScrollToTop>
-					<Navbar />
-					<Switch>
-						<Route exact path="/">
-							<Landing />
-						</Route>
-						<Route exact path="/Login">
-							<Login />
-						</Route>
-						<Route exact path="/Register">
-							<Register />
-						</Route>
-						<Route exact path="/ForgotPassword">
-							<ForgotPassword />
-						</Route>
-						<Route exact path="/Home">
-							<Home />
-						</Route>
-						<Route exact path="/ConfirmEmail/:EVToken">
-							<ConfirmEmail />
-						</Route>
-						<Route exact path="/ResetPassword">
-							<ResetPassword />
-						</Route>
-						<Route exact path="/ResetPassword/:GUID">
-							<ResetPassword />
-						</Route>
-						<Route exact path="/WebDirectory">
-							<WebDirectory />
-						</Route>
-						<Route exact path="/Roles">
-							<Roles />
-						</Route>
-						<Route exact path="/Users">
-							<Users />
-						</Route>
-						<Route exact path="/Profile">
-							<UsersProfile />
-						</Route>
-						<Route exact path="/Profile/:UserID">
-							<UsersProfile />
-						</Route>
-						<Route exact path="/Products/Admin">
-							<ProductsAdmin />
-						</Route>
-						<Route exact path="/Products">
-							<Products />
-						</Route>
-						<Route exact path="/ShopCart">
-							<ShopCart />
-						</Route>
-						<Route exact path="/ShopCart/CheckOut">
-							<CheckOut />
-						</Route>
-						<Route exact path="/CheckOut/Confirmation">
-							<CheckOutConfirmation />
-						</Route>
-						<Route exact path="/Order/:OrderID">
-							<CheckOutConfirmation />
-						</Route>
-						<Route exact path="/Orders/Master">
-							<OrdersMaster />
-						</Route>
-						<Route exact path="/Order/PaidConfirmation/:APIKey/:OrderID">
-							<OrderPaidConfirmation />
-						</Route>
-						<Route>
-							<h1>Not found!</h1>
-						</Route>
-					</Switch>
-					<Footer />
-				</ScrollToTop>
-			</BrowserRouter>
-		</div>
+		<ConfigProvider locale={esES}>
+			<div className="d-flex flex-column">
+				<BrowserRouter basename={basename}>
+					<ScrollToTop>
+						<Navbar />
+						<Switch>
+							<Route exact path="/">
+								<Landing />
+							</Route>
+							<Route exact path="/Login">
+								<Login />
+							</Route>
+							<Route exact path="/Register">
+								<Register />
+							</Route>
+							<Route exact path="/ForgotPassword">
+								<ForgotPassword />
+							</Route>
+							<Route exact path="/Home">
+								<Home />
+							</Route>
+							<Route exact path="/ConfirmEmail/:EVToken">
+								<ConfirmEmail />
+							</Route>
+							<Route exact path="/ResetPassword">
+								<ResetPassword />
+							</Route>
+							<Route exact path="/ResetPassword/:GUID">
+								<ResetPassword />
+							</Route>
+							<Route exact path="/WebDirectory">
+								<WebDirectory />
+							</Route>
+							<Route exact path="/Roles">
+								<Roles />
+							</Route>
+							<Route exact path="/Users">
+								<Users />
+							</Route>
+							<Route exact path="/Profile">
+								<UsersProfile />
+							</Route>
+							<Route exact path="/Profile/:UserID">
+								<UsersProfile />
+							</Route>
+							<Route exact path="/Products/Admin">
+								<ProductsAdmin />
+							</Route>
+							<Route exact path="/Products">
+								<Products />
+							</Route>
+							<Route exact path="/ShopCart">
+								<ShopCart />
+							</Route>
+							<Route exact path="/ShopCart/CheckOut">
+								<CheckOut />
+							</Route>
+							<Route exact path="/CheckOut/Confirmation">
+								<CheckOutConfirmation />
+							</Route>
+							<Route exact path="/Order/:OrderID">
+								<CheckOutConfirmation />
+							</Route>
+							<Route exact path="/Orders/Master">
+								<OrdersMaster />
+							</Route>
+							<Route exact path="/Order/PaidConfirmation/:APIKey/:OrderID">
+								<OrderPaidConfirmation />
+							</Route>
+							<Route>
+								<h1>Not found!</h1>
+							</Route>
+						</Switch>
+						<Footer />
+					</ScrollToTop>
+				</BrowserRouter>
+			</div>
+		</ConfigProvider>
 	);
 };
 

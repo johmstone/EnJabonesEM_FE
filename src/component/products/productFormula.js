@@ -149,8 +149,8 @@ export const ProductFormula = props => {
     return (
         <div>
             <Tooltip title="Ver Formula" color="blue">
-                <a onClick={() => setIsModalVisible(true)}>
-                    <i className="far fa-list-alt align-middle"></i>
+                <a className="mx-2" onClick={() => setIsModalVisible(true)}>
+                    <i className="fas fa-flask align-middle"></i>
                 </a>
             </Tooltip>
             <Modal

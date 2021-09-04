@@ -65,9 +65,12 @@ export const CheckOut = () => {
         } else {
             setStageOrder(orderid);
             HelperSVC.ExchangeRate().then(res => {
-                var doc = new DOMParser().parseFromString(res.result, 'text/html')
-                var exchangerateHTML = doc.getElementsByTagName("b")[0]
-                var exchangerate = parseFloat(exchangerateHTML.outerHTML.split(" = ")[1].replace(" CRC</b>", ""));
+                //console.log(res);
+                var exchangerate = parseInt(res.compra/10000)-10;
+                //console.log(exchangerate);
+                // var doc = new DOMParser().parseFromString(res.result, 'text/html')
+                // var exchangerateHTML = doc.getElementsByTagName("b")[0]
+                // var exchangerate = parseFloat(exchangerateHTML.outerHTML.split(" = ")[1].replace(" CRC</b>", ""));
                 setExchangeRate(exchangerate);
             });
             OrderSVC.SearchStagingOrder(orderid).then(res => {
@@ -257,7 +260,7 @@ export const CheckOut = () => {
                                             </div>
                                             <Card hoverable>
                                                 <FormControl component="fieldset">
-                                                    <RadioGroup aria-label="gender" name="gender1" value={PaymentOption} onChange={handleChange}>
+                                                    <RadioGroup aria-label="gender" name="gender1" value={PaymentOption} onChange={(e) => handleChange(e)}>
                                                         <FormControlLabel value="Deposit" control={<Radio />} label="Depósito Bancario" />
                                                         <FormControlLabel value="SINPE" control={<Radio />} label="SINPE Móvil" />
                                                         <FormControlLabel value="PayPal" control={<Radio />} label="PayPal" />

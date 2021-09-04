@@ -5,6 +5,7 @@ import { Table } from 'antd';
 import moment from 'moment';
 import { OrdersDetails } from "./orderDetails";
 import { OrderChangeStatus } from "./orderChangeStatus";
+import { OrderHistory } from "./orderHistory";
 
 export const OrdersTable = props => {
 
@@ -62,8 +63,16 @@ export const OrdersTable = props => {
             defaultSortOrder: 'descend',
             render: (e) => (
                 <p className="text-center align-middle m-0 text-capitalize">
-                    {moment(e.OrderDate).format('DD/MMM YYYY hh:mm A')}
+                    {moment(e.OrderDate).format('DD/MM/YYYY hh:mm A')}
                 </p>
+            ),
+        },
+        {
+            title: '',
+            dataIndex: '',
+            key: 'x',
+            render: (e) => (
+                <OrderHistory OrderID={e.OrderID} />
             ),
         },
     ]
@@ -90,7 +99,7 @@ export const OrdersTable = props => {
                                     <p className="m-0 font-weight-bold">Comprobante: <span className="font-weight-normal">{record.ProofPayment}</span></p>
                                 </div>
                                 <div className="col-sm-6">
-                                    <OrdersDetails Order={record}/>
+                                    <OrdersDetails Order={record} BtnType="Button" BtnLabel="Ver Información"/>
                                 </div>
                             </div>
                         ),

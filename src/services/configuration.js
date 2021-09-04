@@ -1,5 +1,6 @@
 class ConfigurationService {
     AppName = "MasQueJabones";
+    CreatedInStoneLink = 'https://createdinstone.azurewebsites.net';
     // BackEnd_API_BaseURL = "https://masquejabonesapi.azurewebsites.net";
     BackEnd_API_BaseURL = "https://localhost:44335";
     AzureHostName = "https://masquejabones.blob.core.windows.net";

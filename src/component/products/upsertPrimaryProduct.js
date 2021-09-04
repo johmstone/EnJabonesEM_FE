@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import PropType from "prop-types";
-import { Tooltip, Modal, message } from 'antd';
+import { Tooltip, Modal, message, Transfer } from 'antd';
 import { useForm, Controller, useFormState } from "react-hook-form";
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -9,11 +10,11 @@ import TextField from '@material-ui/core/TextField';
 import Resizer from 'react-image-file-resizer';
 import { generate } from 'shortid';
 
-import { Context } from '../../store/appContext';
-
 import ConfigurationService from '../../services/configuration';
 import AzureServices from '../../services/azure';
 import ProductServices from '../../services/products';
+import PropertiesService from "../../services/properties";
+
 
 export const UpsertPrimaryProduct = props => {
     let MaxLengthDescription = 1000;
@@ -23,21 +24,46 @@ export const UpsertPrimaryProduct = props => {
     const ConfigSVC = new ConfigurationService();
     const AzureSVC = new AzureServices();
     const ProductsSVC = new ProductServices();
+    const PropertiesSVC = new PropertiesService();
 
-    const { actions } = useContext(Context);
     const [isEdit] = useState(props.PrimaryProduct ? true : false)
+    const [isLoading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [LeftCharacters, setLeftCharacters] = useState(props.PrimaryProduct ? (MaxLengthDescription - props.PrimaryProduct.Description.length) : MaxLengthDescription);
     const [srcAvatar, setsrcAvatar] = useState(props.PrimaryProduct ? props.PrimaryProduct.PhotoURL : "http://ssl.gstatic.com/accounts/ui/avatar_2x.png");
     const [PhotoProccesed, setPhotoProccesed] = useState(props.PrimaryProduct ? true : false);
     const [SomethingChanged, setChanged] = useState(false);
     const [imageFile, setImageFile] = useState();
+    const [Properties, setProperties] = useState([]);
+    const [ProductPropeties, setProductPropeties] = useState([]);
 
     const { handleSubmit, control, reset } = useForm({
         mode: 'onChange',
         criteriaMode: 'all'
     });
     const { isDirty } = useFormState({ control });
+
+    useEffect(() => {
+        if (isModalVisible) {
+            setLoading(true);
+            //console.log(props.PrimaryProduct)
+            PropertiesSVC.List().then(res => {
+                //console.log(res)
+                setProperties(res);
+            });
+            if (isEdit) {
+                let PropsPropeties = []
+                props.PrimaryProduct.Properties.forEach(element => {
+                    PropsPropeties = [...PropsPropeties, element.PropertyID]
+                });
+                setProductPropeties(PropsPropeties);
+                //console.log(ProductPropeties);
+                setLoading(false);
+            } else {
+                setLoading(false);
+            }
+        }
+    }, [isModalVisible]);
 
     const processPhoto = imageInput => {
         const file = imageInput.target.files[0];
@@ -86,13 +112,17 @@ export const UpsertPrimaryProduct = props => {
     }
 
     const onSubmit = data => {
+        //console.log(data);
         if (isEdit && !isDirty && !SomethingChanged) {
             handleCancel()
+            //console.log('cancel');
         } else {
-            actions.Loading(true);
+            //console.log('Ok');
+            //actions.Loading(true);
             const fileName = "IMG_Product_" + generate() + ".JPG";
 
             if (SomethingChanged) {
+                //console.log('some changed');
                 AzureSVC.UploadImages(imageFile, fileName).then(res => {
                     //console.log(res);
                     let PhotoPath = ConfigSVC.AzureHostName + '/images/' + fileName;
@@ -106,6 +136,7 @@ export const UpsertPrimaryProduct = props => {
                             Technique: data.Technique,
                             Description: data.Description,
                             PhotoURL: PhotoPath,
+                            StrProperties: data.Properties.toString(),
                             ActionType: 'Update'
                         }
                         UploadData(UpdateModel, "Update");
@@ -115,12 +146,15 @@ export const UpsertPrimaryProduct = props => {
                             Technique: data.Technique,
                             Description: data.Description,
                             PhotoURL: PhotoPath,
+                            StrProperties: data.Properties.toString(),
                             ActionType: 'AddNew'
                         }
+                        console.log(UpdateModel)
                         UploadData(UpdateModel, "AddNew");
                     }
                 });
             } else {
+                //console.log('no change');
                 let UpdateModel = {
                     ...props.PrimaryProduct,
                     ActiveFlag: true,
@@ -129,21 +163,22 @@ export const UpsertPrimaryProduct = props => {
                     Technique: data.Technique,
                     Description: data.Description,
                     PhotoURL: props.PrimaryProduct.PhotoURL,
+                    StrProperties: data.Properties.toString(),
                     ActionType: 'Update'
                 }
                 UploadData(UpdateModel, "Update");
-            }           
+            }
         }
     }
 
     const UploadData = (model, Type) => {
-        //console.log(model, Type);
-        ProductsSVC.UpsertPrimaryProduct(model,Type).then(res => {
-            if(res) {
-                if(Type === 'AddNew') {
+        console.log(model, Type);
+        ProductsSVC.UpsertPrimaryProduct(model, Type).then(res => {
+            if (res) {
+                if (Type === 'AddNew') {
                     props.parentCallback(model.Name);
                 }
-                actions.UploadProductList();
+                //actions.UploadProductList();
                 handleCancel();
             } else {
                 message.error({
@@ -169,27 +204,24 @@ export const UpsertPrimaryProduct = props => {
         setChanged(false);
     }
 
-    return (
-        <div>
-            <Tooltip title={isEdit ? "Editar" : "Agregar Producto"} color="blue">
-                <a onClick={() => setIsModalVisible(true)}>
-                    {isEdit ?
-                        (<i className="fas fa-pencil-alt align-middle"></i>) :
-                        (<button className="btn"><i className="far fa-plus-square"></i> Agregar Producto</button>)
-                    }
-                </a>
-            </Tooltip>
-            <Modal className="custom-form"
-                title={[
-                    <h3 key="title" className="text-center text-primary-color text-font-base m-0">
-                        {isEdit ? "Editar Información Principal" : "Agregar Producto Principal"}
-                    </h3>
-                ]}
-                visible={isModalVisible}
-                centered
-                onCancel={() => setIsModalVisible(false)}
-                footer={[]}>
-                <article className="card-body p-0 mw-100">
+    const mockData = Properties.map(item => {
+        return ({
+            key: item.PropertyID,
+            Title: item.PropertyName
+        })
+    })
+
+    const ContentPage = () => {
+        if (isLoading) {
+            return (
+                <div className="text-center text-black-50">
+                    <h2 className="text-black-50">Cargando...</h2>
+                    <div className="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                </div>
+            );
+        } else {
+            return (
+                <article className="card-body p-0 mw-100" style={isEdit ? null : ({ height: 500, overflow: 'scroll' })}>
                     <form onSubmit={handleSubmit(onSubmit)} className="my-3">
                         <Controller
                             name="Name"
@@ -230,7 +262,7 @@ export const UpsertPrimaryProduct = props => {
                                         }}
                                         error={!!error}
                                         helperText={(
-                                            <label className="text-font-base text-muted">Quedan {LeftCharacters} carácteres</label>
+                                            <label className="text-font-base text-muted m-0">Quedan {LeftCharacters} carácteres</label>
                                         )} />
                                     <FormHelperText id="component-helper-text">
                                         {error ? (<label className="text-font-base text-danger">
@@ -256,6 +288,31 @@ export const UpsertPrimaryProduct = props => {
                                 </FormControl>
                             )}
                         />
+                        {isEdit ? null :
+                            (<Controller
+                                name="Properties"
+                                control={control}
+                                defaultValue={isEdit ? ProductPropeties : []}
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <FormControl variant="outlined" className="w-100 my-2">
+                                        <Transfer
+                                            className="mx-auto mw-100"
+                                            dataSource={mockData}
+                                            //rowKey={record => record.PropertyID}
+                                            titles={false}
+                                            showSearch
+                                            targetKeys={value}
+                                            ///selectedKeys={value}
+                                            onChange={onChange}
+                                            //onSelectChange={this.handleSelectChange}
+                                            render={item => item.Title}
+                                            oneWay
+                                        //style={{ marginBottom: 16 }}
+                                        />
+                                    </FormControl>
+                                )}
+                            />)
+                        }
                         <div className="profile-img mw-100 mx-auto" style={{ width: "225px" }}>
                             <img src={srcAvatar} className="avatar img-thumbnail w-100" alt="avatar" />
                             <div className="file btn btn-lg btn-primary w-100">
@@ -280,6 +337,30 @@ export const UpsertPrimaryProduct = props => {
                         </div>
                     </form>
                 </article>
+            );
+        }
+    }
+    return (
+        <div>
+            <Tooltip title={isEdit ? "Editar" : "Agregar Producto"} color="blue">
+                <a onClick={() => setIsModalVisible(true)}>
+                    {isEdit ?
+                        (<i className="fas fa-pencil-alt align-middle"></i>) :
+                        (<button className="btn"><i className="far fa-plus-square"></i> Agregar Producto</button>)
+                    }
+                </a>
+            </Tooltip>
+            <Modal className="custom-form"
+                title={[
+                    <h3 key="title" className="text-center text-primary-color text-font-base m-0">
+                        {isEdit ? "Editar Información Principal" : "Agregar Producto Principal"}
+                    </h3>
+                ]}
+                visible={isModalVisible}
+                centered
+                onCancel={() => setIsModalVisible(false)}
+                footer={[]}>
+                <ContentPage />
             </Modal>
         </div>
     );

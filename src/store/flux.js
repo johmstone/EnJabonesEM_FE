@@ -60,6 +60,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			UploadProductList: () => {
 				setStore({ isLoading: true })
 				ProductSVC.PrimaryProductList().then(items => {
+					//console.log(items);
 					setStore({ ProductList: items });
 					setStore({ isLoading: false })
 				});
@@ -81,6 +82,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// 	setStore({ isLoading: value })
 			// },
 			AddItemShopCart: (item) => {
+				console.log(item);
 				let shopcart = localStorage.getItem('ShopCart');
 				if (shopcart === null) {
 					localStorage.setItem('ShopCart', JSON.stringify([item]));

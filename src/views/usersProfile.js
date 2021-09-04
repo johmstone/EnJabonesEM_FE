@@ -23,6 +23,8 @@ import { Loading } from '../component/loading';
 import { MainInfoUser } from '../component/users/mainInfoUser';
 import { DeliveryAddressInfoUser } from '../component/users/deliveryAddressInfoUser';
 import { FacturationInfoUser } from '../component/users/facturationInfoUser';
+import { OrderHistorial } from '../component/users/orderHistorial';
+
 moment.locale("es");
 
 export const UsersProfile = () => {
@@ -230,19 +232,13 @@ export const UsersProfile = () => {
                                     <NavItem>
                                         <NavLink className={classnames({ active: activeTab === '1' })}
                                             onClick={() => { toggle('1'); }}>
-                                            <strong>Principal</strong>
+                                            <span className="text-font-base font-weight-bolder">Principal</span>
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink className={classnames({ active: activeTab === '2' })}
                                             onClick={() => { toggle('2'); }} >
-                                            <strong>Direcciones de Envío</strong>
-                                        </NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <NavLink className={classnames({ active: activeTab === '3' })}
-                                            onClick={() => { toggle('3'); }} >
-                                            <strong>Información de Facturación</strong>
+                                            <span className="text-font-base font-weight-bolder">Historial de Pedidos</span>
                                         </NavLink>
                                     </NavItem>
                                 </Nav>
@@ -250,16 +246,13 @@ export const UsersProfile = () => {
                                     <TabPane tabId="1">
                                         <Fade in={true}>
                                             <MainInfoUser User={User} WriteRight={Rights.WriteRight} />                                            
+                                            <DeliveryAddressInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} Addresses={User.DeliveryAddresses}/>
+                                            <FacturationInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} FactInfo={User.FacturatioInfos}/>
                                         </Fade>
                                     </TabPane>
                                     <TabPane tabId="2">
                                         <Fade in={true}>
-                                            <DeliveryAddressInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} Addresses={User.DeliveryAddresses}/>
-                                        </Fade>
-                                    </TabPane>
-                                    <TabPane tabId="3">
-                                        <Fade in={true}>
-                                            <FacturationInfoUser WriteRight={Rights.WriteRight} UserID={User.UserID} FactInfo={User.FacturatioInfos}/>
+                                            <OrderHistorial Orders={User.OrderList}/>
                                         </Fade>
                                     </TabPane>
                                 </TabContent>

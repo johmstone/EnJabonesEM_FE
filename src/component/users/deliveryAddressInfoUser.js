@@ -72,7 +72,7 @@ export const DeliveryAddressInfoUser = (props) => {
     if (Addresses.length > 0) {
         return (
             <div className='Addresses'>
-                <h5>Direcciones de Envio</h5>
+                <h5 className="mt-3 mb-0 text-font-base">Direcciones de Envio</h5>
                 <div className="scrolldown-vertical">
                     <div className="row m-0">
                         {
@@ -80,7 +80,7 @@ export const DeliveryAddressInfoUser = (props) => {
                                 return (
                                     <div className='cardhorizontal m-2' key={i}>
                                         <Card className="bg-light">
-                                            <CardContent className="pt-3 px-3 pb-0">
+                                            <CardContent className="pt-3 px-3 pb-0 text-font-base">
                                                 <div className="row m-0 w-100">
                                                     <p className="font-weight-bold m-0 font-italic">{item.ContactName}</p>
                                                     <EditDeliveryAddressInfoUser Address={item} />
@@ -120,7 +120,7 @@ export const DeliveryAddressInfoUser = (props) => {
 
                         <div className='cardhorizontal m-2 AddNewAddress'>
                             <Card className="bg-light">
-                                <CardContent className="p-3">
+                                <CardContent className="p-3 text-font-base">
                                     <AddDeliveryAddressUser UserID={props.UserID} />
                                 </CardContent>              
                             </Card>
@@ -132,9 +132,9 @@ export const DeliveryAddressInfoUser = (props) => {
     } else {
         return (
             <div className='Addresses'>
-                <h5>Direcciones de Envio</h5>
+                <h5 className="text-font-base">Direcciones de Envio</h5>
                 <div className="scrolldown-vertical">
-                    <div className="row m-0">
+                    <div className="row m-0 text-font-base">
                         <AddDeliveryAddressUser UserID={props.UserID} />
                     </div>
                 </div>

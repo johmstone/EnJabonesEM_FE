@@ -93,30 +93,7 @@ export const OrderChangeStatus = props => {
                                                 })
                                             }
                                         </select>
-
-                                        // <FormControl variant="outlined" className="w-100 my-2">
-                                        //     <TextField
-                                        //         id="TypeID"
-                                        //         select
-                                        //         variant="outlined"
-                                        //         value={value}
-                                        //         onChange={onChange}
-                                        //         label="Tipo de Ingrediente"
-                                        //         error={!!error}
-                                        //         helperText={error ? (<label className="text-font-base text-danger">
-                                        //             {error.message}
-                                        //         </label>) : null}>
-                                        //         {
-                                        //             Types.map((item, i) => {
-                                        //                 return (
-                                        //                     <MenuItem value={item.TypeID} key={i}>{item.TypeName}</MenuItem>
-                                        //                 )
-                                        //             })
-                                        //         }
-                                        //     </TextField>
-                                        // </FormControl>
                                     )}
-                                    //onChange={e => e}
                                     rules={{ required: "Requerido" }}
                                 />
                             <div className="input-group-append">

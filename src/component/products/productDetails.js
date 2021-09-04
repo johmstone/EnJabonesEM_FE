@@ -59,7 +59,7 @@ export const ProductDetails = props => {
             PhotoURL: props.PrimaryProduct.PhotoURL,
             ProductDetails: props.PrimaryProduct.Products.filter(src => src.ProductID === data.ProductID)[0]
         };
-        // console.log(NewItem);
+        console.log(NewItem);
         actions.AddItemShopCart(NewItem);
         handleCancel();        
     }
@@ -71,7 +71,9 @@ export const ProductDetails = props => {
                 hoverable
                 cover={<img alt="example" src={props.PrimaryProduct.PhotoURL} onClick={() => setIsModalVisible(true)} />}
                 actions={[
-                    <i className="far fa-cart-arrow-down"></i>,
+                    <button className="btn btn-block p-0" onClick={() => setIsModalVisible(true)}>
+                        <i className="far fa-cart-arrow-down"></i>
+                    </button>,
                 ]}
                 style={{ width: 300 }}>
                 <h5 className="text-font-base" onClick={() => setIsModalVisible(true)} >{props.PrimaryProduct.Name}</h5>

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 import PropType from "prop-types";
 
@@ -89,14 +90,29 @@ export const OrdersDetails = props => {
         )
     }
 
+    const BtnExec = () => {
+        if (props.BtnType === 'Button') {
+            return (
+                <button className="btn card-btn-success btn-outline-primary mx-auto py-2"
+                    type="button"
+                    onClick={showModal}
+                    style={{ top: "0" }}>
+                    {props.BtnLabel}
+                </button>
+            )
+        } else {
+            return (
+                <a className="text-primary" onClick={showModal}>
+                    {props.BtnLabel}
+                </a>
+            )
+        }
+
+    }
+
     return (
         <div key="OrderDetails">
-            <button className="btn card-btn-success btn-outline-primary mx-auto py-2"
-                type="button"
-                onClick={showModal}
-                style={{ top: "0" }}>
-                Ver Información
-            </button>
+            <BtnExec />
             <Modal
                 title={[
                     <>
@@ -205,5 +221,7 @@ export const OrdersDetails = props => {
     )
 }
 OrdersDetails.propTypes = {
-    Order: PropType.object
+    Order: PropType.object,
+    BtnType: PropType.string,
+    BtnLabel: PropType.string
 };

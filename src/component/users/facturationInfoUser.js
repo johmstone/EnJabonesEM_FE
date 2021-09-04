@@ -79,7 +79,7 @@ export const FacturationInfoUser = (props) => {
     if (FactInfo.length > 0) {
         return (
             <div className='Addresses'>
-                <h5 className="mt-3 mx-3 mb-0">Información de Facturación</h5>
+                <h5 className="mt-3 mb-0 text-font-base">Información de Facturación</h5>
                 <div className="scrolldown-vertical">
                     <div className="row m-0">
                         {
@@ -87,10 +87,9 @@ export const FacturationInfoUser = (props) => {
                                 return (
                                     <div className='cardhorizontal m-2' key={i}>
                                         <Card className="bg-light">
-                                            <CardContent className="pt-3 px-3 pb-0">
+                                            <CardContent className="pt-3 px-3 pb-0 text-font-base">
                                                 <div className="row m-0 w-100">
                                                     <p className="font-weight-bold m-0 font-italic">{item.FullName}</p>
-                                                    {/* <EditDeliveryAddressInfoUser Address={item} /> */}
                                                 </div>
                                                 <p className="m-0">{item.IdentityType}: {item.IdentityID}</p>
                                                 <p className="m-0">Teléfono: {item.PhoneNumber}</p>
@@ -127,7 +126,7 @@ export const FacturationInfoUser = (props) => {
 
                         <div className='cardhorizontal m-2 AddNewAddress'>
                             <Card className="bg-light">
-                                <CardContent className="p-3">
+                                <CardContent className="p-3 text-font-base">
                                     <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Info" NeedResult={false} parentCallback={HandleCallback} />
                                 </CardContent>
                             </Card>
@@ -139,9 +138,9 @@ export const FacturationInfoUser = (props) => {
     } else {
         return (
             <div className='Addresses'>
-                <h5>Direcciones de Envio</h5>
+                <h5 className="text-font-base">Direcciones de Envio</h5>
                 <div className="scrolldown-vertical">
-                    <div className="row m-0">
+                    <div className="row m-0 text-font-base">
                         <AddFacturationInfo UserID={props.UserID} btnLegend="Agregar Información de Facturación" NeedResult={false} parentCallback={HandleCallback} />
                     </div>
                 </div>

@@ -12,7 +12,7 @@ export const Presentations = props => {
 
     const ProductSVC = new ProductServices();
 
-    const [Products, setProducts] = useState(props.PrimaryProduct.Products.filter(src => src.ProductID > 0))
+    const [Products, setProducts] = useState(props.PrimaryProduct.Products !== null ? props.PrimaryProduct.Products: [] )
 
     const ChangeStatus = (item) => {
         let UpdateProduct = {...item, ActionType: 'CHGST'}

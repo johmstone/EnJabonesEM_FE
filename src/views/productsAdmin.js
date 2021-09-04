@@ -1,8 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 import { Tooltip, Table, message } from 'antd';
-import { Context } from '../store/appContext';
 
 import AuthenticationService from '../services/authentication';
 import WebDirectoryService from '../services/webdirectory';
@@ -13,6 +13,7 @@ import { Error } from '../component/error';
 import { Presentations } from '../component/products/presentations';
 import { UpsertPrimaryProduct } from '../component/products/upsertPrimaryProduct';
 import { ProductFormula } from '../component/products/productFormula';
+import { ProductProperties } from "../component/products/productProperties";
 
 export const ProductsAdmin = () => {
 
@@ -22,31 +23,28 @@ export const ProductsAdmin = () => {
     const location = useLocation();
 
     const [isLogin] = useState(AuthSVC.isAuthenticated());
-    const { store, actions } = useContext(Context);
     const [isLoading, setLoading] = useState(false);
     const [Rights, setRights] = useState({});
     const [SearchInput, setSearchInput] = useState('');
-    const [ProductList, setProductList] = useState(store.ProductList);
+    const [ProductList, setProductList] = useState([]);
     const [SearchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
         if (isLogin) {
             LoadPage();
             setLoading(true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }        
     }, []);
 
     useEffect(() => {
-        setProductList(store.ProductList);
         const results = ProductList.filter(item =>
             item.Name.toLowerCase().includes(SearchInput.toLowerCase()) ||
             item.Description.toLowerCase().includes(SearchInput.toLowerCase()) ||
-            item.Technique.toLowerCase().includes(SearchInput.toLowerCase())
+            item.Technique.toLowerCase().includes(SearchInput.toLowerCase()) ||
+            item.StrProperties.toLowerCase().includes(SearchInput.toLowerCase())
         );
         setSearchResults(results);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [SearchInput, ProductList, store.isLoading]);
+    }, [SearchInput, ProductList]);
 
     const LoadPage = () => {
         const pathname = location.pathname.slice(1).split('/');
@@ -55,16 +53,23 @@ export const ProductsAdmin = () => {
             Action: pathname[1] === undefined ? "Index" : pathname[1]
         }
         WebDirectorySVC.RightsValidation(model).then(res => {
-            //console.log(res);
             setRights(res);
             return res;
         }).then(src => {
             if (src.ReadRight) {
-                actions.UploadProductList();
-                setLoading(false);
+                LoadData()
             }
         });
 
+    }
+
+    const LoadData = () => {
+        ProductSVC.PrimaryProductList().then(items => {
+            //console.log(items);
+            setProductList(items);
+            setSearchResults(items);
+            setLoading(false);
+        });
     }
 
     const handleChange = (event) => {
@@ -90,7 +95,9 @@ export const ProductsAdmin = () => {
     }
 
     const handleCallback = (childData) => {
+        LoadData();
         setSearchInput(childData);
+
     }
 
     const columnsAdmin = [
@@ -101,7 +108,10 @@ export const ProductsAdmin = () => {
             dataIndex: '',
             key: 'x',
             render: (e) => (
-                <ProductFormula PrimaryProduct={e} />
+                <div className="d-flex">
+                    <ProductFormula PrimaryProduct={e} />
+                    <ProductProperties PrimaryProduct={e} />
+                </div>
             ),
         },
         { title: 'Técnica', dataIndex: 'Technique', key: 'Technique' },
@@ -112,7 +122,7 @@ export const ProductsAdmin = () => {
             className: 'text-center',
             render: (e) => (
                 <p className="m-0">
-                    {e.Products.filter(src => src.ProductID > 0 && src.ActiveFlag).length}
+                    {e.Products !== null ? e.Products.filter(src => src.ProductID > 0 && src.ActiveFlag).length : 0}
                 </p>
             ),
         },
@@ -190,10 +200,10 @@ export const ProductsAdmin = () => {
                                 <span className="input-group-text" id="SearchInput-label"><i className="fas fa-search"></i></span>
                             </div>
                             <input type="text" className="form-control" placeholder="Palabra clave..." aria-label="Palabra clave..." aria-describedby="SearchInput-label"
-                                value={SearchInput} onChange={handleChange} autoFocus />                            
+                                value={SearchInput} onChange={handleChange} autoFocus />
                         </div>
                     </div>
-                    <UpsertPrimaryProduct parentCallback={handleCallback}/>
+                    <UpsertPrimaryProduct parentCallback={handleCallback} />
                 </div>
                 <div className="justify-content-start my-2">
                     <p className="mx-2 mb-0">Total de Productos: {SearchResults.length}</p>
@@ -216,11 +226,11 @@ export const ProductsAdmin = () => {
         )
     }
 
-    if (store.isLoading || isLoading) {
+    if (isLoading) {
         return <Loading />
     } else {
         if (isLogin) {
-            if (Rights.ReadRight) {
+            if (Rights.WriteRight) {
                 return <ContentPage />
             } else {
                 return <Error Message='Usted no esta autorizado para ingresar a esta seccion, si necesita acceso contacte con un administrador.' />

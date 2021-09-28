@@ -16,7 +16,7 @@ class HelperService {
         };
 
         //return await fetch("https://www.paypal.com/smarthelp/currency-conversion?fromCountry=CR&fromPaymentCurrency=CRC&toTransCurrency=USD&tType=FX_ON_SENDER&transAmount=1", requestOptions)
-        return await fetch("https://www.bancobcr.com/wps/proxy/http/bcrrestgen-app:24000/rest/api/v1/bcr-informativo/tipo-cambio/obtener/2", requestOptions)
+        return await fetch("https://www.bancobcr.com/wps/proxy/http/bcrrestgen-app:24000/rest/api/v1/bcr-informativo/tipo-cambio/obtener/dolares", requestOptions)
             .then(res => res.json())
             .then(data => { return data; })
             .catch(err => console.log(err));

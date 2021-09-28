@@ -1,95 +1,76 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import PropType from "prop-types";
-import { Card } from 'antd';
-import { useForm, Controller, useFormState } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 
-import AuthenticationService from '../../services/authentication';
-import CostaRicaServices from '../../services/costaRica';
+import { Context } from '../../store/appContext';
+import { Tooltip } from "antd";
 
-export const CheckOutFactInfo = (props) => {
-    const CostaRicaSVC = new CostaRicaServices();
-    const AuthSVC = new AuthenticationService();
+export const CheckOutFacturationInfo = (props) => {
+
+
     const IdentityTypes = ['Cédula Jurídica', 'Cédula de Identidad', 'Cédula de Residencia', 'Pasaporte'];
-    const [isLogin] = useState(AuthSVC.isAuthenticated());
-    //const [isLoading, setLoading] = useState(false);
-    //const [DisableFields, setDisableFields] = useState(AuthSVC.isAuthenticated());
-    const [DisableFields, setDisableFields] = useState(false);
+
+    const { store } = useContext(Context);
+    const [DisableFields, setDisableFields] = useState(props.EditFlag);
     const [FacturationInfo, setFacturationInfo] = useState(props.FacturationInfo);
-    const [Provinces, setProvinces] = useState([]);
+    const [Provinces] = useState(store.Provinces);
     const [EnableCanton, setEnableCanton] = useState(false)
     const [EnableDistrict, setEnableDistrict] = useState(false)
     const [EnableStreet, setEnableStreet] = useState(false)
     const [Cantons, setCantons] = useState([]);
     const [Districts, setDistricts] = useState([]);
-    const [Validated, setValidated] = useState(false);
 
     const { handleSubmit, control } = useForm({
         mode: 'onChange',
         criteriaMode: 'all'
     });
 
-    const { isDirty } = useFormState({ control });
-
     useEffect(() => {
         LoadPage();
     }, [])
 
     const LoadPage = () => {
-        //console.log(props.FacturationInfo);
-        CostaRicaSVC.Provinces().then(res => {
-            setProvinces(res);
-            if (FacturationInfo.FacturationInfoID > 0) {
-                setEnableCanton(true);
-                setDisableFields(true);
-                return FacturationInfo.ProvinceID;
-            } else {
-                setDisableFields(!props.EditFlag);
-                return 1;
-            }
-        }).then(src => {
-            CostaRicaSVC.Cantons(src).then(can => {
-                setCantons(can);
-                if (FacturationInfo.FacturationInfoID > 0) {
-                    setEnableDistrict(true);
-                    return FacturationInfo;
-                } else {
-                    return { ProvinceID: src, CantonID: 1 };
-                }
-            }).then(prov => {
-                CostaRicaSVC.Districts(prov.ProvinceID, prov.CantonID).then(dist => {
-                    setDistricts(dist);
-                    if (FacturationInfo.FacturationInfoID > 0) {
-                        setEnableStreet(true);
-                        setValidated(true);
-                        //console.log(props.EditFlag);
-                        //setDisableFields(!props.EditFlag);
-                    }
-                });
-            })
-        });
+        if (FacturationInfo.ProvinceID > 0) {
+            setDisableFields(true);
+            let can = store.Cantons.filter(x => x.ProvinceID === FacturationInfo.ProvinceID)
+            //console.log(Cantons)
+            setCantons(can);
+            setEnableCanton(true);
+
+        }
+        if (FacturationInfo.CantonID > 0) {
+            let distCan = store.Districts.filter(x => x.ProvinceID === FacturationInfo.ProvinceID).filter(x => x.CantonID === FacturationInfo.CantonID);
+            //console.log(distCan);
+            setDistricts(distCan);
+            setEnableDistrict(true);
+        }
+        if (FacturationInfo.DistrictID > 0) {
+            setEnableStreet(true);
+        }
     }
 
     const OnChangeProvince = ProvinceInput => {
         let NewFactInfo = { ...FacturationInfo, ProvinceID: ProvinceInput }
         setFacturationInfo(NewFactInfo);
-        CostaRicaSVC.Cantons(ProvinceInput).then(can => {
-            setCantons(can);
-            setEnableCanton(true);
-        });
+        let can = store.Cantons.filter(x => x.ProvinceID === ProvinceInput)
+        //console.log(Cantons)
+        setCantons(can);
+        setEnableCanton(true);
+
     }
 
     const OnChangeCanton = CantonInput => {
         let NewFactInfo = { ...FacturationInfo, CantonID: CantonInput }
-
-        CostaRicaSVC.Districts(FacturationInfo.ProvinceID, CantonInput).then(res => {
-            setDistricts(res);
-            setFacturationInfo(NewFactInfo);
-            setEnableDistrict(true);
-        });
+        let distCan = store.Districts.filter(x => x.ProvinceID === FacturationInfo.ProvinceID).filter(x => x.CantonID === CantonInput);
+        //console.log(distCan);
+        setDistricts(distCan);
+        setFacturationInfo(NewFactInfo);
+        setEnableDistrict(true);
     }
 
     const onChangeDistrict = DistrictInput => {
@@ -108,8 +89,8 @@ export const CheckOutFactInfo = (props) => {
         let district = Districts.filter(src => src.DistrictID === data.DistrictID)[0].District;
         // console.log(district);
         let CostaRicaID = Districts.filter(src => src.DistrictID === data.DistrictID)[0].CostaRicaID
-        //console.log(CostaRicaID);
-        //console.log(data.PhoneNumber.replace(/[^A-Z0-9]+/ig, ""));
+        // console.log(CostaRicaID);
+        // console.log(data.PhoneNumber.toString().replace(/[^A-Z0-9]+/ig, ""));
         const NewFactInfo = {
             UserID: FacturationInfo.FacturationInfoID > 0 ? FacturationInfo.UserID : FacturationInfo.UserID ? FacturationInfo.UserID : 0,
             FacturationInfoID: FacturationInfo.FacturationInfoID > 0 ? FacturationInfo.FacturationInfoID : 0,
@@ -117,7 +98,7 @@ export const CheckOutFactInfo = (props) => {
             IdentityType: data.IdentityType,
             IdentityID: data.IdentityID.replaceAll("-", ""),
             Email: data.Email,
-            PhoneNumber: FacturationInfo.FacturationInfoID > 0 ? FacturationInfo.PhoneNumber : parseInt(data.PhoneNumber.replace(/[^A-Z0-9]+/ig, "")),
+            PhoneNumber: FacturationInfo.FacturationInfoID > 0 ? FacturationInfo.PhoneNumber : parseInt(data.PhoneNumber.toString().replace(/[^A-Z0-9]+/ig, "")),
             CostaRicaID: CostaRicaID,
             ProvinceID: data.ProvinceID,
             Province: province,
@@ -127,32 +108,30 @@ export const CheckOutFactInfo = (props) => {
             District: district,
             Street: data.Street
         }
+        // console.log(NewFactInfo);
         setFacturationInfo(NewFactInfo);
-        setValidated(true);
         setDisableFields(true);
-        props.parentCallback(NewFactInfo);
+        props.parentCallback(NewFactInfo, true);
     }
 
-    const CancelTaks = () => {
-        setValidated(true);
-        setDisableFields(true);
-        props.parentCallback(undefined, true);
+    const EditTask = () => {
+        //console.log(FacturationInfo);
+        setDisableFields(false);        
+        //props.parentCallback(FacturationInfo, false);        
     }
 
-    if (DisableFields) {
-        return (
-            <div className='inviteFacturationInfo'>
-                <h6 className="text-primary">{FacturationInfo.FullName}</h6>
-                <p className="m-0">{FacturationInfo.IdentityType}: {FacturationInfo.IdentityID}</p>
-                <p className="m-0">Teléfono: {FacturationInfo.PhoneNumber}</p>
-                <p className="m-0">Email: {FacturationInfo.Email}</p>
-                <p className="m-0  withoutWhiteSpace">{FacturationInfo.Street}</p>
-                <p className="m-0">{FacturationInfo.Canton}, {FacturationInfo.District}</p>
-                <p className="m-0">{FacturationInfo.Province}, CR {FacturationInfo.CostaRicaID}</p>
+    return (
+        <>
+            <div className="row m-0">
+                <h6 className="text-font-base text-uppercase">Datos de Facturación</h6>
+                <Tooltip title="Editar información" placement="topLeft" color="blue">
+                    <a className="mr-0 ml-auto p-0 float-right"
+                        onClick={() => EditTask()}
+                        hidden={!DisableFields}>
+                        <i className="far fa-money-check-edit"></i>
+                    </a>
+                </Tooltip>
             </div>
-        )
-    } else {
-        return (
             <form onSubmit={handleSubmit(onSubmit)} className="inviteFacturationInfo">
                 <Controller
                     name="FullName"
@@ -414,31 +393,16 @@ export const CheckOutFactInfo = (props) => {
                     />
                 </div>
                 <div className="form-group m-0 text-center">
-                    {
-                        DisableFields ? null :
-                            (
-                                <button className="btn btn-outline-primary mx-2 py-2 text-uppercase" type="submit" disabled={!isDirty}>
-                                    {Validated ? 'Confirmar' : 'Confirmar Información'}
-                                </button>
-                            )
-                    }
-                    {
-                        Validated ?
-                            DisableFields ? null :
-                                (
-                                    <button className="btn btn-outline-danger mx-2 py-2 text-uppercase" type="button" onClick={() => CancelTaks()}>
-                                        Cancelar
-                                    </button>
-                                )
-                            : null
-                    }
+                    <button className='btn btn-outline-primary mx-2 py-2 text-uppercase' type="submit" hidden={DisableFields}>
+                        Confirmar Información
+                    </button>
                 </div>
             </form>
-        )
-    }
+        </>
+    )
 }
 
-CheckOutFactInfo.propTypes = {
+CheckOutFacturationInfo.propTypes = {
     parentCallback: PropType.func,
     FacturationInfo: PropType.object,
     EditFlag: PropType.bool

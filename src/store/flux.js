@@ -3,6 +3,8 @@ import RolesService from '../services/roles';
 import UsersService from '../services/users';
 import ProductServices from '../services/products';
 import IngredientServices from '../services/ingredients';
+import CostaRicaServices from '../services/costaRica';
+import HelperService from '../services/helpers';
 
 const getState = ({ getStore, getActions, setStore }) => {
 
@@ -11,6 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 	const UsersSVC = new UsersService();
 	const ProductSVC = new ProductServices();
 	const IngredientSVC = new IngredientServices();
+	const CostaRicaSVC = new CostaRicaServices();
+	const HelperSVC = new HelperService();
 
 	return {
 		store: {
@@ -24,6 +28,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			, UsersList: []
 			, ProductList: []
 			, IngredientList: []
+			, Provinces: []
+			, Cantons: []
+			, Districts: []
+			, ExchangeRate: 0
 		},
 		actions: {
 			uploadMenu: (model) => {
@@ -31,6 +39,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 					//console.log(items);
 					setStore({ menu: items });
 					setStore({ isLoading: false })
+				});
+			},
+			uploadCostaRicaData: () => {
+				CostaRicaSVC.CostaRicaData('Provinces').then(items => {
+					setStore({ Provinces: items });
+				});
+				CostaRicaSVC.CostaRicaData('Cantons').then(items => {
+					setStore({ Cantons: items });
+				});
+				CostaRicaSVC.CostaRicaData('Districts').then(items => {
+					setStore({ Districts: items });
+				});
+			},
+			UploadExchangeRate: () => {
+				HelperSVC.ExchangeRate().then(res => {
+					//console.log(res);
+					var exchangerate = parseInt(res.compra/10000)-10;
+					setStore({ ExchangeRate: exchangerate});
 				});
 			},
 			uploadWDList: () => {
@@ -82,7 +108,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// 	setStore({ isLoading: value })
 			// },
 			AddItemShopCart: (item) => {
-				console.log(item);
+				//console.log(item);
 				let shopcart = localStorage.getItem('ShopCart');
 				if (shopcart === null) {
 					localStorage.setItem('ShopCart', JSON.stringify([item]));

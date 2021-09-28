@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import PropType from "prop-types";
 import { Modal, message } from 'antd';
 import { useForm, Controller, useFormState } from "react-hook-form";
@@ -7,21 +7,22 @@ import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 
-import CostaRicaServices from '../../services/costaRica';
+import { Context } from '../../store/appContext';
+
 import UsersService from '../../services/users';
 
 export const AddDeliveryAddressUser = (props) => {
 
+    const { store, actions } = useContext(Context);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [Address, setAddress] = useState(props.Address);
-    const [Provinces, setProvinces] = useState([]);
+    const [Provinces, setProvinces] = useState(store.Provinces);
     const [EnableCanton, setEnableCanton] = useState(false)
     const [EnableDistrict, setEnableDistrict] = useState(false)
     const [EnableStreet, setEnableStreet] = useState(false)
     const [Cantons, setCantons] = useState([]);
     const [Districts, setDistricts] = useState([]);
 
-    const CostaRicaSVC = new CostaRicaServices();
     const UsersSVC = new UsersService();
 
     const { handleSubmit, control, reset } = useForm({
@@ -31,19 +32,19 @@ export const AddDeliveryAddressUser = (props) => {
     const { isDirty } = useFormState({ control });
 
     const LoadPage = () => {
-        CostaRicaSVC.Provinces().then(res => {
-            setProvinces(res);
-            return 1;
-        }).then(src => {
-            CostaRicaSVC.Cantons(src).then(can => {
-                setCantons(can);
-                return src;
-            }).then(prov => {
-                CostaRicaSVC.Districts(prov, 1).then(dist => {
-                    setDistricts(dist);
-                });
-            })
-        });
+        // CostaRicaSVC.Provinces().then(res => {
+        //     setProvinces(res);
+        //     return 1;
+        // }).then(src => {
+        //     CostaRicaSVC.Cantons(src).then(can => {
+        //         setCantons(can);
+        //         return src;
+        //     }).then(prov => {
+        //         CostaRicaSVC.Districts(prov, 1).then(dist => {
+        //             setDistricts(dist);
+        //         });
+        //     })
+        // });
     }
 
     useEffect(() => {
@@ -54,20 +55,21 @@ export const AddDeliveryAddressUser = (props) => {
     const OnChangeProvince = ProvinceInput => {
         let NewAddress = { ...Address, ProvinceID: ProvinceInput.target.value }
         setAddress(NewAddress);
-        CostaRicaSVC.Cantons(ProvinceInput.target.value).then(can => {
-            setCantons(can);
-            setEnableCanton(true);
-        });
+        let can = store.Cantons.filter(x => x.ProvinceID === NewAddress.ProvinceID);
+        // CostaRicaSVC.Cantons(ProvinceInput.target.value).then(can => {
+        setCantons(can);
+        setEnableCanton(true);
+        // });
     }
 
     const OnChangeCanton = CantonInput => {
         let NewAddress = { ...Address, CantonID: CantonInput.target.value }
-
-        CostaRicaSVC.Districts(Address.ProvinceID, CantonInput.target.value).then(res => {
-            setDistricts(res);
-            setAddress(NewAddress);
-            setEnableDistrict(true);
-        });
+        setAddress(NewAddress);
+        let distCan = store.Districts.filter(x => x.ProvinceID === NewAddress.ProvinceID).filter(x => x.CantonID === CantonInput.target.value);
+        // CostaRicaSVC.Districts(Address.ProvinceID, CantonInput.target.value).then(res => {
+        setDistricts(distCan);
+        setEnableDistrict(true);
+        // });
     }
 
     const onChangeDistrict = DistrictInput => {

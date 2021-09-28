@@ -11,13 +11,11 @@ import { ChangeDeliveryAddress } from '../component/shopCart/changeDeliveryAddre
 
 import AuthenticationService from '../services/authentication';
 import OrdersService from '../services/orders';
-import HelperServices from '../services/helpers';
 
 export const ShopCart = () => {
 
     const AuthSVC = new AuthenticationService();
     const OrderSVC = new OrdersService();
-    const HelperSVC = new HelperServices();
     const history = useHistory();
 
     const { store, actions } = useContext(Context);
@@ -25,7 +23,7 @@ export const ShopCart = () => {
     const [Delivery, setDelivery] = useState({});
     const [TotalDelivery, setTotalDelivery] = useState(0);
     const [isLoading, setLoading] = useState(false);
-    const [ExchangeRate, setExchangeRate] = useState();
+    const [ExchangeRate] = useState(store.ExchangeRate);
 
     useEffect(() => {
         setLoading(true);
@@ -61,13 +59,7 @@ export const ShopCart = () => {
     const LoadPage = () => {
         let shopcart = JSON.parse(localStorage.getItem('ShopCart'));
         if (store.ShopCart.length === 0 && shopcart !== null) {
-            actions.UpdateShopCart();
-            HelperSVC.ExchangeRate().then(res => {
-                var doc = new DOMParser().parseFromString(res.result, 'text/html')
-                var exchangerateHTML = doc.getElementsByTagName("b")[0]
-                setExchangeRate(exchangerateHTML.outerHTML);
-                setLoading(false);
-            });
+            actions.UpdateShopCart();            
         } else {
             setLoading(false);
         }
@@ -341,10 +333,9 @@ export const ShopCart = () => {
                                                 <td className='px-0' colSpan={2}></td>
                                                 <td className='px-0 text-right'>
                                                     <p className="float-left m-0">Tipo de Cambio</p>
-                                                    <p className="text-font-base m-0 text-primary"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: ExchangeRate
-                                                        }}></p>
+                                                    <p className="text-font-base m-0 text-primary"> 
+                                                        <b>1.00 USD = {ExchangeRate} CRC</b>
+                                                    </p>
                                                 </td>
                                             </tr>
                                         </tbody>

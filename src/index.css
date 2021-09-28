@@ -358,6 +358,10 @@ thead[class*="ant-table-thead"] th {
 .ant-btn .anticon-right {
 	margin-bottom: 5px;
 }
+
+.ant-steps-item-description {
+	color: #0069d9;
+}
 /* ------------------------------------------------------------------ */
 /* Width & Height */
 /* ------------------------------------------------------------------ */

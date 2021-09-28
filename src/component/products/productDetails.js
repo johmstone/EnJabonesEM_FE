@@ -59,7 +59,7 @@ export const ProductDetails = props => {
             PhotoURL: props.PrimaryProduct.PhotoURL,
             ProductDetails: props.PrimaryProduct.Products.filter(src => src.ProductID === data.ProductID)[0]
         };
-        console.log(NewItem);
+        //console.log(NewItem);
         actions.AddItemShopCart(NewItem);
         handleCancel();        
     }

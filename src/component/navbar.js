@@ -118,7 +118,7 @@ export const Navbar = () => {
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
 			<Link to="/" className="navbar-brand">
-				<span className="navbar-brand mb-0 h1">{config.AppName}</span>
+				<span className="navbar-brand mb-0 h1 text-font-base">{config.AppName}</span>
 			</Link>
 			<Link to="/ShopCart" className="btn btn-toggler btn-cart ml-auto mx-1 py-2">
 				<Badge count={store.ShopCart.length} size="small"><i className="far fa-cart-arrow-down align-middle"></i></Badge> Carrito

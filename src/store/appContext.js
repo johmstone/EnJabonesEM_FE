@@ -22,6 +22,7 @@ const injectContext = PassedComponent => {
 		);
 
 		useEffect(() => {
+			
 			const user = JSON.parse(localStorage.getItem('User'));
 			
 			let model = {
@@ -37,16 +38,19 @@ const injectContext = PassedComponent => {
 					model.UserID = user.UserID;
 					state.actions.uploadMenu(model);
 					state.actions.UploadRoleList();
+					state.actions.UpdateShopCart();
 				} else {
 					localStorage.removeItem('User');
 					state.actions.Logout();
-					state.actions.uploadMenu(model);
+					state.actions.uploadMenu(model);					
 				}
 			} else {
 				state.actions.Logout();
 				state.actions.uploadMenu(model);
 			}
 			state.actions.UploadProductList();
+			state.actions.uploadCostaRicaData();
+			state.actions.UploadExchangeRate();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, []);
 		return (
